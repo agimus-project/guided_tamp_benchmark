@@ -263,8 +263,8 @@ class Cuboid(object):
                    "handleZpySp", "handleZmySp", "handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
                    "handleYmzSm", "handleYpzSp", "handleYmzSp"]
 
-        for handle in handles:
-            handle = prefix + handle
+        for i, handle in enumerate(handles):
+            handles[i] = prefix + handle
 
         return handles
 
@@ -289,22 +289,22 @@ class Cuboid(object):
         :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
         """
 
-        handle_list = []
+        active_handles = []
 
         if self.lengths[0] < 0.075:
-            handle_list = handle_list + ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm",
+            active_handles = active_handles + ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm",
                                          "handleZmxSm", "handleZpxSp", "handleZmxSp"]
         if self.lengths[1] < 0.075:
-            handle_list = handle_list + ["handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm",
+            active_handles = active_handles + ["handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm",
                                          "handleZmySm", "handleZpySp", "handleZmySp"]
         if self.lengths[2] < 0.075:
-            handle_list = handle_list + ["handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
+            active_handles = active_handles + ["handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
                                          "handleYmzSm", "handleYpzSp", "handleYmzSp"]
 
-        for handle in handle_list:
-            handle = prefix + handle
+        for i, handle in enumerate(active_handles):
+            active_handles[i] = prefix + handle
 
-        return handle_list
+        return active_handles
 
     @staticmethod
     def contact_surfaces(prefix: str = ""):
