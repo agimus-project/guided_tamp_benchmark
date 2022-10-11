@@ -22,9 +22,6 @@ class Cuboid(object):
         :param lengths: sizes of the cuboid object [width in x, width in y, width in z]
         """
         super().__init__()
-        self.h1_active = False
-        self.h2_active = False
-        self.h3_active = False
         if isinstance(lengths, float):
             lengths = [lengths] * 3
         else:
@@ -89,7 +86,8 @@ class Cuboid(object):
             </robot>
             """
 
-    def srdf(self, lengths: list[float]) -> str:
+    @staticmethod
+    def srdf(lengths: list[float]) -> str:
         """
         this function generates text for .srdf file with given parameters to create handles and contact surfaces
 
@@ -103,18 +101,9 @@ class Cuboid(object):
                 dist[i] = abs(0.07 - length) / 2
         a, b, c = [l / 2 for l in lengths]
 
-        preinfo = f"""
+        return f"""
                 <?xml version="1.0"?>
                 <robot name="box">
-                """
-
-        handles1 = ""
-        handles2 = ""
-        handles3 = ""
-
-        if lengths[0] < 0.075:
-            self.h1_active = True
-            handles1 = f"""
 
                  <handle name="handleZpx" clearance="{lengths[0]}">
                     <position> 0 0 {dist[2]}   0.7071068, 0, 0.7071068, 0</position>
@@ -155,11 +144,6 @@ class Cuboid(object):
                     <position> 0 {dist[1]} {-dist[2]}  0.65328148  0.27059805 -0.65328148 -0.27059805</position>
                     <link name="base_link"/>
                   </handle>
-                            """
-
-        if lengths[1] < 0.075:
-            self.h2_active = True
-            handles2 = f"""
 
                 <handle name="handleZpy" clearance="{lengths[1]}">
                     <position> 0 0 {dist[2]}   0.5 -0.5  0.5  0.5 </position>
@@ -200,10 +184,6 @@ class Cuboid(object):
                     <position> {dist[0]} 0 {-dist[2]}   0.27059805  0.27059805 -0.65328148  0.65328148</position>
                     <link name="base_link"/>
                   </handle>
-                  """
-        if lengths[2] < 0.075:
-            self.h3_active = True
-            handles3 = f"""
 
                 <handle name="handleYpz" clearance="{lengths[2]}">
                     <position> 0 {dist[1]} 0.0   0.7071067811865476 0.0 0.0 -0.7071067811865475 </position>
@@ -244,9 +224,7 @@ class Cuboid(object):
                     <position> {dist[0]} {-dist[1]} 0.0    0 0.3826834 0.9238795 0</position>
                     <link name="base_link"/>
                   </handle>
-                """
 
-        afterinfo = f"""
                   <contact name="box_surface">
                     <link name="base_link"/>
                      <point>
@@ -257,8 +235,6 @@ class Cuboid(object):
                   </contact>
                 </robot>
                """
-
-        return preinfo + handles1 + handles2 + handles3 + afterinfo
 
     @staticmethod
     def handles(prefix: str = ""):
@@ -292,7 +268,7 @@ class Cuboid(object):
 
         return handles
 
-    def active_handles(self, name):
+    def active_handles(self, prefix: str = ""):
         """
         This function returns list of curently active handles.
         Handle description following:
@@ -309,28 +285,29 @@ class Cuboid(object):
 
         Warning: if there is unreachable handle, constraint graph validation will be incorrect!
 
-        :param name: argument which is the name of the handled object passed to HPP corbaserver
-        :return: list of handles [obj_name/handleAbc, obj_name/handleAbc, ...]
+        :param prefix: prefix for handle name
+        :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
         """
 
         handle_list = []
 
-        if self.h1_active:
-            handle_list = handle_list + [name + "/handleZpx", name + "/handleZmx", name + "/handleYmx",
-                                         name + "/handleYpx", name + "/handleZpxSm", name + "/handleZmxSm",
-                                         name + "/handleZpxSp", name + "/handleZmxSp"]
-        if self.h2_active:
-            handle_list = handle_list + [name + "/handleZpy", name + "/handleZmy", name + "/handleXmy",
-                                         name + "/handleXpy", name + "/handleZpySm", name + "/handleZmySm",
-                                         name + "/handleZpySp", name + "/handleZmySp"]
-        if self.h3_active:
-            handle_list = handle_list + [name + "/handleYpz", name + "/handleYmz", name + "/handleXmz",
-                                         name + "/handleXpz", name + "/handleYpzSm", name + "/handleYmzSm",
-                                         name + "/handleYpzSp", name + "/handleYmzSp"]
+        if self.lengths[0] < 0.075:
+            handle_list = handle_list + ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm",
+                                         "handleZmxSm", "handleZpxSp", "handleZmxSp"]
+        if self.lengths[1] < 0.075:
+            handle_list = handle_list + ["handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm",
+                                         "handleZmySm", "handleZpySp", "handleZmySp"]
+        if self.lengths[2] < 0.075:
+            handle_list = handle_list + ["handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
+                                         "handleYmzSm", "handleYpzSp", "handleYmzSp"]
+
+        for handle in handle_list:
+            handle = prefix + handle
 
         return handle_list
 
-    def contact_surfaces(self, prefix: str = ""):
+    @staticmethod
+    def contact_surfaces(prefix: str = ""):
         """
         This function returns the name of the contact surface of the object
 
