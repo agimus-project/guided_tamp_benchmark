@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import copy
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 11.10.2022
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
@@ -14,18 +14,28 @@ class Cuboid(object):
     urdfSuffix = ""
     srdfSuffix = ""
 
-    def __init__(self, lengths: list[float]) -> None:
+    handles = ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm", "handleZmxSm", "handleZpxSp",
+               "handleZmxSp", "handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm", "handleZmySm",
+               "handleZpySp", "handleZmySp", "handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
+               "handleYmzSm", "handleYpzSp", "handleYmzSp"]
+
+    def __init__(self, lengths: List[float], disabled_handles: List[int], grasp_depth: float) -> None:
         """
         Create urdf/srdf files for the box of given size.
         This object can be passed to hpp function loadEnvironmentObject() or loadObjectModel() as argument.
 
-        :param lengths: sizes of the cuboid object [width in x, width in y, width in z]
+        :param lengths: sizes of the cuboid object [width in x, width in y, width in z] or single float for symmetric
+        cube
+        :param disabled_handles: list of IDs of the handles to be disabled
+        :param grasp_depth:
         """
         super().__init__()
         if isinstance(lengths, float):
             lengths = [lengths] * 3
         else:
             pass
+
+        self.disabled_handles = disabled_handles
 
         assert len(lengths) == 3
 
@@ -35,7 +45,7 @@ class Cuboid(object):
         with os.fdopen(self.fd_urdf, "w") as f:
             f.write(self.urdf(lengths=lengths))
         with os.fdopen(self.fd_srdf, "w") as f:
-            f.write(self.srdf(lengths=lengths))
+            f.write(self.srdf(lengths=lengths, grasp_depth=grasp_depth))
 
         self.lengths = lengths
 
@@ -87,7 +97,7 @@ class Cuboid(object):
             """
 
     @staticmethod
-    def srdf(lengths: list[float]) -> str:
+    def srdf(lengths: List[float], gripper_depth: float) -> str:
         """
         this function generates text for .srdf file with given parameters to create handles and contact surfaces
 
@@ -97,8 +107,8 @@ class Cuboid(object):
 
         dist = [0, 0, 0]  # is the distance of the grip from the center of the cuboid
         for i, length in enumerate(lengths):
-            if length > 0.07:
-                dist[i] = abs(0.07 - length) / 2
+            if length > gripper_depth:
+                dist[i] = abs(gripper_depth - length) / 2
         a, b, c = [l / 2 for l in lengths]
 
         return f"""
@@ -236,8 +246,8 @@ class Cuboid(object):
                 </robot>
                """
 
-    @staticmethod
-    def handles(prefix: str = ""):
+
+    def handles(self, prefix: str = ""):
         """
         This function returns list of curently active handles.
         Handle description following:
@@ -258,15 +268,7 @@ class Cuboid(object):
         :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
         """
 
-        handles = ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm", "handleZmxSm", "handleZpxSp",
-                   "handleZmxSp", "handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm", "handleZmySm",
-                   "handleZpySp", "handleZmySp", "handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
-                   "handleYmzSm", "handleYpzSp", "handleYmzSp"]
-
-        for i, handle in enumerate(handles):
-            handles[i] = prefix + handle
-
-        return handles
+        return [prefix + h for h in self.handles]
 
     def active_handles(self, prefix: str = ""):
         """
@@ -289,20 +291,10 @@ class Cuboid(object):
         :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
         """
 
-        active_handles = []
+        active_handles = copy.deepcopy(self.handles)
 
-        if self.lengths[0] < 0.075:
-            active_handles = active_handles + ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm",
-                                         "handleZmxSm", "handleZpxSp", "handleZmxSp"]
-        if self.lengths[1] < 0.075:
-            active_handles = active_handles + ["handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm",
-                                         "handleZmySm", "handleZpySp", "handleZmySp"]
-        if self.lengths[2] < 0.075:
-            active_handles = active_handles + ["handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
-                                         "handleYmzSm", "handleYpzSp", "handleYmzSp"]
-
-        for i, handle in enumerate(active_handles):
-            active_handles[i] = prefix + handle
+        for d in self.disabled_handles:
+            active_handles.pop(d)
 
         return active_handles
 
