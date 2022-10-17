@@ -47,8 +47,9 @@ class Table(BaseObject):
     def contact_surfaces(cls, prefix: str = ""):
         """
         This function returns the list of all contact surface defined by the object.
+
         :param prefix: prefix for contact surface name
-        :return: name as string prefix + "box_surface"
+        :return: name as string prefix + "desk"
         """
         return [prefix + "desk"]
 
@@ -57,7 +58,7 @@ class Table(BaseObject):
         os.unlink(self.srdfFilename)
 
     @staticmethod
-    def urdf(pos, rot: List[float], size: List[float], legs=True, material: str = 'brown',
+    def urdf(pos: List[float], rot: List[float], size: List[float], legs=True, material: str = 'brown',
              color_rgba: str = '0.43 0.34 0.24 0.9'):
         """
         this function generates text for .urdf file with given parameters to create table object
