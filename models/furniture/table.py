@@ -49,8 +49,9 @@ class Table(BaseObject):
         This function returns the list of all contact surface defined by the object.
 
         :param prefix: prefix for contact surface name
-        :return: name as string prefix + "desk"
+        :return: name as a list of strings [prefix + "desk"]
         """
+
         return [prefix + "desk"]
 
     def __del__(self):
