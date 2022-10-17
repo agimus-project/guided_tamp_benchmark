@@ -112,18 +112,18 @@ class Table(BaseObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                             <material name="{material}">
                             <color rgba="{color_rgba}"/>
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                         </collision>
                     </link>
@@ -134,18 +134,18 @@ class Table(BaseObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                             <material name="{material}">
                             <color rgba="{color_rgba}"/>
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                         </collision>
                     </link>
@@ -156,18 +156,18 @@ class Table(BaseObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                             <material name="{material}">
                             <color rgba="{color_rgba}"/>
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                         </collision>
                     </link>
@@ -178,18 +178,18 @@ class Table(BaseObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                             <material name="{material}">
                             <color rgba="{color_rgba}"/>
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-0.39}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.05} {0.05} {0.72}"/>
+                                <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
                         </collision>
                     </link>
@@ -238,18 +238,18 @@ class Table(BaseObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{0} {0} {-0.375}" rpy="0 0 0" />
+                            <origin xyz="{0} {0} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{size[0]} {size[1]} {0.75}"/>
+                                <box size="{size[0]} {size[1]} {size[2]}"/>
                             </geometry>
                             <material name="{material}">
                                 <color rgba="{color_rgba}"/>
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{0} {0} {-0.375}" rpy="0 0 0" />
+                            <origin xyz="{0} {0} {-size[2]/2}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{size[0]} {size[1]} {0.75}"/>
+                                <box size="{size[0]} {size[1]} {size[2]}"/>
                             </geometry>
                         </collision>
                     </link>
