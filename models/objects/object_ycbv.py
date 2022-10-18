@@ -7,10 +7,11 @@
 
 import os
 import tempfile
-from typing import List, Union
+from typing import List
 from .base import BaseObject
 
-class ObjectYCBV(object):
+
+class ObjectYCBV(BaseObject):
     rootJointType = "freeflyer"
     urdfSuffix = ""
     srdfSuffix = ""
@@ -37,6 +38,25 @@ class ObjectYCBV(object):
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf())
 
+    def active_handles(self):
+        """
+        function that gives correct handle IDs for the current ycbv object
+
+        :return: handle IDs in a list of int ex.: [1,2,3,4]
+        """
+
+        if self.name == "obj_000002":
+            return [i for i in range(8)]
+        elif self.name == "obj_000003":
+            return [i for i in range(8)]
+        elif self.name == "obj_000004":
+            return [i for i in range(4)] + [i for i in range(8, 12)]
+        elif self.name == "obj_000005":
+            return [8, 10, 11]  # Zm handles must be disabled!
+        elif self.name == "obj_000012":
+            return [8, 10, 11]  # Zm handles must be disabled!
+        elif self.name == "obj_000021":
+            return [i for i in range(24)]
 
     def initial_configuration(self) -> List[float]:
         """
@@ -45,7 +65,6 @@ class ObjectYCBV(object):
         :return: initial configuration of cuboid considering its size
         """
         return [0.0, 0, self.lengths[2] / 2 + 0.001, ] + [0, 0, 0, 1]
-
 
     @classmethod
     def handles(cls, prefix: str = ""):
@@ -69,7 +88,6 @@ class ObjectYCBV(object):
 
         return [prefix + h for h in cls._all_handles]
 
-
     @classmethod
     def contact_surfaces(cls, prefix: str = ""):
         """
@@ -78,7 +96,6 @@ class ObjectYCBV(object):
         :return: name as string prefix + "box_surface"
         """
         return [prefix + f"ycbv_surface"]
-
 
     def __del__(self):
         os.unlink(self.urdfFilename)
