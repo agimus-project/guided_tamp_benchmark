@@ -53,7 +53,7 @@ class Tunnel(FurnitureObject):
         :return: name as list of strings [prefix + "top_shelf_surface", prefix + "inside_shelf_surface"]
         """
 
-        return [None]
+        return []
 
     def __del__(self):
         os.unlink(self.urdfFilename)
