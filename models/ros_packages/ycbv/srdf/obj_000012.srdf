@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<robot name="obj_000012">
+
+
+      <handle name="handleZpy" clearance="0.075">
+        <position> 0 0 0.08   0.5 -0.5  0.5  0.5 </position>
+        <link name="base_link"/>
+      </handle>
+
+      <handle name="handleZmy" clearance="0.075">
+        <position> 0 0 -0.08   0.5 0.5 -0.5 0.5  </position>
+        <link name="base_link"/>
+      </handle>
+
+      <handle name="handleXmy" clearance="0.06">
+        <position> 0.0  0 0.0   0.7071067811865476 -0.7071067811865475 0.0 0.0  </position>
+        <link name="base_link"/>
+      </handle>
+
+      <handle name="handleXpy" clearance="0.06">
+        <position> 0.03 0 0.0   0 0 -0.7071067811865475 0.7071067811865476 </position>
+        <link name="base_link"/>
+      </handle>
+
+
+    <contact name="obj_000012_surface">
+        <link name="base_link"/>
+        <point>
+            0.048  0.032  -0.126   0.048  -0.032  -0.126    -0.048  -0.032  -0.126    -0.048  0.032  -0.126
+        </point>
+        <shape>4 0 1 2 3</shape>
+    </contact>
+
+</robot>
