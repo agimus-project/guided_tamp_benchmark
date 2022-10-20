@@ -10,6 +10,7 @@ from typing import List, Union
 
 from models.objects.base import BaseObject
 
+
 class Shelf(BaseObject):
     rootJointType = "fix"
     urdfSuffix = ""
@@ -35,7 +36,6 @@ class Shelf(BaseObject):
             f.write(self.urdf(pos=position, rot=rpy, inside=display_inside_shelf))
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf(inside_shelf=display_inside_shelf))
-
 
     @classmethod
     def contact_surfaces(cls, prefix: str = ""):
