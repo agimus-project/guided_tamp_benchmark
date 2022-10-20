@@ -34,7 +34,7 @@ class ObjectYCBV(BaseObject):
         self.srdfFilename = os.path.dirname(__file__) + "/data/ycbv/srdf/" + object_name + ".srdf"
 
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(name=self.name))
+            f.write(self.urdf(name=self.name, path=os.path.dirname(__file__) + "/data/ycbv/meshes/"))
 
     def active_handles(self):
         """
@@ -99,7 +99,7 @@ class ObjectYCBV(BaseObject):
         os.unlink(self.urdfFilename)
 
     @staticmethod
-    def urdf(name: str):
+    def urdf(name: str, path: str):
         """
         this function generates text for .urdf file with given parameters to create ycbv object
 
@@ -112,7 +112,7 @@ class ObjectYCBV(BaseObject):
            <link name="base_link">
               <visual>
                  <geometry>
-                    <mesh filename="package://ycbv/meshes/{name}.obj" scale="0.001 0.001 0.001"/>
+                    <mesh filename="{path + name}.obj" scale="0.001 0.001 0.001"/>
                  </geometry>
                  <material name="mat_part0">
                     <color rgba="1.0 1.0 1.0 1.0"/>
@@ -120,7 +120,7 @@ class ObjectYCBV(BaseObject):
               </visual>
               <collision>
                  <geometry>
-                    <mesh filename="package://ycbv/meshes/{name}.obj" scale="0.001 0.001 0.001"/>
+                    <mesh filename="{path + name}.obj" scale="0.001 0.001 0.001"/>
                  </geometry>
               </collision>
               <inertial>
