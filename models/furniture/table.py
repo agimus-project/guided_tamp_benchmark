@@ -8,10 +8,10 @@ import os
 import tempfile
 from typing import List, Union
 
-from models.objects.base import BaseObject
+from models.furniture.base import FurnitureObject
 
 
-class Table(BaseObject):
+class Table(FurnitureObject):
     rootJointType = "fix"
     urdfSuffix = ""
     srdfSuffix = ""

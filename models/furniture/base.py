@@ -8,7 +8,7 @@ from abc import abstractmethod
 from typing import List
 
 
-class BaseObject(object):
+class FurnitureObject(object):
 
     @classmethod
     @abstractmethod

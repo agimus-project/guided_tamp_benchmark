@@ -8,10 +8,10 @@ import os
 import tempfile
 from typing import List, Union
 
-from models.objects.base import BaseObject
+from models.furniture.base import FurnitureObject
 
 
-class Tunnel(BaseObject):
+class Tunnel(FurnitureObject):
     rootJointType = "freeflyer"
     urdfSuffix = ""
     srdfSuffix = ""
