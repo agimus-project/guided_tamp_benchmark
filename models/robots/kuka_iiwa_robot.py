@@ -24,7 +24,7 @@ class KukaIIWARobot(BaseRobot):
     @classmethod
     def initial_configuration(cls) -> List[float]:
         """ Return the initial configuration of the robot. """
-        return [0, -np.pi / 4, 0,  -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0]
+        return [0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0]
 
     @classmethod
     def reach_m(cls):
