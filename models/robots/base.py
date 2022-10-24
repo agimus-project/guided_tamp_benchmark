@@ -10,8 +10,9 @@ from typing import List
 
 class BaseRobot(object):
 
+    @classmethod
     @abstractmethod
-    def initial_configuration(self) -> List[float]:
+    def initial_configuration(cls) -> List[float]:
         """Return initial configuration of the object."""
         pass
 
