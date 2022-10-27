@@ -11,7 +11,6 @@ from typing import List
 from models.robots.base import BaseRobot
 
 
-# todo: discuss: Previous class parent was cass Robot from hpp.corbaserver.manipulation.robot
 class KukaIIWARobot(BaseRobot):
     urdfFilename = os.path.dirname(__file__) + "data/kuka_iiwa/kuka_iiwa.urdf"
     srdfFilename = os.path.dirname(__file__) + "data/kuka_iiwa/kuka_iiwa.srdf"
@@ -33,14 +32,9 @@ class KukaIIWARobot(BaseRobot):
         """
         return 0.8
 
-    # todo: Will we need this function? Dependent on robot class from corbaserver.manipulation
+    # todo: Will we need this function? Dependent on robot class from corbaserver.manipulation, use pinochio
     def get_actuated_joint_names(self) -> List[str]:
         """Return list of names of actuated joints"""
-        pass
-
-    # todo: Get new implementation with pyphysx
-    @classmethod
-    def get_pyphysx_robot(cls):
         pass
 
     @classmethod
