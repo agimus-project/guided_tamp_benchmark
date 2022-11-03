@@ -5,6 +5,7 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import os
+import pinocchio
 import numpy as np
 from typing import List
 
@@ -35,6 +36,9 @@ class KukaIIWARobot(BaseRobot):
     # todo: Will we need this function? Dependent on robot class from corbaserver.manipulation, use pinochio
     def get_actuated_joint_names(self) -> List[str]:
         """Return list of names of actuated joints"""
+
+        model = pinocchio.buildModelFromUrdf(self.urdfFilename)
+        print(model.joints)
         pass
 
     @classmethod
