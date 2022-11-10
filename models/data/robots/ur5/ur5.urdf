@@ -14,7 +14,7 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <mesh filename="package://ur5/meshes/visual/base.dae"/>
+        <mesh filename="package://robots/ur5/meshes/visual/base.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -22,7 +22,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ur5/meshes/collision/base.stl"/>
+        <mesh filename="package://robots/ur5/meshes/collision/base.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -42,7 +42,7 @@
   <link name="shoulder_link">
     <visual>
       <geometry>
-        <mesh filename="package://ur5/meshes/visual/shoulder.dae"/>
+        <mesh filename="package://robots/ur5/meshes/visual/shoulder.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -50,7 +50,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ur5/meshes/collision/shoulder.stl"/>
+        <mesh filename="package://robots/ur5/meshes/collision/shoulder.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -70,7 +70,7 @@
   <link name="upper_arm_link">
     <visual>
       <geometry>
-        <mesh filename="package://ur5/meshes/visual/upperarm.dae"/>
+        <mesh filename="package://robots/ur5/meshes/visual/upperarm.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -78,7 +78,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ur5/meshes/collision/upperarm.stl"/>
+        <mesh filename="package://robots/ur5/meshes/collision/upperarm.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -98,7 +98,7 @@
   <link name="forearm_link">
     <visual>
       <geometry>
-        <mesh filename="package://ur5/meshes/visual/forearm.dae"/>
+        <mesh filename="package://robots/ur5/meshes/visual/forearm.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -106,7 +106,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ur5/meshes/collision/forearm.stl"/>
+        <mesh filename="package://robots/ur5/meshes/collision/forearm.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -126,7 +126,7 @@
   <link name="wrist_1_link">
     <visual>
       <geometry>
-        <mesh filename="package://ur5/meshes/visual/wrist1.dae"/>
+        <mesh filename="package://robots/ur5/meshes/visual/wrist1.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -134,7 +134,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ur5/meshes/collision/wrist1.stl"/>
+        <mesh filename="package://robots/ur5/meshes/collision/wrist1.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -154,7 +154,7 @@
   <link name="wrist_2_link">
     <visual>
       <geometry>
-        <mesh filename="package://ur5/meshes/visual/wrist2.dae"/>
+        <mesh filename="package://robots/ur5/meshes/visual/wrist2.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -162,7 +162,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ur5/meshes/collision/wrist2.stl"/>
+        <mesh filename="package://robots/ur5/meshes/collision/wrist2.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -182,7 +182,7 @@
   <link name="wrist_3_link">
     <visual>
       <geometry>
-        <mesh filename="package://ur5/meshes/visual/wrist3.dae"/>
+        <mesh filename="package://robots/ur5/meshes/visual/wrist3.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -190,7 +190,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ur5/meshes/collision/wrist3.stl"/>
+        <mesh filename="package://robots/ur5/meshes/collision/wrist3.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -228,13 +228,13 @@
         </inertial>
         <visual>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/visual/hand.dae"/>
+                <mesh filename="package://robots/franka_panda/meshes/visual/hand.dae"/>
             </geometry>
             <material name="panda_white"/>
         </visual>
         <collision>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/collision/hand.stl"/>
+                <mesh filename="package://robots/franka_panda/meshes/collision/hand.stl"/>
             </geometry>
             <material name="panda_white"/>
         </collision>
@@ -248,13 +248,13 @@
         </inertial>
         <visual>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/visual/finger.dae"/>
+                <mesh filename="package://robots/franka_panda/meshes/visual/finger.dae"/>
             </geometry>
             <material name="panda_white"/>
         </visual>
         <collision>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/collision/finger.stl"/>
+                <mesh filename="package://robots/franka_panda/meshes/collision/finger.stl"/>
             </geometry>
             <material name="panda_white"/>
         </collision>
@@ -269,14 +269,14 @@
         <visual>
             <origin rpy="0 0 3.14159265359" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/visual/finger.dae"/>
+                <mesh filename="package://robots/franka_panda/meshes/visual/finger.dae"/>
             </geometry>
             <material name="panda_white"/>
         </visual>
         <collision>
             <origin rpy="0 0 3.14159265359" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/collision/finger.stl"/>
+                <mesh filename="package://robots/franka_panda/meshes/collision/finger.stl"/>
             </geometry>
             <material name="panda_white"/>
         </collision>

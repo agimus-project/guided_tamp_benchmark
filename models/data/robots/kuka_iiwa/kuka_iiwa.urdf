@@ -43,14 +43,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_0.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_0.stl"/>
       </geometry>
       <material name="Grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_0.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_0.stl"/>
       </geometry>
       <material name="Grey"/>
     </collision>
@@ -75,14 +75,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_1.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_1.stl"/>
       </geometry>
       <material name="Orange"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_1.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_1.stl"/>
       </geometry>
       <material name="Orange"/>
     </collision>
@@ -106,14 +106,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_2.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_2.stl"/>
       </geometry>
       <material name="Orange"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_2.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_2.stl"/>
       </geometry>
       <material name="Orange"/>
     </collision>
@@ -137,14 +137,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_3.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_3.stl"/>
       </geometry>
       <material name="Orange"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_3.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_3.stl"/>
       </geometry>
       <material name="Orange"/>
     </collision>
@@ -168,14 +168,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_4.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_4.stl"/>
       </geometry>
       <material name="Orange"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_4.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_4.stl"/>
       </geometry>
       <material name="Orange"/>
     </collision>
@@ -199,14 +199,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_5.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_5.stl"/>
       </geometry>
       <material name="Orange"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_5.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_5.stl"/>
       </geometry>
       <material name="Orange"/>
     </collision>
@@ -230,14 +230,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_6.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_6.stl"/>
       </geometry>
       <material name="Orange"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_6.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_6.stl"/>
       </geometry>
       <material name="Orange"/>
     </collision>
@@ -261,14 +261,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/visual/link_7_basic.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/visual/link_7_basic.stl"/>
       </geometry>
       <material name="Grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuka_iiwa/meshes/collision/link_7_basic.stl"/>
+        <mesh filename="package://robots/kuka_iiwa/meshes/collision/link_7_basic.stl"/>
       </geometry>
       <material name="Grey"/>
     </collision>
@@ -303,13 +303,13 @@
         </inertial>
         <visual>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/visual/hand.dae"/>
+                <mesh filename="package://robots/franka_panda/meshes/visual/hand.dae"/>
             </geometry>
             <material name="panda_white"/>
         </visual>
         <collision>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/collision/hand.stl"/>
+                <mesh filename="package://robots/franka_panda/meshes/collision/hand.stl"/>
             </geometry>
             <material name="panda_white"/>
         </collision>
@@ -323,13 +323,13 @@
         </inertial>
         <visual>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/visual/finger.dae"/>
+                <mesh filename="package://robots/franka_panda/meshes/visual/finger.dae"/>
             </geometry>
             <material name="panda_white"/>
         </visual>
         <collision>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/collision/finger.stl"/>
+                <mesh filename="package://robots/franka_panda/meshes/collision/finger.stl"/>
             </geometry>
             <material name="panda_white"/>
         </collision>
@@ -344,14 +344,14 @@
         <visual>
             <origin rpy="0 0 3.14159265359" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/visual/finger.dae"/>
+                <mesh filename="package://robots/franka_panda/meshes/visual/finger.dae"/>
             </geometry>
             <material name="panda_white"/>
         </visual>
         <collision>
             <origin rpy="0 0 3.14159265359" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://franka_panda/meshes/collision/finger.stl"/>
+                <mesh filename="package://robots/franka_panda/meshes/collision/finger.stl"/>
             </geometry>
             <material name="panda_white"/>
         </collision>
