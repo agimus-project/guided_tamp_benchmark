@@ -8,6 +8,8 @@
 import os
 import tempfile
 from typing import List
+
+import models
 from models.objects.base import BaseObject
 
 
@@ -31,7 +33,7 @@ class ObjectYCBV(BaseObject):
         self.name = object_name
 
         self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        self.srdfFilename = os.path.dirname(__file__) + "/data/ycbv/srdf/" + object_name + ".srdf"
+        self.srdfFilename = os.path.dirname(models.__file__) + "/data/ycbv/srdf/" + object_name + ".srdf"
 
         with os.fdopen(self.fd_urdf, "w") as f:
             f.write(self.urdf(name=self.name, path=os.path.dirname(__file__) + "/data/ycbv/meshes/"))
