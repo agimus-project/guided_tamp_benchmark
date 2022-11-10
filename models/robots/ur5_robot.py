@@ -13,8 +13,8 @@ from models.robots.base import BaseRobot
 
 
 class UR5Robot(BaseRobot):
-    urdfFilename = os.path.dirname(models.__file__) + "data/robots/ur5/ur5.urdf"
-    srdfFilename = os.path.dirname(models.__file__) + "data/robots/ur5/ur5.srdf"
+    urdfFilename = os.path.dirname(models.__file__) + "/data/robots/ur5/ur5.urdf"
+    srdfFilename = os.path.dirname(models.__file__) + "/data/robots/ur5/ur5.srdf"
     urdfSuffix = ""
     srdfSuffix = ""
 
