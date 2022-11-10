@@ -8,12 +8,13 @@ import os
 import numpy as np
 from typing import List
 
+import models
 from models.robots.base import BaseRobot
 
 
 class PandaRobot(BaseRobot):
-    urdfFilename = os.path.dirname(__file__) + "data/franka_panda/panda.urdf"
-    srdfFilename = os.path.dirname(__file__) + "data/franka_panda/panda.srdf"
+    urdfFilename = os.path.dirname(models.__file__) + "data/franka_panda/panda.urdf"
+    srdfFilename = os.path.dirname(models.__file__) + "data/franka_panda/panda.srdf"
     urdfSuffix = ""
     srdfSuffix = ""
 
