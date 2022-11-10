@@ -13,8 +13,8 @@ from models.robots.base import BaseRobot
 
 
 class PandaRobot(BaseRobot):
-    urdfFilename = os.path.dirname(models.__file__) + "data/franka_panda/panda.urdf"
-    srdfFilename = os.path.dirname(models.__file__) + "data/franka_panda/panda.srdf"
+    urdfFilename = os.path.dirname(models.__file__) + "data/robots/franka_panda/panda.urdf"
+    srdfFilename = os.path.dirname(models.__file__) + "data/robots/franka_panda/panda.srdf"
     urdfSuffix = ""
     srdfSuffix = ""
 

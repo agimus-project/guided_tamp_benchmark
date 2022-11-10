@@ -14,8 +14,8 @@ from models.robots.base import BaseRobot
 
 
 class KukaIIWARobot(BaseRobot):
-    urdfFilename = os.path.dirname(models.__file__) + "data/kuka_iiwa/kuka_iiwa.urdf"
-    srdfFilename = os.path.dirname(models.__file__) + "data/kuka_iiwa/kuka_iiwa.srdf"
+    urdfFilename = os.path.dirname(models.__file__) + "data/robots/kuka_iiwa/kuka_iiwa.urdf"
+    srdfFilename = os.path.dirname(models.__file__) + "data/robots/kuka_iiwa/kuka_iiwa.srdf"
     urdfSuffix = ""
     srdfSuffix = ""
 
