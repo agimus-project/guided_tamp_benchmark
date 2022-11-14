@@ -34,13 +34,10 @@ class KukaIIWARobot(BaseRobot):
         """
         return 0.8
 
-    # todo: Will we need this function? Dependent on robot class from corbaserver.manipulation, use pinochio
     def get_actuated_joint_names(self) -> List[str]:
         """Return list of names of actuated joints"""
-
         model = pinocchio.buildModelFromUrdf(self.urdfFilename)
-        print(model.joints)
-        pass
+        return model.names.tolist()[1:]
 
     @classmethod
     def get_gripper_name(cls):
