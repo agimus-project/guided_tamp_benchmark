@@ -7,6 +7,8 @@
 from abc import abstractmethod
 from typing import List
 
+import pinocchio
+
 
 class BaseRobot(object):
 
@@ -24,7 +26,8 @@ class BaseRobot(object):
     @abstractmethod
     def get_actuated_joint_names(self) -> List[str]:
         """Return list of names of actuated joints"""
-        pass
+        model = pinocchio.buildModelFromUrdf(self.urdfFilename)
+        return model.names.tolist()[1:]
 
     @classmethod
     @abstractmethod
