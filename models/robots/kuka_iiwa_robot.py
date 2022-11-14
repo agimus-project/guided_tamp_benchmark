@@ -21,18 +21,15 @@ class KukaIIWARobot(BaseRobot):
     def __init__(self):
         pass
 
-    @classmethod
     def initial_configuration(cls) -> List[float]:
         """ Return the initial configuration of the robot. """
         return [0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0]
 
-    @classmethod
     def reach_m(cls):
         """
         :return: Maximum reach of robot end effector in meters.
         """
         return 0.8
 
-    @classmethod
     def get_gripper_name(cls):
         return "iiwa/gripper"
