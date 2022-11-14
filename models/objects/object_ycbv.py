@@ -81,9 +81,7 @@ class ObjectYCBV(BaseObject):
         else:
             return False
 
-        handles = [self._all_handles[i] for i in ids]
-
-        return [prefix + h for h in handles]
+        return [prefix + self._all_handles[i] for i in ids]
 
     def contact_surfaces(self, prefix: str = ""):
         """
