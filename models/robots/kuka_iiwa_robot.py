@@ -5,7 +5,6 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import os
-import pinocchio
 import numpy as np
 from typing import List
 
@@ -33,11 +32,6 @@ class KukaIIWARobot(BaseRobot):
         :return: Maximum reach of robot end effector in meters.
         """
         return 0.8
-
-    def get_actuated_joint_names(self) -> List[str]:
-        """Return list of names of actuated joints"""
-        model = pinocchio.buildModelFromUrdf(self.urdfFilename)
-        return model.names.tolist()[1:]
 
     @classmethod
     def get_gripper_name(cls):
