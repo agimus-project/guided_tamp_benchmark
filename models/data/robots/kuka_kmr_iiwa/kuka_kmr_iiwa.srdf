@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<robot name="kmr_iiwa">
+    <gripper name="gripper" clearance="0.08">
+        <position>0 0 0.12 0.5 -0.5 -0.5 -0.5</position>
+        <link name="panda_hand"/>
+    </gripper>
+
+   <disable_collisions link1="kmr_link" link2="iiwa_link_0" />
+   <disable_collisions link1="iiwa_link_0" link2="iiwa_link_1" />
+   <disable_collisions link1="iiwa_link_1" link2="iiwa_link_2" />
+   <disable_collisions link1="iiwa_link_2" link2="iiwa_link_3" />
+   <disable_collisions link1="iiwa_link_3" link2="iiwa_link_4" />
+   <disable_collisions link1="iiwa_link_4" link2="iiwa_link_5" />
+   <disable_collisions link1="iiwa_link_5" link2="iiwa_link_6" />
+   <disable_collisions link1="iiwa_link_6" link2="iiwa_link_7" />
+   <disable_collisions link1="iiwa_link_7" link2="iiwa_link_ee" />
+   <disable_collisions link1="iiwa_link_7" link2="panda_hand" />
+   <disable_collisions link1="panda_hand" link2="panda_leftfinger" />
+   <disable_collisions link1="panda_hand" link2="panda_rightfinger" />
+   <disable_collisions link1="panda_leftfinger" link2="panda_rightfinger" />
+
+   <contact name="kmr_surface">
+        <link name="kmr_link"/>
+            <point>
+              -0.48 -0.28 0.7    0.16 -0.28 0.7     0.16 0.28 0.7     -0.48 0.28 0.7
+            </point>
+            <shape>4 0 1 2 3</shape>
+    </contact>
+
+
+</robot>
