@@ -48,6 +48,7 @@ class ObjectYCBV(BaseObject):
         return [0.0, 0.0, 0.0, ] + [0, 0, 0, 1]
 
     def handles(self, prefix: str = ""):
+
         """
         This function returns list of all handles prepended with the prefix.
         Handle description following:
