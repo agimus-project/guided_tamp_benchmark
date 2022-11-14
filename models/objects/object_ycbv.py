@@ -47,8 +47,7 @@ class ObjectYCBV(BaseObject):
         """
         return [0.0, 0.0, 0.0, ] + [0, 0, 0, 1]
 
-    @classmethod
-    def handles(cls, prefix: str = ""):
+    def handles(self, prefix: str = ""):
         """
         This function returns list of all handles prepended with the prefix.
         Handle description following:
@@ -67,7 +66,24 @@ class ObjectYCBV(BaseObject):
         :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
         """
 
-        return [prefix + h for h in cls._all_handles]
+        if self.name == "obj_000002":
+            ids = [i for i in range(8)]
+        elif self.name == "obj_000003":
+            ids = [i for i in range(8)]
+        elif self.name == "obj_000004":
+            ids = [i for i in range(4)] + [i for i in range(8, 12)]
+        elif self.name == "obj_000005":
+            ids = [8, 9, 10, 11]
+        elif self.name == "obj_000012":
+            ids = [8, 9, 10, 11]
+        elif self.name == "obj_000021":
+            ids = [i for i in range(24)]
+        else:
+            return False
+
+        handles = [self._all_handles[i] for i in ids]
+
+        return [prefix + h for h in handles]
 
     def contact_surfaces(self, prefix: str = ""):
         """
