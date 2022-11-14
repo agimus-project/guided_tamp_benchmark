@@ -23,7 +23,6 @@ class BaseRobot(object):
         """Return maximum reach of robot end effector in meters."""
         pass
 
-    @abstractmethod
     def get_actuated_joint_names(self) -> List[str]:
         """Return list of names of actuated joints"""
         model = pinocchio.buildModelFromUrdf(self.urdfFilename)
