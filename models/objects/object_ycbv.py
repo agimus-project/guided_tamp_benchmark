@@ -38,26 +38,6 @@ class ObjectYCBV(BaseObject):
         with os.fdopen(self.fd_urdf, "w") as f:
             f.write(self.urdf(name=self.name, path=os.path.dirname(__file__) + "/data/ycbv/meshes/"))
 
-    def active_handles(self):
-        """
-        function that gives correct handle IDs for the current ycbv object
-
-        :return: handle IDs in a list of int ex.: [1,2,3,4]
-        """
-
-        if self.name == "obj_000002":
-            return [i for i in range(8)]
-        elif self.name == "obj_000003":
-            return [i for i in range(8)]
-        elif self.name == "obj_000004":
-            return [i for i in range(4)] + [i for i in range(8, 12)]
-        elif self.name == "obj_000005":
-            return [8, 9, 10, 11]
-        elif self.name == "obj_000012":
-            return [8, 9, 10, 11]
-        elif self.name == "obj_000021":
-            return [i for i in range(24)]
-
     @classmethod
     def initial_configuration(cls) -> List[float]:
         """
