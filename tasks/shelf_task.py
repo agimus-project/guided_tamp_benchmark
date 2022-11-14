@@ -6,5 +6,5 @@
 
 class ShelfTask():
 
-    def __init__(self, ):
+    def __init__(self, robot, demo):
         pass
