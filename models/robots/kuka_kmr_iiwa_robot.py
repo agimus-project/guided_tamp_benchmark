@@ -42,8 +42,3 @@ class KukaMobileIIWARobot(BaseRobot):
     @classmethod
     def get_gripper_name(cls):
         return "kmr_iiwa/gripper"
-
-    def modify_open_gripper(self, config):
-        ndof = len(self.initial_configuration())
-        config[ndof - 2:ndof] = [0.039, 0.039]
-        return config
