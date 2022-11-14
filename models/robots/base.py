@@ -28,17 +28,6 @@ class BaseRobot(object):
 
     @classmethod
     @abstractmethod
-    def get_pyphysx_robot(cls):
-
-        pass
-
-    @classmethod
-    @abstractmethod
     def get_gripper_name(cls) -> str:
         """return name of the gripper of the robot"""
-        pass
-
-    @abstractmethod
-    def modify_open_gripper(self, config) -> List[float]:
-
         pass
