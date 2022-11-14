@@ -27,7 +27,6 @@ class BaseRobot(object):
         model = pinocchio.buildModelFromUrdf(self.urdfFilename)
         return model.names.tolist()[1:]
 
-    @classmethod
     @abstractmethod
     def get_gripper_name(cls) -> str:
         """return name of the gripper of the robot"""
