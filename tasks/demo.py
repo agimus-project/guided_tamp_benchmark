@@ -17,39 +17,48 @@ from models.furniture.tunnel import Tunnel
 
 class Demo():
 
-    def __init__(self, objects, furniture_objects):
+    def __init__(self, objects, furniture_objects, robot_pose):
         """
 
-        :param objects: dictionary {'obj_type': ['cuboid', 'ycbv'], 'obj_param': ['id', [width_x, width_y, width_z]], 'obj_pose': [np.array, np.array]}
-        :param furniture_objects: dictionary {'obj_type': ['shelf', 'table', 'tunnel'], 'obj_param': [None, [width_x, width_y, width_z]], 'obj_pose': [np.array, np.array, np.array]}
+        :param objects: dictionary {'obj_type': ['cuboid', 'ycbv'], 'obj_param': ['id', [width_x, width_y, width_z]], 'obj_poses': [[np.array,...], [np.array,...],...]}
+        :param furniture_objects: dictionary {'obj_type': ['shelf', 'table', 'tunnel'], 'obj_param': [None, [width_x, width_y, width_z], [[width in x, width in y, width in z], thickness]], 'obj_pose': [np.array, np.array, np.array]}
+        :param robot_pose: np.array(4x4)
         """
-        list_objects = []
+
+        assert all([len(furniture_objects["obj_pose"][0]) == len(T) for T in furniture_objects["obj_poses"]])
+
+        self.list_objects = []
         for i, o in enumerate(objects["obj_types"]):
             if o == "cuboid":
-                list_objects.append(Cuboid(objects["obj_param"][i]))
+                self.list_objects.append(Cuboid(objects["obj_param"][i]))
             elif o == "ycbv":
-                list_objects.append(ObjectYCBV(objects["obj_param"][i]))
+                self.list_objects.append(ObjectYCBV(objects["obj_param"][i]))
 
-        list_furniture = []
+        self.list_furniture = []
         for i, f in enumerate(furniture_objects["obj_types"]):
-            r = R.from_matrix(furniture_objects["obj_param"][i][:3, :3])
+            r = R.from_matrix(furniture_objects["obj_pose"][i][:3, :3])
             if f == "table":
-                list_furniture.append(Table(position=furniture_objects["obj_param"][i][:3, 3].tolist(),
-                                            rpy=r.as_euler("xyz").tolist(),
-                                            desk_size=furniture_objects["obj_param"][i]))
+                self.list_furniture.append(Table(position=furniture_objects["obj_pose"][i][:3, 3].tolist(),
+                                                 rpy=r.as_euler("xyz").tolist(),
+                                                 desk_size=furniture_objects["obj_param"][i]))
             elif f == "shelf":
-                list_furniture.append(Shelf(position=furniture_objects["obj_param"][i][:3, 3].tolist(),
-                                            rpy=r.as_euler("xyz").tolist()))
+                self.list_furniture.append(Shelf(position=furniture_objects["obj_pose"][i][:3, 3].tolist(),
+                                                 rpy=r.as_euler("xyz").tolist()))
             elif f == "tunnel":
-                list_furniture.append(Tunnel(position=furniture_objects["obj_param"][i][:3, 3].tolist(),
-                                             rpy=r.as_euler("xyz").tolist()))
+                self.list_furniture.append(Tunnel(position=furniture_objects["obj_pose"][i][:3, 3].tolist(),
+                                                  rpy=r.as_euler("xyz").tolist(),
+                                                  lengths=furniture_objects["obj_param"][i][0],
+                                                  tunnel_walls_thickness=furniture_objects["obj_param"][i][1]))
+
+        self.obj_poses = objects["obj_poses"]
+        self.robot_pose = robot_pose
 
 
-    def get_object_poses(self):
-        pass
+    def get_object_poses(self, obj_id):
+        return self.obj_poses[obj_id]
 
-    def get_contacts(self):
-        pass
+    def get_contacts(self, obj_id):
+        return self.list_objects[obj_id].handles()
 
     def get_robot_pose(self):
-        pass
+        return self.robot_pose
