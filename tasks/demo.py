@@ -25,22 +25,22 @@ class Demo():
     def get_robot_pose(self):
         return self.robot_pose
 
-    def load(self, demo_file):
+    def load(self, demo_file, robot_name, pose_id):
         with open(demo_file, 'rb') as f:
             data = pickle.load(f)
         self.object_ids = data["object_ids"]
         self.objects_poses = data["objects_poses"]
         self.contacts = data["contacts"]
-        self.robot_pose = data["robot_pose"]
+        self.robot_pose = data["robot_pose"][robot_name][pose_id]
         return self
 
-    def save(self, demo_file):
+    def save(self, demo_file, robot_name, pose_id):
         with open(demo_file, 'rb') as f:
             data = pickle.load(f)
         self.object_ids = data["object_ids"]
         self.objects_poses = data["objects_poses"]
         self.contacts = data["contacts"]
-        self.robot_pose = data["robot_pose"]
+        self.robot_pose = data["robot_pose"][robot_name][pose_id]
 
 
 a = [np.array([[1., 0., 0., 0.15],[0., 1., 0., 0.15],[0., 0., 1., 0.031],[0., 0., 0., 1.]]),
@@ -66,11 +66,12 @@ b = [0] + 16 * [1] + [0]
 c = [np.array([[1., 0., 0., 0.15],[0., 1., 0., -0.15],[0., 0., 1., 0.031],[0., 0., 0., 1.]])] * 18
 d = [0] * 18
 
-dummy = {"object_ids": [[0.06, 0.06, 0.06], [0.06, 0.06, 0.06]], "objects_poses": [a, c], "contacts": [b,d], "robot_pose": [np.eye(4)]}
+dummy = {"object_ids": [[0.06, 0.06, 0.06], [0.06, 0.06, 0.06]], "objects_poses": [a, c], "contacts": [b,d],
+         "robot_pose": {"panda_robot":[np.eye(4)]}}
 
 with open('dummy_demo.pkl', 'wb') as handle:
     pickle.dump(dummy, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 demo = Demo()
-demo.save('dummy_demo.pkl')
+demo.save('dummy_demo.pkl', "panda_robot", 0)
 
