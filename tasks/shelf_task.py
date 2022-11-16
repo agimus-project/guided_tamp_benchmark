@@ -4,7 +4,9 @@
 # Created on: 14.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
-class ShelfTask():
+from tasks.base_task import Task
 
-    def __init__(self, robot, demo):
-        pass
+
+class ShelfTask(Task):
+    def __init__(self, demo=None, **kwargs):
+        super().__init__(demo, **kwargs)

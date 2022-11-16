@@ -6,7 +6,17 @@
 
 class Task:
     def __init__(self, demo, robot):
+        self.demo = demo
         pass
+
+    def get_robot(self):
+        pass
+
+    def get_furniture(self):
+        return self.demo.list_furniture
+
+    def get_objects(self):
+        return self.demo.list_objects
 
     def check_collision(self):
         pass
@@ -17,11 +27,11 @@ class Task:
     def check_place_constraint(self):
         pass
 
-    def compute_lenght(self):
+    def compute_length(self):
         pass
 
-    def is_sucessful(self):
+    def is_successful(self):
         pass
 
-    def compute_n_grasps(config_list):
+    def compute_n_grasps(self, config_list):
         pass
