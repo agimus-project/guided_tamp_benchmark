@@ -13,18 +13,16 @@ import numpy as np
 
 class Demonstration:
     def __init__(self):
-        self.task_name = None
-        self.demo_id = None
-        self.robot_name = None
-        self.pose_id = None
-
+        self.task_name: Optional[str] = None
+        self.demo_id: Optional[int] = None
+        self.robot_name: Optional[str] = None
+        self.pose_id: Optional[str] = None
         self.object_ids: Optional[List[str]] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
-        # todo: add other types as well
-        self.objects_poses = None
+        self.objects_poses: Optional[List[List[np.array]]] = None
         self.contacts: Optional[List[List[int]]] = None
-        self.robot_pose = None
-        self.furniture_ids = None
-        self.furniture_poses = None
+        self.robot_pose: Optional[np.array] = None
+        self.furniture_ids: Optional[List[str]] = None
+        self.furniture_poses: Optional[List[np.array]] = None
 
     def get_object_poses(self):
         return self.objects_poses
@@ -40,6 +38,10 @@ class Demonstration:
         with open("data/" + task_name + "_" + str(demo_id) + ".pkl", 'rb') as f:
             data = pickle.load(f)
         demo = Demonstration()
+        demo.task_name = task_name
+        demo.demo_id = demo_id
+        demo.robot_name = robot_name
+        demo.pose_id = pose_id
         demo.object_ids = data["object_ids"]
         demo.objects_poses = data["objects_poses"]
         demo.contacts = data["contacts"]
