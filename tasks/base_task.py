@@ -13,10 +13,10 @@ class Task:
         pass
 
     def get_furniture(self):
-        return self.demo.list_furniture
+        pass
 
     def get_objects(self):
-        return self.demo.list_objects
+        pass
 
     def check_collision(self):
         pass
