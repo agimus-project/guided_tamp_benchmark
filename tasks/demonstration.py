@@ -50,14 +50,18 @@ class Demonstration:
         return Demonstration
 
     def save(self, demo_file, robot_name, pose_id):
-        with open(demo_file, 'rb') as f:
-            data = pickle.load(f)
-        self.object_ids = data["object_ids"]
-        self.objects_poses = data["objects_poses"]
-        self.contacts = data["contacts"]
-        self.robot_pose = data["robot_pose"][robot_name][pose_id]
-        self.furniture_ids = data["furniture_ids"]
-        self.furniture_poses = data["furniture_poses"]
+        demo = dict(object_ids=[], object_poses=[], contacts=[], furniture_ids=[], furniture_poses=[])
+        demo["object_ids"] = self.object_ids
+        demo["objects_poses"] = self.objects_poses
+        demo["contacts"] = self.contacts
+        demo["furniture_ids"] = self.furniture_ids
+        demo["furniture_poses"] = self.furniture_poses
+        with open(demo_file + '.pkl', 'wb') as handle:
+            pickle.dump(demo, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        robot = dict(pose_id=[])
+        robot[pose_id] = self.robot_pose
+        with open(demo_file + "_" + robot_name + '_poses.pkl', 'wb') as handle:
+            pickle.dump(demo, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 if __name__ == "__main__":
@@ -90,5 +94,5 @@ if __name__ == "__main__":
     with open('dummy_demo.pkl', 'wb') as handle:
         pickle.dump(dummy, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    demo = Demonstration()
-    demo.save('dummy_demo.pkl', "panda_robot", 0)
+    d = Demonstration()
+    d.save('dummy_demo.pkl', "panda_robot", 0)
