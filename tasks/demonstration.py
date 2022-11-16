@@ -37,17 +37,18 @@ class Demonstration:
 
     @staticmethod
     def load(task_name, demo_id, robot_name, pose_id):
-        with open("data/" + task_name + "_" + demo_id + ".pkl", 'rb') as f:
+        with open("data/" + task_name + "_" + str(demo_id) + ".pkl", 'rb') as f:
             data = pickle.load(f)
-        Demonstration.object_ids = data["object_ids"]
-        Demonstration.objects_poses = data["objects_poses"]
-        Demonstration.contacts = data["contacts"]
-        Demonstration.furniture_ids = data["furniture_ids"]
-        Demonstration.furniture_poses = data["furniture_poses"]
-        with open("data/" + task_name + "_" + demo_id + "_" + robot_name + "_poses.pkl", 'rb') as f:
+        demo = Demonstration()
+        demo.object_ids = data["object_ids"]
+        demo.objects_poses = data["objects_poses"]
+        demo.contacts = data["contacts"]
+        demo.furniture_ids = data["furniture_ids"]
+        demo.furniture_poses = data["furniture_poses"]
+        with open("data/" + task_name + "_" + str(demo_id) + "_" + robot_name + "_poses.pkl", 'rb') as f:
             robot_data = pickle.load(f)
-        Demonstration.robot_pose = robot_data[pose_id]
-        return Demonstration
+        demo.robot_pose = robot_data[pose_id]
+        return demo
 
     def save(self, demo_file, robot_name, pose_id):
         demo = dict(object_ids=[], object_poses=[], contacts=[], furniture_ids=[], furniture_poses=[])
@@ -56,12 +57,12 @@ class Demonstration:
         demo["contacts"] = self.contacts
         demo["furniture_ids"] = self.furniture_ids
         demo["furniture_poses"] = self.furniture_poses
-        with open(demo_file + '.pkl', 'wb') as handle:
+        with open("data/" + demo_file + '.pkl', 'wb') as handle:
             pickle.dump(demo, handle, protocol=pickle.HIGHEST_PROTOCOL)
         robot = dict(pose_id=[])
         robot[pose_id] = self.robot_pose
-        with open(demo_file + "_" + robot_name + '_poses.pkl', 'wb') as handle:
-            pickle.dump(demo, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open("data/" + demo_file + "_" + robot_name + '_poses.pkl', 'wb') as handle:
+            pickle.dump(robot, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 if __name__ == "__main__":
@@ -88,11 +89,15 @@ if __name__ == "__main__":
     c = [np.array([[1., 0., 0., 0.15], [0., 1., 0., -0.15], [0., 0., 1., 0.031], [0., 0., 0., 1.]])] * 18
     d = [0] * 18
 
-    dummy = {"object_ids": [[0.06, 0.06, 0.06], [0.06, 0.06, 0.06]], "objects_poses": [a, c], "contacts": [b, d],
-             "robot_pose": {"panda_robot": [np.eye(4)]}, "furniture_ids": ["table"], "furniture_poses": [np.eye(4)]}
+    dummy = {"object_ids": ["cuboid_0.06_0.06_0.06", "cuboid_0.06_0.06_0.06"], "objects_poses": [a, c],
+             "contacts": [b, d], "furniture_ids": ["table"], "furniture_poses": [np.eye(4)]}
+    robot_dummy = {"robot_pose": [np.eye(4)]}
 
-    with open('dummy_demo.pkl', 'wb') as handle:
+    with open('data/dummy_0.pkl', 'wb') as handle:
         pickle.dump(dummy, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open('data/dummy_0_panda_robot_poses.pkl', 'wb') as handle:
+        pickle.dump(robot_dummy, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    d = Demonstration()
-    d.save('dummy_demo.pkl', "panda_robot", 0)
+    demo = Demonstration.load('dummy', 0, "panda_robot", "robot_pose")
+    demo.save('shelf_1', "panda_robot", "robot_pose")
+    demo2 = Demonstration.load("shelf", 1, "panda_robot", "robot_pose")
