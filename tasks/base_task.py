@@ -4,10 +4,14 @@
 # Created on: 15.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
+from tasks.demonstration import Demonstration
+from typing import Optional
+
+
 class Task:
-    def __init__(self, demo, robot):
-        self.demo = demo
-        self.robot = robot
+    def __init__(self):
+        self.demo: Optional[Demonstration] = None
+        self.robot: Optional[object] = None
         pass
 
     def get_robot(self):
