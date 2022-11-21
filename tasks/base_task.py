@@ -7,6 +7,7 @@
 class Task:
     def __init__(self, demo, robot):
         self.demo = demo
+        self.robot = robot
         pass
 
     def get_robot(self):
