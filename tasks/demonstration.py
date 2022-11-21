@@ -18,11 +18,11 @@ class Demonstration:
         self.robot_name: Optional[str] = None
         self.pose_id: Optional[str] = None
         self.object_ids: Optional[List[str]] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
-        self.objects_poses: Optional[List[List[np.array]]] = None
+        self.objects_poses: Optional[np.array] = None # n*t*4x4 numpy array
         self.contacts: Optional[List[List[int]]] = None
-        self.robot_pose: Optional[np.array] = None
+        self.robot_pose: Optional[np.array] = None # 4x4 numpy array
         self.furniture_ids: Optional[List[str]] = None
-        self.furniture_poses: Optional[List[np.array]] = None
+        self.furniture_poses: Optional[np.array] = None
 
     def get_object_poses(self):
         return self.objects_poses
