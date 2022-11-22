@@ -31,6 +31,22 @@ class BaseTask:
         self.furniture: List[FurnitureObject] = []
         self.objects: List[BaseObject] = []
 
+    def get_robot(self) -> BaseRobot:
+        """Returns the robot instance of the task"""
+        return self.robot
+
+    def get_robot_pose(self) -> np.array:
+        """Returns the robot base pose as a 4x4 numpy array"""
+        return self.demo.robot_pose
+
+    def get_furniture(self) -> List[FurnitureObject]:
+        """Returns the list of furniture instances"""
+        return self.furniture
+
+    def get_objects(self) -> List[BaseObject]:
+        """Returns the list of object instances"""
+        return self.objects
+
     def _check_grasp_constraint(self, q: np.array) -> bool:
         """ Check if grasp constraint is satisfied for a given configuration q."""
         pass
