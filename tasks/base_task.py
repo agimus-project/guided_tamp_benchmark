@@ -58,6 +58,13 @@ class BaseTask:
         """Compute the amount of grasp-release actions."""
         pass
 
+    def select_demo(self, demo_id: str, pose_id: int):
+        self.demo = Demonstration.load("shelf", demo_id=demo_id,robot_name=self.robot.name, pose_id=pose_id)
+
+        self.objects = self._create_objects(self.demo.object_ids)
+        self.furniture = self._create_furniture(self.demo.furniture_ids, self.demo.furniture_poses,
+                                                self.demo.furniture_param)
+
     @staticmethod
     def _create_objects(obj_ids):
         """Utility function that converts text representation of objects into the actual object instances. """
