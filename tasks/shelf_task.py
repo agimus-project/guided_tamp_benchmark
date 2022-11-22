@@ -4,9 +4,10 @@
 # Created on: 14.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
-from tasks.base_task import Task
+from tasks.base_task import BaseTask
 
 
-class ShelfTask(Task):
-    def __init__(self, demo=None, robot=None, **kwargs):
-        super().__init__(demo, robot, **kwargs)
+
+class ShelfTask(BaseTask):
+    def __init__(self, robot=None, **kwargs):
+        super().__init__("shelf", robot, **kwargs)
