@@ -17,6 +17,7 @@ class UR5Robot(BaseRobot):
     srdfFilename = os.path.dirname(models.__file__) + "/data/robots/ur5/ur5.srdf"
     urdfSuffix = ""
     srdfSuffix = ""
+    name = "ur5_robot"
 
     def __init__(self):
         pass

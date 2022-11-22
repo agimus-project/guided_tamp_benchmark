@@ -17,6 +17,7 @@ class PandaRobot(BaseRobot):
     srdfFilename = os.path.dirname(models.__file__) + "/data/robots/franka_panda/panda.srdf"
     urdfSuffix = ""
     srdfSuffix = ""
+    name = "panda_robot"
 
     def __init__(self):
         pass

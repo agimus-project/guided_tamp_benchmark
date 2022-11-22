@@ -17,6 +17,7 @@ class KukaIIWARobot(BaseRobot):
     srdfFilename = os.path.dirname(models.__file__) + "/data/robots/kuka_iiwa/kuka_iiwa.srdf"
     urdfSuffix = ""
     srdfSuffix = ""
+    name = "Kuka_iiwa_robot"
 
     def __init__(self):
         pass
