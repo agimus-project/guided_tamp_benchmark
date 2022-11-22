@@ -74,8 +74,7 @@ class BaseTask:
 
     @staticmethod
     def _create_furniture(fur_id, fur_poses, fur_param):
-        """Utility function that converts a text representation of furniture object into furniture instances.
-         TODO: this function is not complete!"""
+        """Utility function that converts a text representation of furniture object into furniture instances."""
         fur = []
         for i, f in enumerate(fur_id):
             if f == "table":
