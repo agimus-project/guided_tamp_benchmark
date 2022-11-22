@@ -70,14 +70,22 @@ class BaseTask:
         return obj
 
     @staticmethod
-    def _create_furniture(fur_id, fur_poses):
-        """Create furniture objects from the text description. TODO: this function is not complete!"""
+    def _create_furniture(fur_id, fur_poses, fur_param):
+        """Create furniture objects from the text description."""
         fur = []
-        for f in fur_id:
+        for i, f in enumerate(fur_id):
             if f == "table":
-                fur.append(Table())
+                r = R.from_matrix(fur_poses[i,:3,:3])
+                rpy = r.as_euler("xyz", degrees=False).tolist()
+                fur.append(Table(position=fur_poses[0, :3, 2:3],rpy=rpy,desk_size=fur_param[i]))
             elif f == "shelf":
-                fur.append(Shelf())
+                r = R.from_matrix(fur_poses[i, :3, :3])
+                rpy = r.as_euler("xyz", degrees=False).tolist()
+                fur.append(Shelf(position=fur_poses[0, :3, 2:3],rpy=rpy, display_inside_shelf=fur_param[i]))
             elif f == "tunnel":
-                fur.append(Tunnel())
+                r = R.from_matrix(fur_poses[i, :3, :3])
+                rpy = r.as_euler("xyz", degrees=False).tolist()
+                fur.append(Tunnel(position=fur_poses[0, :3, 2:3],rpy=rpy, lengths=fur_param[i][0],
+                                  tunnel_walls_thickness=fur_param[i][1], collision_walls_thickness=fur_param[i][2],
+                                  walls_display=True))
         return fur
