@@ -59,7 +59,8 @@ class BaseTask:
         pass
 
     def select_demo(self, demo_id: str, pose_id: int):
-        self.demo = Demonstration.load("shelf", demo_id=demo_id,robot_name=self.robot.name, pose_id=pose_id)
+        """this function loads demo of given id for current task and will create objects and furniture instances"""
+        self.demo = Demonstration.load(self.task_name, demo_id=demo_id,robot_name=self.robot.name, pose_id=pose_id)
 
         self.objects = self._create_objects(self.demo.object_ids)
         self.furniture = self._create_furniture(self.demo.furniture_ids, self.demo.furniture_poses,
@@ -67,7 +68,7 @@ class BaseTask:
 
     @staticmethod
     def _create_objects(obj_ids):
-        """Utility function that converts text representation of objects into the actual object instances. """
+        """Utility function that converts text representation of objects into the object instances. """
         obj = []
         for o in obj_ids:
             if o[:4] == "ycbv":
@@ -84,17 +85,13 @@ class BaseTask:
         """Utility function that converts a text representation of furniture object into furniture instances."""
         fur = []
         for i, f in enumerate(fur_id):
+            r = R.from_matrix(fur_poses[i, :3, :3])
+            rpy = r.as_euler("xyz", degrees=False).tolist()
             if f == "table":
-                r = R.from_matrix(fur_poses[i,:3,:3])
-                rpy = r.as_euler("xyz", degrees=False).tolist()
                 fur.append(Table(position=fur_poses[0, :3, 2:3],rpy=rpy,desk_size=fur_param[i]))
             elif f == "shelf":
-                r = R.from_matrix(fur_poses[i, :3, :3])
-                rpy = r.as_euler("xyz", degrees=False).tolist()
                 fur.append(Shelf(position=fur_poses[0, :3, 2:3],rpy=rpy, display_inside_shelf=fur_param[i]))
             elif f == "tunnel":
-                r = R.from_matrix(fur_poses[i, :3, :3])
-                rpy = r.as_euler("xyz", degrees=False).tolist()
                 fur.append(Tunnel(position=fur_poses[0, :3, 2:3],rpy=rpy, lengths=fur_param[i][0],
                                   tunnel_walls_thickness=fur_param[i][1], collision_walls_thickness=fur_param[i][2],
                                   walls_display=True))
