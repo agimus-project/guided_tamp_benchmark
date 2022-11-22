@@ -36,13 +36,13 @@ class BaseTask:
         pass
 
     def _check_place_constraint(self, q: np.array) -> bool:
-        """ Check if grasp constraint is satisfied for a given configuration q."""
+        """ Check if place constraint is satisfied for a given configuration q."""
         pass
 
     def _check_collision(self, path: np.array) -> bool:
-        """Return true if objects are not in collision, i.e. configurations are valid. Path if of size Tx[N+7*M]
-         where N is number of DoFs of Robot and M is number of objects. Each object is represented by 3 positions and
-         4 quaternion values"""
+        """Return true if every configuration of the path is collision-free. Collisions are check with hpp-fcl library.
+         Path size is Tx[N+7*M], where T is a number of timesteps, N is a number of DoFs of a Robot and
+         M is a number of objects. Each object pose is represented by 3 position and 4 quaternion values"""
         pass
 
     def compute_lengths(self, path: np.array) -> Tuple[float, float, float]:
@@ -50,16 +50,17 @@ class BaseTask:
         and rotational length of objects [rad]. """
         pass
 
-    def is_successful(self, path: np.array) -> bool:
-        """Return true if path solve the given task."""
+    def path_is_successful(self, path: np.array) -> bool:
+        """Return true if path solves the given task."""
         pass
 
-    def compute_n_grasps(self, config_list):
+    def compute_n_grasps(self, path: np.array) -> int:
+        """Compute the amount of grasp-release actions."""
         pass
 
     @staticmethod
     def _create_objects(obj_ids):
-        """Utility function that converts text representation of objects into the actual object instances. """
+        """Utility function that converts a text representation of objects into object instances. """
         obj = []
         for o in obj_ids:
             if o[:4] == "ycbv":
@@ -67,11 +68,14 @@ class BaseTask:
             elif o[:6] == "cuboid":
                 tmp = o.split("_")
                 obj.append(Cuboid([float(tmp[1]), float(tmp[2]), float(tmp[3])]))
+            else:
+                raise ValueError(f"Unknown object {o}")
         return obj
 
     @staticmethod
     def _create_furniture(fur_id, fur_poses):
-        """Create furniture objects from the text description. TODO: this function is not complete!"""
+        """Utility function that converts a text representation of furniture object into furniture instances.
+         TODO: this function is not complete!"""
         fur = []
         for f in fur_id:
             if f == "table":
@@ -80,4 +84,6 @@ class BaseTask:
                 fur.append(Shelf())
             elif f == "tunnel":
                 fur.append(Tunnel())
+            else:
+                raise ValueError(f"Unknown furniture {f}")
         return fur
