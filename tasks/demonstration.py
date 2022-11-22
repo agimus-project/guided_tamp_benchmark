@@ -24,19 +24,9 @@ class Demonstration:
         self.furniture_ids: Optional[List[str]] = None
         self.furniture_poses: Optional[np.array] = None
 
-    def get_object_poses(self):
-        return self.objects_poses
-
-    def get_contacts(self):
-        return self.contacts
-
-    def get_robot_pose(self):
-        return self.robot_pose
-
     @staticmethod
     def load(task_name, demo_id, robot_name, pose_id):
-        with open("data/" + task_name + "_" + str(demo_id) + ".pkl", 'rb') as f:
-            data = pickle.load(f)
+        data = pickle.load(open("data/" + task_name + "_" + str(demo_id) + ".pkl", 'rb'))
         demo = Demonstration()
         demo.task_name = task_name
         demo.demo_id = demo_id
@@ -47,19 +37,14 @@ class Demonstration:
         demo.contacts = data["contacts"]
         demo.furniture_ids = data["furniture_ids"]
         demo.furniture_poses = data["furniture_poses"]
-        with open("data/" + task_name + "_" + str(demo_id) + "_" + robot_name + "_poses.pkl", 'rb') as f:
-            robot_data = pickle.load(f)
+        robot_data = pickle.load(open("data/" + task_name + "_" + str(demo_id) + "_" + robot_name + "_poses.pkl", 'rb'))
         demo.robot_pose = robot_data[pose_id]
         return demo
 
-    def save(self, demo_file, robot_name, pose_id):
-        if os.path.exists("data/" + demo_file + '.pkl'):
-            with open("data/" + demo_file + "_" + robot_name + '_poses.pkl', "rb") as f:
-                robot = pickle.load(f)
-            assert pose_id not in robot, f"{pose_id} is already a pose_id in {demo_file}_{robot_name}_poses.pkl"
-            robot[pose_id] = self.robot_pose
-            with open("file.txt", "wb") as f:
-                pickle.dump(robot, f)
+    def save(self, overwrite=False):
+        demo_file_name = "data/" + self.task_name + "_" + str(self.demo_id) + ".pkl"
+        if os.path.exists(demo_file_name) and not overwrite:
+            print('The demo file exists, not updating. Please, remove it manually before saving.')
         else:
             demo = dict(object_ids=[], object_poses=[], contacts=[], furniture_ids=[], furniture_poses=[])
             demo["object_ids"] = self.object_ids
@@ -67,12 +52,17 @@ class Demonstration:
             demo["contacts"] = self.contacts
             demo["furniture_ids"] = self.furniture_ids
             demo["furniture_poses"] = self.furniture_poses
-            with open("data/" + demo_file + '.pkl', 'wb') as handle:
-                pickle.dump(demo, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            robot = dict(pose_id=[])
-            robot[pose_id] = self.robot_pose
-            with open("data/" + demo_file + "_" + robot_name + '_poses.pkl', 'wb') as handle:
-                pickle.dump(robot, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(demo, open(demo_file_name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+
+        robot_data_filename = "data/" + self.task_name + "_" + str(self.demo_id) + "_" + self.robot_name + "_poses.pkl"
+        robot_poses = {}
+        if os.path.exists(robot_data_filename):
+            robot_poses = pickle.load(open(robot_data_filename, 'rb'))
+        if self.pose_id in robot_poses and not overwrite:
+            print('The pose is already in the robot poses, not updating.')
+        else:
+            robot_poses[self.pose_id] = self.robot_pose
+            pickle.dump(robot_poses, open(robot_data_filename, 'wb'))
 
 
 if __name__ == "__main__":
