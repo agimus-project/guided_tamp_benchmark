@@ -9,5 +9,5 @@ from tasks.base_task import BaseTask
 
 
 class ShelfTask(BaseTask):
-    def __init__(self, robot=None, **kwargs):
-        super().__init__("shelf", robot, **kwargs)
+    def __init__(self, robot=None):
+        super().__init__("shelf", robot)

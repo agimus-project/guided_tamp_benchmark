@@ -99,5 +99,6 @@ if __name__ == "__main__":
         pickle.dump(robot_dummy, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     demo = Demonstration.load('dummy', 0, "panda_robot", "robot_pose_0")
-    demo.save('shelf_0', "panda_robot", "robot_pose_0")
-    demo2 = Demonstration.load("shelf", 0, "panda_robot", "robot_pose_0")
+    # TODO: next lines do not make sense, fix them or delete them
+    # demo.save()
+    # demo2 = Demonstration.load("shelf", 0, "panda_robot", "robot_pose_0")
