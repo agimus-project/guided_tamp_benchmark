@@ -6,6 +6,7 @@
 
 import os
 import pickle
+from pathlib import Path
 from typing import Optional, List
 
 import numpy as np
@@ -19,14 +20,31 @@ class Demonstration:
         self.pose_id: Optional[str] = None
         self.object_ids: Optional[List[str]] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
         self.objects_poses: Optional[np.array] = None  # n*t*4x4 numpy array
-        self.contacts: Optional[List[List[int]]] = None
+        self.contacts: Optional[np.array] = None  # n * t np array of boolean grasped/not grasped
         self.robot_pose: Optional[np.array] = None  # 4x4 numpy array
         self.furniture_ids: Optional[List[str]] = None
         self.furniture_poses: Optional[np.array] = None
+        self.furniture_params = None
+
+    @staticmethod
+    def _get_data_directory() -> Path:
+        """Get path to the data of the demonstrations/tasks."""
+        return Path(__file__).resolve().parent.joinpath('data')
+
+    @staticmethod
+    def _get_demonstration_filepath(task_name: str, demo_id: int) -> Path:
+        """Get path to the demonstration file."""
+        return Demonstration._get_data_directory().joinpath(f'{task_name}_{demo_id}.pkl')
+
+    @staticmethod
+    def _get_robot_poses_filepath(task_name: str, demo_id: int, robot_name: str) -> Path:
+        """Get path to the robot_poses file."""
+        return Demonstration._get_data_directory().joinpath(f'{task_name}_{demo_id}_{robot_name}_poses.pkl')
 
     @staticmethod
     def load(task_name, demo_id, robot_name, pose_id):
-        data = pickle.load(open("data/" + task_name + "_" + str(demo_id) + ".pkl", 'rb'))
+        """Load a demonstration from file and return the instance of the class 'Demonstration' """
+        data = pickle.load(open(Demonstration._get_demonstration_filepath(task_name, demo_id), 'rb'))
         demo = Demonstration()
         demo.task_name = task_name
         demo.demo_id = demo_id
@@ -37,13 +55,15 @@ class Demonstration:
         demo.contacts = data["contacts"]
         demo.furniture_ids = data["furniture_ids"]
         demo.furniture_poses = data["furniture_poses"]
-        robot_data = pickle.load(open("data/" + task_name + "_" + str(demo_id) + "_" + robot_name + "_poses.pkl", 'rb'))
+        demo.furniture_params = data["furniture_params"]
+        robot_data = pickle.load(open(Demonstration._get_robot_poses_filepath(task_name, demo_id, robot_name), 'rb'))
         demo.robot_pose = robot_data[pose_id]
         return demo
 
     def save(self, overwrite=False):
-        demo_file_name = "data/" + self.task_name + "_" + str(self.demo_id) + ".pkl"
-        if os.path.exists(demo_file_name) and not overwrite:
+        """Save the demonstration into the files. Overwrite existing data only if @param overwrite is True"""
+        demo_file_path = Demonstration._get_demonstration_filepath(self.task_name, self.demo_id)
+        if os.path.exists(demo_file_path) and not overwrite:
             print('The demo file exists, not updating. Please, remove it manually before saving.')
         else:
             demo = dict(object_ids=[], object_poses=[], contacts=[], furniture_ids=[], furniture_poses=[])
@@ -52,53 +72,34 @@ class Demonstration:
             demo["contacts"] = self.contacts
             demo["furniture_ids"] = self.furniture_ids
             demo["furniture_poses"] = self.furniture_poses
-            pickle.dump(demo, open(demo_file_name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+            demo["furniture_params"] = self.furniture_params
+            pickle.dump(demo, open(demo_file_path, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 
-        robot_data_filename = "data/" + self.task_name + "_" + str(self.demo_id) + "_" + self.robot_name + "_poses.pkl"
-        robot_poses = {}
-        if os.path.exists(robot_data_filename):
-            robot_poses = pickle.load(open(robot_data_filename, 'rb'))
+        robot_data_path = Demonstration._get_robot_poses_filepath(self.task_name, self.demo_id, self.robot_name)
+        robot_poses = {} if not os.path.exists(robot_data_path) else pickle.load(open(robot_data_path, 'rb'))
         if self.pose_id in robot_poses and not overwrite:
             print('The pose is already in the robot poses, not updating.')
         else:
             robot_poses[self.pose_id] = self.robot_pose
-            pickle.dump(robot_poses, open(robot_data_filename, 'wb'))
+            pickle.dump(robot_poses, open(robot_data_path, 'wb'))
 
 
 if __name__ == "__main__":
-    a = np.array([[[1., 0., 0., 0.15], [0., 1., 0., 0.15], [0., 0., 1., 0.031], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.15], [0., 0., 1., 0.031], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.15], [0., 0., 1., 0.041], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.15], [0., 0., 1., 0.051], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.15], [0., 0., 1., 0.061], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.15], [0., 0., 1., 0.071], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.15], [0., 0., 1., 0.081], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.14], [0., 0., 1., 0.081], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.13], [0., 0., 1., 0.081], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.12], [0., 0., 1., 0.081], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.11], [0., 0., 1., 0.081], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.10], [0., 0., 1., 0.081], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.10], [0., 0., 1., 0.071], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.10], [0., 0., 1., 0.061], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.10], [0., 0., 1., 0.051], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.10], [0., 0., 1., 0.041], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.10], [0., 0., 1., 0.031], [0., 0., 0., 1.]],
-                  [[1., 0., 0., 0.15], [0., 1., 0., 0.10], [0., 0., 1., 0.031], [0., 0., 0., 1.]]])
-    b = [0] + 16 * [1] + [0]
+    """Example of creating a demonstration."""
+    T = 5
+    demo = Demonstration()
+    demo.task_name = 'test'
+    demo.demo_id = 0
+    demo.robot_name = 'panda'
+    demo.pose_id = 0
+    demo.object_ids = ['CUBOID_0.1_0.2_0.8', 'CUBOID_0.1_0.2_0.8']
+    demo.objects_poses = np.eye(4).reshape(1, 1, 4, 4).repeat(T, axis=1).repeat(2, axis=0)
+    demo.contacts = np.zeros((2, T), dtype=bool)
+    demo.robot_pose = np.eye(4)
+    demo.furniture_ids = ['tunnel']
+    demo.furniture_poses = np.eye(4).reshape(1, 4, 4)
+    demo.furniture_params = [{'lengths': [0.1, 0.2, 0.3], 'tunnel_walls_thickness': 0.16, 'collision_walls_thickness': 0.1}]
+    demo.save(overwrite=True)
 
-    c = np.array([[[1., 0., 0., 0.15], [0., 1., 0., -0.15], [0., 0., 1., 0.031], [0., 0., 0., 1.]]] * 18)
-    d = [0] * 18
-
-    dummy = {"object_ids": ["cuboid_0.06_0.06_0.06", "cuboid_0.06_0.06_0.06"], "objects_poses": np.array([a, c]),
-             "contacts": [b, d], "furniture_ids": ["table"], "furniture_poses": np.array([np.eye(4)])}
-    robot_dummy = {"robot_pose_0": np.eye(4)}
-
-    with open('data/dummy_0.pkl', 'wb') as handle:
-        pickle.dump(dummy, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open('data/dummy_0_panda_robot_poses.pkl', 'wb') as handle:
-        pickle.dump(robot_dummy, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-    demo = Demonstration.load('dummy', 0, "panda_robot", "robot_pose_0")
-    # TODO: next lines do not make sense, fix them or delete them
-    # demo.save()
-    # demo2 = Demonstration.load("shelf", 0, "panda_robot", "robot_pose_0")
+    """Example of loading the demonstration """
+    d = Demonstration.load('test', 0, 'panda', 0)

@@ -11,9 +11,14 @@ import pinocchio
 
 
 class BaseRobot(object):
+    urdfFilename = ''
+    srdfFilename = ''
+    urdfSuffix = ''
+    srdfSuffix = ''
+    name = 'robot'
 
     @abstractmethod
-    def initial_configuration(cls) -> List[float]:
+    def initial_configuration(self) -> List[float]:
         """Return initial configuration of the object."""
         pass
 
@@ -28,6 +33,6 @@ class BaseRobot(object):
         return model.names.tolist()[1:]
 
     @abstractmethod
-    def get_gripper_name(cls) -> str:
+    def get_gripper_name(self) -> str:
         """return name of the gripper of the robot"""
         pass

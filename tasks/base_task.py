@@ -1,26 +1,17 @@
 #!/usr/bin/env python
-import numpy as np
-
+#
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 15.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
-from tasks.demonstration import Demonstration
-
-from models.robots.base import BaseRobot
-
-from models.objects.base import BaseObject
-from models.objects.cuboid import Cuboid
-from models.objects.object_ycbv import ObjectYCBV
-
-from models.furniture.base import FurnitureObject
-from models.furniture.shelf import Shelf
-from models.furniture.table import Table
-from models.furniture.tunnel import Tunnel
-
-from scipy.spatial.transform import Rotation as R
-
+import numpy as np
 from typing import Optional, List, Tuple
+from pinocchio.pinocchio_pywrap.rpy import matrixToRpy
+
+from tasks.demonstration import Demonstration
+from models.robots.base import BaseRobot
+from models.objects import *
+from models.furniture import *
 
 
 class BaseTask:
@@ -74,9 +65,16 @@ class BaseTask:
         """Compute the amount of grasp-release actions."""
         pass
 
+    def load_demo(self, demo_id: str, pose_id: int):
+        """this function loads demo of given id for current task and will create objects and furniture instances"""
+        self.demo = Demonstration.load(self.task_name, demo_id=demo_id, robot_name=self.robot.name, pose_id=pose_id)
+        self.objects = self._create_objects(self.demo.object_ids)
+        self.furniture = self._create_furniture(self.demo.furniture_ids, self.demo.furniture_poses,
+                                                self.demo.furniture_param)
+
     @staticmethod
     def _create_objects(obj_ids):
-        """Utility function that converts a text representation of objects into object instances. """
+        """Utility function that converts text representation of objects into the object instances. """
         obj = []
         for o in obj_ids:
             if o[:4] == "ycbv":
@@ -89,17 +87,9 @@ class BaseTask:
         return obj
 
     @staticmethod
-    def _create_furniture(fur_id, fur_poses):
-        """Utility function that converts a text representation of furniture object into furniture instances.
-         TODO: this function is not complete!"""
-        fur = []
-        for f in fur_id:
-            if f == "table":
-                fur.append(Table())
-            elif f == "shelf":
-                fur.append(Shelf())
-            elif f == "tunnel":
-                fur.append(Tunnel())
-            else:
-                raise ValueError(f"Unknown furniture {f}")
-        return fur
+    def _create_furniture(fur_id, fur_poses, fur_params):
+        """Utility function that converts a text representation of furniture object into furniture instances."""
+        return [
+            globals()[f.capitalize()](position=pose[:3, 0:3], rpy=matrixToRpy(pose[:3, :3]).tolist(), **param) for
+            f, pose, param in zip(fur_id, fur_poses, fur_params)
+        ]
