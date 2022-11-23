@@ -12,9 +12,6 @@ from models.furniture.base import FurnitureObject
 
 
 class Tunnel(FurnitureObject):
-    rootJointType = "freeflyer"
-    urdfSuffix = ""
-    srdfSuffix = ""
 
     def __init__(self, position: List[float], rpy: List[float], lengths: List[float],
                  tunnel_walls_thickness: float = 0.16, collision_walls_thickness: float = 0.1,

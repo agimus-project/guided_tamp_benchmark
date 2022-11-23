@@ -12,9 +12,6 @@ from models.furniture.base import FurnitureObject
 
 
 class Table(FurnitureObject):
-    rootJointType = "fix"
-    urdfSuffix = ""
-    srdfSuffix = ""
 
     def __init__(self, position: List[float], rpy: List[float], desk_size: Union[List[float], float],
                  leg_display=True) -> None:

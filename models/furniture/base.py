@@ -9,6 +9,15 @@ from typing import List
 
 
 class FurnitureObject(object):
+    rootJointType = "fix"
+    urdfSuffix = ""
+    srdfSuffix = ""
+
+    def __init__(self) -> None:
+        super().__init__()
+        # todo: consider creating urdf/srfd file automatically here and not in derived class
+        self.urdfFilename = ''
+        self.srdfFilename = ''
 
     @classmethod
     @abstractmethod
