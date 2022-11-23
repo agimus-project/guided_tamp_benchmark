@@ -6,12 +6,12 @@
 
 import numpy as np
 from typing import Optional, List, Tuple
-from pinocchio.pinocchio_pywrap.rpy import matrixToRpy
+from pinocchio.rpy import matrixToRpy
 
-from tasks.demonstration import Demonstration
-from models.robots.base import BaseRobot
-from models.objects import *
-from models.furniture import *
+from guided_tamp_benchmark.tasks.demonstration import Demonstration
+from guided_tamp_benchmark.models.robots import BaseRobot
+from guided_tamp_benchmark.models.objects import *
+from guided_tamp_benchmark.models.furniture import *
 
 
 class BaseTask:

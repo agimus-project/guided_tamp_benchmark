@@ -7,21 +7,21 @@
 import numpy as np
 from typing import List
 
-from models.robots.base import BaseRobot
-from models.utils import get_robots_data_directory
+from guided_tamp_benchmark.models.robots import BaseRobot
+from guided_tamp_benchmark.models.utils import get_robots_data_directory
 
 
-class KukaMobileIIWARobot(BaseRobot):
-    urdfFilename = str(get_robots_data_directory().joinpath('kuka_kmr_iiwa/kuka_kmr_iiwa.urdf'))
-    srdfFilename = str(get_robots_data_directory().joinpath('kuka_kmr_iiwa/kuka_kmr_iiwa.srdf'))
-    name = "kuka_kmr_iiwa"
+class UR5Robot(BaseRobot):
+    urdfFilename = str(get_robots_data_directory().joinpath('ur5/ur5.urdf'))
+    srdfFilename = str(get_robots_data_directory().joinpath('ur5/ur5.srdf'))
+    name = "ur5_robot"
 
     def __init__(self):
         pass
 
     def initial_configuration(self) -> List[float]:
         """ Return the initial configuration of the robot. """
-        return [0, 0, 0, 0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0]
+        return [0, -np.pi * 3 / 4, np.pi / 2, -np.pi / 4, -np.pi / 2, np.pi / 4, 0, 0]
 
     def reach_m(self):
         """
@@ -30,4 +30,4 @@ class KukaMobileIIWARobot(BaseRobot):
         return 0.8
 
     def get_gripper_name(self):
-        return "kmr_iiwa/gripper"
+        return "ur5/gripper"
