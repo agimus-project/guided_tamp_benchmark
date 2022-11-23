@@ -4,7 +4,7 @@
 # Created on: 14.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
-from tasks.base_task import BaseTask
+from guided_tamp_benchmark.tasks import BaseTask
 
 
 class ShelfTask(BaseTask):

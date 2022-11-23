@@ -7,8 +7,8 @@
 import numpy as np
 from typing import List
 
-from models.robots.base import BaseRobot
-from models.utils import get_robots_data_directory
+from guided_tamp_benchmark.models.robots import BaseRobot
+from guided_tamp_benchmark.models.utils import get_robots_data_directory
 
 
 class KukaIIWARobot(BaseRobot):

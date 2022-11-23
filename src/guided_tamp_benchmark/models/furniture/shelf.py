@@ -6,9 +6,9 @@
 
 import os
 import tempfile
-from typing import List, Union
+from typing import List
 
-from models.furniture.base import FurnitureObject
+from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Shelf(FurnitureObject):

@@ -8,7 +8,7 @@ import os
 import tempfile
 from typing import List, Union
 
-from models.furniture.base import FurnitureObject
+from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Table(FurnitureObject):

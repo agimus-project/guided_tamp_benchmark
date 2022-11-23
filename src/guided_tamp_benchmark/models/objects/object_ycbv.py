@@ -9,8 +9,8 @@ import os
 import tempfile
 from typing import List
 
-import models
-from models.objects.base import BaseObject
+from guided_tamp_benchmark import models
+from guided_tamp_benchmark.models.objects import BaseObject
 
 
 class ObjectYCBV(BaseObject):
