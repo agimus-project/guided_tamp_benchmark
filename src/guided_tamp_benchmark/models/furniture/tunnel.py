@@ -5,22 +5,22 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import os
-import tempfile
 from typing import List
+import numpy as np
+from pinocchio.rpy import matrixToRpy
 
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Tunnel(FurnitureObject):
 
-    def __init__(self, position: List[float], rpy: List[float], lengths: List[float],
+    def __init__(self, pose: np.array, lengths: List[float],
                  tunnel_walls_thickness: float = 0.16, collision_walls_thickness: float = 0.1,
                  walls_display=False) -> None:
         """
         will generate .urdf and .srdf file for environmental object tunnel.
         This object can be passed to hpp function loadEnvironmentObject() as argument.
-        :param position: position of the tunnel in [x, y, z]
-        :param rpy: rotation of the tunnel in [r, p, y]
+        :param pose: 4x4 pose matrix
         :param lengths: sizes of the tunnel object [width in x, width in y, width in z] where
         x is tunnel length, y is the width of the tunnel hole and z is the height of the tunnel
         :param tunnel_walls_thickness: Thickness of the tunnel walls
@@ -28,16 +28,13 @@ class Tunnel(FurnitureObject):
         :param walls_display: True if the walls preventing objects to go around tunnel should be displayed
         """
         super().__init__()
-        assert len(position) == 3
-        assert len(rpy) == 3
         assert len(lengths) == 3
-
-        self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
+        assert pose.shape == (4, 4)
 
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(pos=position, rpy=rpy, lengths=lengths, thickness=tunnel_walls_thickness,
-                              collision_thickness=collision_walls_thickness, disp_walls=walls_display))
+            f.write(self.urdf(pos=pose[:3, 3], rpy=matrixToRpy(pose[:3, :3]), lengths=lengths,
+                              thickness=tunnel_walls_thickness, collision_thickness=collision_walls_thickness,
+                              disp_walls=walls_display))
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf())
 

@@ -6,6 +6,8 @@
 #
 
 import time
+import numpy as np
+import pinocchio as pin
 from guided_tamp_benchmark.models.robots import *
 from guided_tamp_benchmark.models.furniture import *
 from guided_tamp_benchmark.tasks.base_task import BaseTask
@@ -21,7 +23,9 @@ class TestTask(BaseTask):
 
 task = TestTask()
 task.furniture.clear()
-task.furniture.append(Table(position=[1, 0, 0.7], rpy=[0, 0, 0], desk_size=[1., 1., 0.7]))
+f = pin.SE3(np.eye(4))
+f.translation[0] = 1.
+task.furniture.append(Table(pose=f.homogeneous, desk_size=[1., 1., 0.7]))
 # task.furniture.append(Shelf(position=[-1, 0, 2], rpy=[0, 0, 0], display_inside_shelf=True))
 # task.furniture.append(Tunnel(position=[0, 2, 0], rpy=[0, 0, 0], lengths=[1, 1, 1]))
 

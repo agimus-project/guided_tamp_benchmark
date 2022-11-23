@@ -5,22 +5,21 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import os
-import tempfile
 from typing import List, Union
+import numpy as np
+from pinocchio.rpy import matrixToRpy
 
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Table(FurnitureObject):
 
-    def __init__(self, position: List[float], rpy: List[float], desk_size: Union[List[float], float],
+    def __init__(self, pose: np.array, desk_size: Union[List[float], float],
                  leg_display=True) -> None:
         """
         will generate .urdf and .srdf file for environmental object table
         This object can be passed to hpp function loadEnvironmentObject() as argument.
-
-        :param position: position of the table in [x, y, z]
-        :param rpy: rotation of the table in [r, p, y]
+        :param pose: 4x4 pose matrix
         :param desk_size: size of the desk in [x, y, z] or single float for symmetric desk size
         :param leg_display: True if legs should be displayed, else table will appear as a box
         """
@@ -29,15 +28,10 @@ class Table(FurnitureObject):
         if isinstance(desk_size, float):
             desk_size = [desk_size] * 3
         assert len(desk_size) == 3
-
-        assert len(position) == 3
-        assert len(rpy) == 3
-
-        self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
+        assert pose.shape == (4, 4)
 
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(size=desk_size, legs=leg_display, pos=position, rot=rpy))
+            f.write(self.urdf(size=desk_size, legs=leg_display, pos=pose[:3, 3], rot=matrixToRpy(pose[:3, :3])))
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf(size=desk_size))
 

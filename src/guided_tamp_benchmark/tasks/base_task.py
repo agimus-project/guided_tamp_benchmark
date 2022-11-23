@@ -83,7 +83,4 @@ class BaseTask:
     @staticmethod
     def _create_furniture(fur_id, fur_poses, fur_params) -> List[FurnitureObject]:
         """Utility function that converts a text representation of furniture object into furniture instances."""
-        return [
-            globals()[f.capitalize()](position=pose[:3, 0:3], rpy=matrixToRpy(pose[:3, :3]).tolist(), **param) for
-            f, pose, param in zip(fur_id, fur_poses, fur_params)
-        ]
+        return [globals()[f.capitalize()](pose=pose, **param) for f, pose, param in zip(fur_id, fur_poses, fur_params)]
