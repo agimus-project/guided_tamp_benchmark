@@ -29,8 +29,8 @@ class Table(FurnitureObject):
         """
 
         if isinstance(desk_size, float):
-            desk_size = [desk_size] * 2
-        assert len(desk_size) == 2
+            desk_size = [desk_size] * 3
+        assert len(desk_size) == 3
 
         assert len(position) == 3
         assert len(rpy) == 3
