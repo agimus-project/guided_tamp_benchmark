@@ -24,13 +24,13 @@ class Table(FurnitureObject):
 
         :param position: position of the table in [x, y, z]
         :param rpy: rotation of the table in [r, p, y]
-        :param desk_size: size of the desk in [x, y] or single float for symmetric desk size
+        :param desk_size: size of the desk in [x, y, z] or single float for symmetric desk size
         :param leg_display: True if legs should be displayed, else table will appear as a box
         """
 
         if isinstance(desk_size, float):
-            desk_size = [desk_size] * 2
-        assert len(desk_size) == 2
+            desk_size = [desk_size] * 3
+        assert len(desk_size) == 3
 
         assert len(position) == 3
         assert len(rpy) == 3
