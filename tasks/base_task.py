@@ -1,26 +1,17 @@
 #!/usr/bin/env python
-import numpy as np
-
+#
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 15.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
-from tasks.demonstration import Demonstration
-
-from models.robots.base import BaseRobot
-
-from models.objects.base import BaseObject
-from models.objects.cuboid import Cuboid
-from models.objects.object_ycbv import ObjectYCBV
-
-from models.furniture.base import FurnitureObject
-from models.furniture.shelf import Shelf
-from models.furniture.table import Table
-from models.furniture.tunnel import Tunnel
-
-from scipy.spatial.transform import Rotation as R
-
+import numpy as np
 from typing import Optional, List, Tuple
+from pinocchio.pinocchio_pywrap.rpy import matrixToRpy
+
+from tasks.demonstration import Demonstration
+from models.robots.base import BaseRobot
+from models.objects import *
+from models.furniture import *
 
 
 class BaseTask:
@@ -58,10 +49,9 @@ class BaseTask:
         """Compute the amount of grasp-release actions."""
         pass
 
-    def select_demo(self, demo_id: str, pose_id: int):
+    def load_demo(self, demo_id: str, pose_id: int):
         """this function loads demo of given id for current task and will create objects and furniture instances"""
-        self.demo = Demonstration.load(self.task_name, demo_id=demo_id,robot_name=self.robot.name, pose_id=pose_id)
-
+        self.demo = Demonstration.load(self.task_name, demo_id=demo_id, robot_name=self.robot.name, pose_id=pose_id)
         self.objects = self._create_objects(self.demo.object_ids)
         self.furniture = self._create_furniture(self.demo.furniture_ids, self.demo.furniture_poses,
                                                 self.demo.furniture_param)
@@ -81,20 +71,9 @@ class BaseTask:
         return obj
 
     @staticmethod
-    def _create_furniture(fur_id, fur_poses, fur_param):
+    def _create_furniture(fur_id, fur_poses, fur_params):
         """Utility function that converts a text representation of furniture object into furniture instances."""
-        fur = []
-        for i, f in enumerate(fur_id):
-            r = R.from_matrix(fur_poses[i, :3, :3])
-            rpy = r.as_euler("xyz", degrees=False).tolist()
-            if f == "table":
-                fur.append(Table(position=fur_poses[0, :3, 2:3],rpy=rpy,desk_size=fur_param[i]))
-            elif f == "shelf":
-                fur.append(Shelf(position=fur_poses[0, :3, 2:3],rpy=rpy, display_inside_shelf=fur_param[i]))
-            elif f == "tunnel":
-                fur.append(Tunnel(position=fur_poses[0, :3, 2:3],rpy=rpy, lengths=fur_param[i][0],
-                                  tunnel_walls_thickness=fur_param[i][1], collision_walls_thickness=fur_param[i][2],
-                                  walls_display=True))
-            else:
-                raise ValueError(f"Unknown furniture {f}")
-        return fur
+        return [
+            globals()[f.capitalize()](position=pose[:3, 0:3], rpy=matrixToRpy(pose[:3, :3]).tolist(), **param) for
+            f, pose, param in zip(fur_id, fur_poses, fur_params)
+        ]

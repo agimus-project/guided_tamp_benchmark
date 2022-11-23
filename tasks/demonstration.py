@@ -19,11 +19,11 @@ class Demonstration:
         self.pose_id: Optional[str] = None
         self.object_ids: Optional[List[str]] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
         self.objects_poses: Optional[np.array] = None  # n*t*4x4 numpy array
-        self.contacts: Optional[List[List[int]]] = None
+        self.contacts: Optional[np.array] = None  # n * t np array of boolean grasped/not grasped
         self.robot_pose: Optional[np.array] = None  # 4x4 numpy array
         self.furniture_ids: Optional[List[str]] = None
         self.furniture_poses: Optional[np.array] = None
-        self.furniture_param = None
+        self.furniture_params = None
 
     @staticmethod
     def load(task_name, demo_id, robot_name, pose_id):
@@ -38,7 +38,7 @@ class Demonstration:
         demo.contacts = data["contacts"]
         demo.furniture_ids = data["furniture_ids"]
         demo.furniture_poses = data["furniture_poses"]
-        demo.furniture_param = data["furniture_param"]
+        demo.furniture_params = data["furniture_params"]
         robot_data = pickle.load(open("data/" + task_name + "_" + str(demo_id) + "_" + robot_name + "_poses.pkl", 'rb'))
         demo.robot_pose = robot_data[pose_id]
         return demo
@@ -54,7 +54,7 @@ class Demonstration:
             demo["contacts"] = self.contacts
             demo["furniture_ids"] = self.furniture_ids
             demo["furniture_poses"] = self.furniture_poses
-            demo["furniture_param"] = self.furniture_param
+            demo["furniture_params"] = self.furniture_params
             pickle.dump(demo, open(demo_file_name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 
         robot_data_filename = "data/" + self.task_name + "_" + str(self.demo_id) + "_" + self.robot_name + "_poses.pkl"
@@ -94,7 +94,8 @@ if __name__ == "__main__":
 
     dummy = {"object_ids": ["cuboid_0.06_0.06_0.06", "cuboid_0.06_0.06_0.06"], "objects_poses": np.array([a, c]),
              "contacts": [b, d], "furniture_ids": ["table"], "furniture_poses": np.array([np.eye(4)]),
-             "furniture_param": [[1.5, 1.5]]}
+             "furniture_params": [{'desk_size': [1.5, 1.5]}]
+             }
     robot_dummy = {"robot_pose_0": np.eye(4)}
 
     with open('data/dummy_0.pkl', 'wb') as handle:
