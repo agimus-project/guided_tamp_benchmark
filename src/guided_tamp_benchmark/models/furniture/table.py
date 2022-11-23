@@ -12,9 +12,6 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Table(FurnitureObject):
-    rootJointType = "fix"
-    urdfSuffix = ""
-    srdfSuffix = ""
 
     def __init__(self, position: List[float], rpy: List[float], desk_size: Union[List[float], float],
                  leg_display=True) -> None:
@@ -28,6 +25,7 @@ class Table(FurnitureObject):
         :param leg_display: True if legs should be displayed, else table will appear as a box
         """
 
+        super().__init__()
         if isinstance(desk_size, float):
             desk_size = [desk_size] * 3
         assert len(desk_size) == 3
@@ -112,7 +110,7 @@ class Table(FurnitureObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -121,7 +119,7 @@ class Table(FurnitureObject):
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {size[1] / 2 - 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -134,7 +132,7 @@ class Table(FurnitureObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -143,7 +141,7 @@ class Table(FurnitureObject):
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {size[1] / 2 - 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -156,7 +154,7 @@ class Table(FurnitureObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -165,7 +163,7 @@ class Table(FurnitureObject):
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{-size[0] / 2 + 0.025} {-size[1] / 2 + 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -178,7 +176,7 @@ class Table(FurnitureObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -187,7 +185,7 @@ class Table(FurnitureObject):
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{size[0] / 2 - 0.025} {-size[1] / 2 + 0.025} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{0.05} {0.05} {size[2]}"/>
                             </geometry>
@@ -238,7 +236,7 @@ class Table(FurnitureObject):
                             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
                         </inertial>
                         <visual>
-                            <origin xyz="{0} {0} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{0} {0} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{size[0]} {size[1]} {size[2]}"/>
                             </geometry>
@@ -247,7 +245,7 @@ class Table(FurnitureObject):
                             </material>
                         </visual>
                         <collision>
-                            <origin xyz="{0} {0} {-size[2]/2}" rpy="0 0 0" />
+                            <origin xyz="{0} {0} {-size[2] / 2}" rpy="0 0 0" />
                             <geometry>
                                 <box size="{size[0]} {size[1]} {size[2]}"/>
                             </geometry>

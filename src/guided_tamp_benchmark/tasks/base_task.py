@@ -15,12 +15,13 @@ from guided_tamp_benchmark.models.furniture import *
 
 
 class BaseTask:
-    def __init__(self, task_name: str, robot: BaseRobot):
+    def __init__(self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int):
         self.task_name: str = task_name
-        self.demo: Optional[Demonstration] = None
         self.robot: BaseRobot = robot
-        self.furniture: List[FurnitureObject] = []
-        self.objects: List[BaseObject] = []
+        self.demo = Demonstration.load(task_name, demo_id=demo_id, robot_name=self.robot.name, pose_id=robot_pose_id)
+        self.objects = self._create_objects(self.demo.object_ids)
+        self.furniture = self._create_furniture(self.demo.furniture_ids, self.demo.furniture_poses,
+                                                self.demo.furniture_params)
 
     def get_robot(self) -> BaseRobot:
         """Returns the robot instance of the task"""
@@ -65,21 +66,14 @@ class BaseTask:
         """Compute the amount of grasp-release actions."""
         pass
 
-    def load_demo(self, demo_id: str, pose_id: int):
-        """this function loads demo of given id for current task and will create objects and furniture instances"""
-        self.demo = Demonstration.load(self.task_name, demo_id=demo_id, robot_name=self.robot.name, pose_id=pose_id)
-        self.objects = self._create_objects(self.demo.object_ids)
-        self.furniture = self._create_furniture(self.demo.furniture_ids, self.demo.furniture_poses,
-                                                self.demo.furniture_param)
-
     @staticmethod
-    def _create_objects(obj_ids):
+    def _create_objects(obj_ids) -> List[BaseObject]:
         """Utility function that converts text representation of objects into the object instances. """
         obj = []
         for o in obj_ids:
-            if o[:4] == "ycbv":
+            if o[:4].lower() == "ycbv":
                 obj.append(ObjectYCBV("obj_0000" + o[5:]))
-            elif o[:6] == "cuboid":
+            elif o[:6].lower() == "cuboid":
                 tmp = o.split("_")
                 obj.append(Cuboid([float(tmp[1]), float(tmp[2]), float(tmp[3])]))
             else:
@@ -87,7 +81,7 @@ class BaseTask:
         return obj
 
     @staticmethod
-    def _create_furniture(fur_id, fur_poses, fur_params):
+    def _create_furniture(fur_id, fur_poses, fur_params) -> List[FurnitureObject]:
         """Utility function that converts a text representation of furniture object into furniture instances."""
         return [
             globals()[f.capitalize()](position=pose[:3, 0:3], rpy=matrixToRpy(pose[:3, :3]).tolist(), **param) for

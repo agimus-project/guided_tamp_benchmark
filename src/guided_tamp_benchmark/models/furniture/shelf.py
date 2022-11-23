@@ -12,9 +12,6 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Shelf(FurnitureObject):
-    rootJointType = "fix"
-    urdfSuffix = ""
-    srdfSuffix = ""
 
     def __init__(self, position: List[float], rpy: List[float], display_inside_shelf=True) -> None:
         """
