@@ -12,8 +12,7 @@ from guided_tamp_benchmark.models.objects import BaseObject
 
 class Tray(BaseObject):
 
-    def __init__(self, tray_size: Union[List[float], float],
-                 leg_display=True) -> None:
+    def __init__(self, tray_size: Union[List[float], float]) -> None:
         """
         will generate .urdf and .srdf file for object tray.
         :param desk_size: size of the tray in [x, y, z] or single float for symmetric tray
@@ -35,7 +34,7 @@ class Tray(BaseObject):
         This function returns the list of all contact surface defined by the object.
 
         :param prefix: prefix for contact surface name
-        :return: name as a list of strings [prefix + "desk"]
+        :return: name as a list of strings [prefix + "tray_surface"]
         """
 
         return [prefix + "tray_surface"]
@@ -44,7 +43,7 @@ class Tray(BaseObject):
         """
         generates initial configuration of cuboid in [x, y, z, i, j, k, w]
 
-        :return: initial configuration of cuboid considering its size
+        :return: initial configuration of tray considering its size
         """
         return [0.0, 0, self.lengths[2] / 2 + 0.001, ] + [0, 0, 0, 1]
 
