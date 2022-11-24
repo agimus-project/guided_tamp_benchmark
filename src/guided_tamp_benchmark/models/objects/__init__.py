@@ -7,3 +7,4 @@
 from .base import BaseObject
 from .cuboid import Cuboid
 from .object_ycbv import ObjectYCBV
+from .tray import Tray
