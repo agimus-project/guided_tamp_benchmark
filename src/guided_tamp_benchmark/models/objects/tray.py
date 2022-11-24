@@ -122,8 +122,8 @@ class Tray(BaseObject):
                 <contact name="tray_surface">
                     <link name="box"/>
                         <point>
-                        {size[0] / 2}   {size[1] / 2}  {size[1] / 2}       {size[0] / 2}    {-size[1] / 2} {size[1] / 2}
-                        {-size[0] / 2}  {-size[1] / 2} {size[1] / 2}       {-size[0] / 2}   {size[1] / 2}  {size[1] / 2}
+                        {size[0] / 2}   {size[1] / 2}  {size[2] / 2}       {size[0] / 2}    {-size[1] / 2} {size[2] / 2}
+                        {-size[0] / 2}  {-size[1] / 2} {size[2] / 2}       {-size[0] / 2}   {size[1] / 2}  {size[2] / 2}
                         </point>
                         <shape>4 3 2 1 0</shape>
                 </contact>
