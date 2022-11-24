@@ -5,35 +5,28 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import os
-import tempfile
 from typing import List
+import numpy as np
+from pinocchio.rpy import matrixToRpy
 
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Shelf(FurnitureObject):
-    rootJointType = "fix"
-    urdfSuffix = ""
-    srdfSuffix = ""
 
-    def __init__(self, position: List[float], rpy: List[float], display_inside_shelf=True) -> None:
+    def __init__(self, pose: np.array, display_inside_shelf=True) -> None:
         """
         will generate .urdf and .srdf file for environmental object shelf.
         This object can be passed to hpp function loadEnvironmentObject() as argument.
 
-        :param position: position of the shelf in [x, y, z]
-        :param rpy: rotation of the shelf in [r, p, y]
+        :param pose: 4x4 pose matrix
         :param display_inside_shelf:  True if inside of shelf should be displayed, else most of the shelf will be box
         """
         super().__init__()
-        assert len(position) == 3
-        assert len(rpy) == 3
-
-        self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
+        assert pose.shape == (4, 4)
 
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(pos=position, rot=rpy, inside=display_inside_shelf))
+            f.write(self.urdf(pos=pose[:3, 3], rot=matrixToRpy(pose[:3, :3]), inside=display_inside_shelf))
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf(inside_shelf=display_inside_shelf))
 
@@ -47,10 +40,6 @@ class Shelf(FurnitureObject):
         """
 
         return [prefix + "top_shelf_surface", prefix + "inside_shelf_surface"]
-
-    def __del__(self):
-        os.unlink(self.urdfFilename)
-        os.unlink(self.srdfFilename)
 
     @staticmethod
     def urdf(pos: List[float], rot: List[float], inside=True, material: str = 'brown',
