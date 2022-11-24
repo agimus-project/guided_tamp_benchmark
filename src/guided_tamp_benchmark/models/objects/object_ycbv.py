@@ -11,7 +11,7 @@ from typing import List
 
 from guided_tamp_benchmark import models
 from guided_tamp_benchmark.models.objects import BaseObject
-
+from guided_tamp_benchmark.models.utils import get_ycbv_data_directory
 
 class ObjectYCBV(BaseObject):
     rootJointType = "freeflyer"
@@ -33,10 +33,10 @@ class ObjectYCBV(BaseObject):
         self.name = object_name
 
         self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        self.srdfFilename = os.path.dirname(models.__file__) + "/data/ycbv/srdf/" + object_name + ".srdf"
+        self.srdfFilename = str(get_ycbv_data_directory().joinpath("srdf/" + object_name + ".srdf"))
 
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(name=self.name, path=os.path.dirname(__file__) + "/data/ycbv/meshes/"))
+            f.write(self.urdf(name=self.name, path=str(get_ycbv_data_directory().joinpath("meshes")) + "/"))
 
     @classmethod
     def initial_configuration(cls) -> List[float]:

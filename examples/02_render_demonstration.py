@@ -11,6 +11,7 @@ import pinocchio as pin
 from guided_tamp_benchmark.models.robots import *
 from guided_tamp_benchmark.models.furniture import *
 from guided_tamp_benchmark.tasks.base_task import BaseTask
+from guided_tamp_benchmark.tasks.shelf_task import ShelfTask
 from guided_tamp_benchmark.tasks.renderer import Renderer
 
 
@@ -21,11 +22,11 @@ class TestTask(BaseTask):
         super().__init__('test', 0, PandaRobot(), 0)
 
 
-task = TestTask()
-task.furniture.clear()
-f = pin.SE3(np.eye(4))
-f.translation[0] = 1.
-task.furniture.append(Table(pose=f.homogeneous, desk_size=[1., 1., 0.7]))
+task = ShelfTask(0, PandaRobot(), 0)
+# task.furniture.clear()
+# f = pin.SE3(np.eye(4))
+# f.translation[0] = 1.
+# task.furniture.append(Table(pose=f.homogeneous, desk_size=[1., 1., 0.7]))
 # task.furniture.append(Shelf(position=[-1, 0, 2], rpy=[0, 0, 0], display_inside_shelf=True))
 # task.furniture.append(Tunnel(position=[0, 2, 0], rpy=[0, 0, 0], lengths=[1, 1, 1]))
 
