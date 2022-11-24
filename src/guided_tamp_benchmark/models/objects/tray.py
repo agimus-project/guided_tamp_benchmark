@@ -7,10 +7,10 @@
 import os
 from typing import List, Union
 
-from guided_tamp_benchmark.models.furniture.base import FurnitureObject
+from guided_tamp_benchmark.models.objects import BaseObject
 
 
-class Tray(FurnitureObject):
+class Tray(BaseObject):
 
     def __init__(self, tray_size: Union[List[float], float],
                  leg_display=True) -> None:
