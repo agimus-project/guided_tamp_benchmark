@@ -40,6 +40,39 @@ class Tray(FurnitureObject):
 
         return [prefix + "tray_surface"]
 
+    def initial_configuration(self) -> List[float]:
+        """
+        generates initial configuration of cuboid in [x, y, z, i, j, k, w]
+
+        :return: initial configuration of cuboid considering its size
+        """
+        return [0.0, 0, self.lengths[2] / 2 + 0.001, ] + [0, 0, 0, 1]
+
+    @classmethod
+    def handles(cls, prefix: str = ""):
+        """
+        This function returns list of all handles prepended with the prefix.
+        Handle description following:
+                    HandleAbc(Sd)
+                        A - X/Y/Z from which coordinate will the gripper come from
+
+                        b - m/p if the approach is from minus (m) or plus (p)
+
+                        c - x/y/z is coordinate in which the width of the grip is represented
+
+                        S - optional S means that the handle is a side handle
+
+                        d - m/p argument tells if the side handle is on minus or plus side of cuboid on the third axis
+
+        :param prefix: prefix for handle name
+        :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
+        """
+        return None
+
+    def __del__(self):
+        os.unlink(self.urdfFilename)
+        os.unlink(self.srdfFilename)
+
     @staticmethod
     def urdf(size: List[float], material: str = 'brown', color_rgba: str = '0.43 0.34 0.24 0.9'):
         """
