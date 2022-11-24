@@ -7,6 +7,7 @@
 from abc import abstractmethod
 from typing import List
 import tempfile
+import os
 
 
 class FurnitureObject(object):
@@ -18,6 +19,10 @@ class FurnitureObject(object):
         super().__init__()
         self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
         self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
+
+    def __del__(self):
+        os.unlink(self.urdfFilename)
+        os.unlink(self.srdfFilename)
 
     @classmethod
     @abstractmethod

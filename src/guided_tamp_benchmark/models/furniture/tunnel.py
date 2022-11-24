@@ -49,10 +49,6 @@ class Tunnel(FurnitureObject):
 
         return []
 
-    def __del__(self):
-        os.unlink(self.urdfFilename)
-        os.unlink(self.srdfFilename)
-
     @staticmethod
     def urdf(pos: List[float], rpy: List[float], lengths: List[float], thickness: float, collision_thickness: float,
              disp_walls=False, material: str = 'grey', color_rgba: str = '0.713 0.725 0.725 0.8', ):

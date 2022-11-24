@@ -41,10 +41,6 @@ class Shelf(FurnitureObject):
 
         return [prefix + "top_shelf_surface", prefix + "inside_shelf_surface"]
 
-    def __del__(self):
-        os.unlink(self.urdfFilename)
-        os.unlink(self.srdfFilename)
-
     @staticmethod
     def urdf(pos: List[float], rot: List[float], inside=True, material: str = 'brown',
              color_rgba: str = '0.43 0.34 0.24 0.9'):
