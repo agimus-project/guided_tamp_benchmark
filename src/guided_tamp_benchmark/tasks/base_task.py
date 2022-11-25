@@ -5,13 +5,13 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import numpy as np
-from typing import Optional, List, Tuple
-from pinocchio.rpy import matrixToRpy
+from typing import List, Tuple
 
 from guided_tamp_benchmark.tasks.demonstration import Demonstration
 from guided_tamp_benchmark.models.robots import BaseRobot
 from guided_tamp_benchmark.models.objects import *
 from guided_tamp_benchmark.models.furniture import *
+from .configuration import Configuration
 
 
 class BaseTask:
@@ -39,30 +39,29 @@ class BaseTask:
         """Returns the list of object instances"""
         return self.objects
 
-    def _check_grasp_constraint(self, q: np.array) -> bool:
-        """ Check if grasp constraint is satisfied for a given configuration q."""
+    def _check_grasp_constraint(self, configuration: Configuration) -> bool:
+        """ Check if grasp constraint is satisfied for a given @param configuration."""
         pass
 
-    def _check_place_constraint(self, q: np.array) -> bool:
-        """ Check if place constraint is satisfied for a given configuration q."""
+    def _check_place_constraint(self, configuration: Configuration) -> bool:
+        """ Check if place constraint is satisfied for a given @param configuration."""
         pass
 
-    def _check_collision(self, path: np.array) -> bool:
+    def _check_collision(self, path: List[Configuration]) -> bool:
         """Return true if every configuration of the path is collision-free. Collisions are check with hpp-fcl library.
-         Path size is Tx[N+7*M], where T is a number of timesteps, N is a number of DoFs of a Robot and
-         M is a number of objects. Each object pose is represented by 3 position and 4 quaternion values"""
+         """
         pass
 
-    def compute_lengths(self, path: np.array) -> Tuple[float, float, float]:
+    def compute_lengths(self, path: List[Configuration]) -> Tuple[float, float, float]:
         """Compute the lengths of the path: rotation length of robot joints [rad], positional length of objects [m],
         and rotational length of objects [rad]. """
-        pass
+        return tuple(np.sum([c1.distance(c2) for c1, c2 in zip(path[:-1], path[1:])], axis=0))
 
-    def path_is_successful(self, path: np.array) -> bool:
+    def path_is_successful(self, path: List[Configuration]) -> bool:
         """Return true if path solves the given task."""
         pass
 
-    def compute_n_grasps(self, path: np.array) -> int:
+    def compute_n_grasps(self, path: List[Configuration]) -> int:
         """Compute the amount of grasp-release actions."""
         pass
 
