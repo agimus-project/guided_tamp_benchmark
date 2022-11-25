@@ -76,9 +76,6 @@ class Cuboid(BaseObject):
         """
         return [prefix + "box_surface"]
 
-    def __del__(self):
-        os.unlink(self.urdfFilename)
-        os.unlink(self.srdfFilename)
 
     @staticmethod
     def urdf(lengths: List[float], material: str = 'red', color_rgba: str = '1 0.2 0.2 0.8') -> str:

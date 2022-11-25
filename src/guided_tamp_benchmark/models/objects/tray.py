@@ -69,9 +69,6 @@ class Tray(BaseObject):
         """
         return list()
 
-    def __del__(self):
-        os.unlink(self.urdfFilename)
-        os.unlink(self.srdfFilename)
 
     @staticmethod
     def urdf(size: List[float], material: str = 'brown', color_rgba: str = '0.43 0.34 0.24 0.9'):

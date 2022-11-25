@@ -7,6 +7,7 @@
 from abc import abstractmethod
 from typing import List
 import tempfile
+import os
 
 class BaseObject(object):
     rootJointType = "freeflyer"
@@ -14,8 +15,9 @@ class BaseObject(object):
     srdfSuffix = ""
 
     def __init__(self, create_srdf_file=True):
+        self.create_srdf_file = create_srdf_file
         self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        if create_srdf_file:
+        if self.create_srdf_file:
             self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
 
     @abstractmethod
@@ -34,3 +36,8 @@ class BaseObject(object):
     def contact_surfaces(cls, prefix: str = "") -> List[str]:
         """Returns the list of all contact surface names defined by the object with optional :param prefix. """
         pass
+
+    def __del__(self):
+        os.unlink(self.urdfFilename)
+        if self.create_srdf_file:
+            os.unlink(self.srdfFilename)

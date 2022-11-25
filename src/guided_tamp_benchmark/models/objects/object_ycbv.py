@@ -87,8 +87,6 @@ class ObjectYCBV(BaseObject):
         """
         return prefix + f"{self.name}_surface"
 
-    def __del__(self):
-        os.unlink(self.urdfFilename)
 
     @staticmethod
     def urdf(name: str, obj_path: str):
