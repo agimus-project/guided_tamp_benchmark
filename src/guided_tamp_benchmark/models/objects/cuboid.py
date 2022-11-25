@@ -5,16 +5,11 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import os
-import tempfile
 from typing import List, Union
 from .base import BaseObject
 
 
 class Cuboid(BaseObject):
-    rootJointType = "freeflyer"
-    urdfSuffix = ""
-    srdfSuffix = ""
-
     _all_handles = ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm", "handleZmxSm", "handleZpxSp",
                     "handleZmxSp", "handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm", "handleZmySm",
                     "handleZpySp", "handleZmySp", "handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
@@ -37,9 +32,6 @@ class Cuboid(BaseObject):
             lengths = [lengths] * 3
         assert len(lengths) == 3
         self.lengths = lengths
-
-        self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
 
         with os.fdopen(self.fd_urdf, "w") as f:
             f.write(self.urdf(lengths=lengths))
@@ -84,9 +76,6 @@ class Cuboid(BaseObject):
         """
         return [prefix + "box_surface"]
 
-    def __del__(self):
-        os.unlink(self.urdfFilename)
-        os.unlink(self.srdfFilename)
 
     @staticmethod
     def urdf(lengths: List[float], material: str = 'red', color_rgba: str = '1 0.2 0.2 0.8') -> str:

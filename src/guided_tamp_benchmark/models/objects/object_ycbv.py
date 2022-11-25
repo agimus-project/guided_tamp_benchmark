@@ -6,7 +6,6 @@
 
 
 import os
-import tempfile
 from typing import List
 
 from guided_tamp_benchmark import models
@@ -14,9 +13,6 @@ from guided_tamp_benchmark.models.objects import BaseObject
 from guided_tamp_benchmark.models.utils import get_ycbv_data_directory
 
 class ObjectYCBV(BaseObject):
-    rootJointType = "freeflyer"
-    urdfSuffix = ""
-    srdfSuffix = ""
 
     _all_handles = ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm", "handleZmxSm", "handleZpxSp",
                     "handleZmxSp", "handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm", "handleZmySm",
@@ -29,14 +25,13 @@ class ObjectYCBV(BaseObject):
 
         :param object_name: string whit the objecs name, example: "obj_000002" or "obj_000012"
         """
-        super().__init__()
+        super().__init__(create_srdf_file=False)
         self.name = object_name
 
-        self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
         self.srdfFilename = str(get_ycbv_data_directory().joinpath("srdf/" + object_name + ".srdf"))
-
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(name=self.name, path=str(get_ycbv_data_directory().joinpath("meshes")) + "/"))
+            f.write(self.urdf(name=self.name,
+                              obj_path=str(get_ycbv_data_directory().joinpath(f"meshes/{self.name}.obj"))))
 
     @classmethod
     def initial_configuration(cls) -> List[float]:
@@ -92,11 +87,9 @@ class ObjectYCBV(BaseObject):
         """
         return prefix + f"{self.name}_surface"
 
-    def __del__(self):
-        os.unlink(self.urdfFilename)
 
     @staticmethod
-    def urdf(name: str, path: str):
+    def urdf(name: str, obj_path: str):
         """
         this function generates text for .urdf file with given parameters to create ycbv object
 
@@ -109,7 +102,7 @@ class ObjectYCBV(BaseObject):
            <link name="base_link">
               <visual>
                  <geometry>
-                    <mesh filename="{path + name}.obj" scale="0.001 0.001 0.001"/>
+                    <mesh filename="{obj_path}" scale="0.001 0.001 0.001"/>
                  </geometry>
                  <material name="mat_part0">
                     <color rgba="1.0 1.0 1.0 1.0"/>
@@ -117,7 +110,7 @@ class ObjectYCBV(BaseObject):
               </visual>
               <collision>
                  <geometry>
-                    <mesh filename="{path + name}.obj" scale="0.001 0.001 0.001"/>
+                    <mesh filename="{obj_path}" scale="0.001 0.001 0.001"/>
                  </geometry>
               </collision>
               <inertial>
