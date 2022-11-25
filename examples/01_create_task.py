@@ -10,8 +10,10 @@ demo.task_name = 'test'
 demo.demo_id = 0
 demo.robot_name = 'panda'
 demo.pose_id = 0
-demo.object_ids = ['CUBOID_0.1_0.2_0.1', 'TRAY_0.57_0.4_0.7']
-demo.objects_poses = np.eye(4).reshape(1, 1, 4, 4).repeat(T, axis=1).repeat(2, axis=0)
+demo.object_ids = ['YCBV_02', 'CUBOID_0.1_0.2_0.1', 'TRAY_0.57_0.4_0.7']
+demo.objects_poses = np.eye(4).reshape(1, 1, 4, 4).repeat(T, axis=1).repeat(3, axis=0)
+for i in range(3):
+    demo.objects_poses[i, :, 0, 3] = np.ones(T) * i
 demo.contacts = np.zeros((2, T), dtype=bool)
 demo.robot_pose = np.eye(4)
 demo.furniture_ids = ['table']

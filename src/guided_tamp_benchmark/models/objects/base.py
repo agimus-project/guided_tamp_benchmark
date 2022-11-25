@@ -6,9 +6,17 @@
 #
 from abc import abstractmethod
 from typing import List
-
+import tempfile
 
 class BaseObject(object):
+    rootJointType = "freeflyer"
+    urdfSuffix = ""
+    srdfSuffix = ""
+
+    def __init__(self, create_srdf_file=True):
+        self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
+        if create_srdf_file:
+            self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
 
     @abstractmethod
     def initial_configuration(self) -> List[float]:

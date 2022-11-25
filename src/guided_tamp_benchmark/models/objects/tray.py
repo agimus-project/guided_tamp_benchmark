@@ -12,9 +12,6 @@ from guided_tamp_benchmark.models.objects import BaseObject
 
 
 class Tray(BaseObject):
-    rootJointType = "freeflyer"
-    urdfSuffix = ""
-    srdfSuffix = ""
 
     def __init__(self, tray_size: Union[List[float], float]) -> None:
         """
@@ -26,9 +23,6 @@ class Tray(BaseObject):
         if isinstance(tray_size, float):
             tray_size = [tray_size] * 3
         assert len(tray_size) == 3
-
-        self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
-        self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
 
         with os.fdopen(self.fd_urdf, "w") as f:
             f.write(self.urdf(size=tray_size))

@@ -21,8 +21,8 @@ class TestTask(BaseTask):
     def __init__(self):
         super().__init__('test', 0, PandaRobot(), 0)
 
-
-task = ShelfTask(0, PandaRobot(), 0)
+task = TestTask()
+# task = ShelfTask(0, PandaRobot(), 0)
 # task.furniture.clear()
 # f = pin.SE3(np.eye(4))
 # f.translation[0] = 1.
