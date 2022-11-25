@@ -29,9 +29,9 @@ class ObjectYCBV(BaseObject):
         self.name = object_name
 
         self.srdfFilename = str(get_ycbv_data_directory().joinpath("srdf/" + object_name + ".srdf"))
-        object_file_path = str(get_ycbv_data_directory().joinpath(f"meshes/{self.name}.obj"))
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(name=self.name, obj_path=object_file_path))
+            f.write(self.urdf(name=self.name,
+                              obj_path=str(get_ycbv_data_directory().joinpath(f"meshes/{self.name}.obj"))))
 
     @classmethod
     def initial_configuration(cls) -> List[float]:
