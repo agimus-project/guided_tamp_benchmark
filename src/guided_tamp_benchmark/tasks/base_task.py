@@ -76,6 +76,8 @@ class BaseTask:
             elif o[:6].lower() == "cuboid":
                 tmp = o.split("_")
                 obj.append(Cuboid([float(tmp[1]), float(tmp[2]), float(tmp[3])]))
+            elif o.lower() == "tray":
+                obj.append(Tray(tray_size=[0.57, 0.4, 0.7]))
             else:
                 raise ValueError(f"Unknown object {o}")
         return obj
