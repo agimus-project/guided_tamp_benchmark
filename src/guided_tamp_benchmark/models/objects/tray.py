@@ -73,7 +73,7 @@ class Tray(BaseObject):
         :param prefix: prefix for handle name
         :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
         """
-        return None
+        return list()
 
     def __del__(self):
         os.unlink(self.urdfFilename)
