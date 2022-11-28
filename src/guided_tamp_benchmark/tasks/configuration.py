@@ -46,7 +46,7 @@ class Configuration:
                  range(nobjects)]
         return Configuration(q, poses)
 
-    def distance(self, other: Configuration) -> Tuple[float, float, float]:
+    def distance(self, other) -> Tuple[float, float, float]:
         """Return 3 dimensional tuple containing distance of robot joint values, linear distance of objects, and rotational
         distance of objects. """
         dq = norm(self.q - other.q)
