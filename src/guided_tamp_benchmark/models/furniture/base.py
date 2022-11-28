@@ -14,6 +14,7 @@ class FurnitureObject(object):
     rootJointType = "fix"
     urdfSuffix = ""
     srdfSuffix = ""
+    name = ''
 
     def __init__(self) -> None:
         super().__init__()

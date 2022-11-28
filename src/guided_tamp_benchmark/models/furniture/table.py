@@ -13,6 +13,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Table(FurnitureObject):
+    name = 'table'
 
     def __init__(self, pose: np.array, desk_size: Union[List[float], float],
                  leg_display=True) -> None:
@@ -44,7 +45,7 @@ class Table(FurnitureObject):
         :return: name as a list of strings [prefix + "desk"]
         """
 
-        return [prefix + "desk"]
+        return [prefix + "table_surface"]
 
     @staticmethod
     def urdf(pos: List[float], rot: List[float], size: List[float], legs=True, material: str = 'brown',

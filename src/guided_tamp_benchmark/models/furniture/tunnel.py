@@ -13,6 +13,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Tunnel(FurnitureObject):
+    name = 'tunnel'
 
     def __init__(self, pose: np.array, lengths: List[float],
                  tunnel_walls_thickness: float = 0.16, collision_walls_thickness: float = 0.1,

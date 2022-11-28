@@ -13,6 +13,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Shelf(FurnitureObject):
+    name = 'shelf'
 
     def __init__(self, pose: np.array, display_inside_shelf=True) -> None:
         """
@@ -24,22 +25,24 @@ class Shelf(FurnitureObject):
         """
         super().__init__()
         assert pose.shape == (4, 4)
+        self.display_inside_shelf = display_inside_shelf
 
         with os.fdopen(self.fd_urdf, "w") as f:
             f.write(self.urdf(pos=pose[:3, 3], rot=matrixToRpy(pose[:3, :3]), inside=display_inside_shelf))
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf(inside_shelf=display_inside_shelf))
 
-    @classmethod
-    def contact_surfaces(cls, prefix: str = ""):
+    def contact_surfaces(self, prefix: str = ""):
         """
         This function returns the list of all contact surface defined by the object.
 
         :param prefix: prefix for contact surface name
         :return: name as list of strings [prefix + "top_shelf_surface", prefix + "inside_shelf_surface"]
         """
-
-        return [prefix + "top_shelf_surface", prefix + "inside_shelf_surface"]
+        contact_surfaces = [prefix + "top_shelf_surface",]
+        if self.display_inside_shelf:
+            contact_surfaces += [prefix + "inside_shelf_surface"]
+        return contact_surfaces
 
     @staticmethod
     def urdf(pos: List[float], rot: List[float], inside=True, material: str = 'brown',
