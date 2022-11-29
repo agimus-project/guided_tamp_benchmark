@@ -4,12 +4,16 @@
 # Created on: 2022-11-23
 #     Author: Vladimir Petrik <vladimir.petrik@cvut.cz>
 #
+from typing import List
 
 from robomeshcat import Robot, Scene
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 from guided_tamp_benchmark.tasks.base_task import BaseTask
 import pinocchio as pin
+
+from guided_tamp_benchmark.tasks.configuration import Configuration
+
 
 class Renderer:
     def __init__(self, task: BaseTask) -> None:
@@ -41,11 +45,11 @@ class Renderer:
                     obj.pose = pose
                 self.scene.render()
 
-    def animate_path(self, path, robot_ndofs, fps: int = 25):
+    def animate_path(self, path: List[Configuration], fps: int = 25):
+        """Animate the path by setting the robot configuration and object poses."""
         with self.scene.animation(fps=fps):
-            for i in range(len(path)):
-                for j in range(robot_ndofs):
-                    self.robot.__setitem__(j, path[i][j])
-                for k, obj in enumerate(self.objects):
-                    obj.pose = pin.XYZQUATToSE3(path[i][robot_ndofs + k * 7: robot_ndofs + (k + 1) * 7]).homogeneous
+            for c in path:
+                self.robot[:] = c.q
+                for pose, obj in zip(c.poses, self.objects):
+                    obj.pose = pose
                 self.scene.render()
