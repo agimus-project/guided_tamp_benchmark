@@ -17,7 +17,7 @@ class Renderer:
         self.task = task
         self.scene = Scene()
         'Add robot into the scene'
-        self.robot = Robot(urdf_path=task.robot.urdfFilename, mesh_folder_path=get_models_data_directory().parent,
+        self.robot = Robot(urdf_path=task.robot.urdfFilename, mesh_folder_path=get_models_data_directory(),
                            pose=task.get_robot_pose())
         self.scene.add_robot(self.robot)
 

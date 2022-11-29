@@ -12,4 +12,4 @@ from .ur5_robot import UR5Robot
 from pathlib import Path
 
 def get_robot_models_path():
-    return Path(__file__).absolute().parent.parent
+    return Path(__file__).absolute().parent
