@@ -36,7 +36,6 @@ class Table(FurnitureObject):
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf(size=desk_size))
 
-    @classmethod
     def contact_surfaces(self, prefix: str = ""):
         """
         This function returns the list of all contact surface defined by the object.
