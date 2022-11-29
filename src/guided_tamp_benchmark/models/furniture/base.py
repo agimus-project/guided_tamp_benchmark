@@ -27,6 +27,6 @@ class FurnitureObject(object):
 
     @classmethod
     @abstractmethod
-    def contact_surfaces(cls, prefix: str = "") -> List[str]:
+    def contact_surfaces(self, prefix: str = "") -> List[str]:
         """Returns the list of all contact surface names defined by the object with optional :param prefix. """
         pass

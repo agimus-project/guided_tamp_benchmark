@@ -40,7 +40,7 @@ class Tunnel(FurnitureObject):
             f.write(self.srdf())
 
     @classmethod
-    def contact_surfaces(cls, prefix: str = ""):
+    def contact_surfaces(self, prefix: str = ""):
         """
         This function returns the list of all contact surface defined by the object.
 
