@@ -13,6 +13,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Tunnel(FurnitureObject):
+    name = 'tunnel'
 
     def __init__(self, pose: np.array, lengths: List[float],
                  tunnel_walls_thickness: float = 0.16, collision_walls_thickness: float = 0.1,
@@ -38,8 +39,7 @@ class Tunnel(FurnitureObject):
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf())
 
-    @classmethod
-    def contact_surfaces(cls, prefix: str = ""):
+    def contact_surfaces(self, prefix: str = ""):
         """
         This function returns the list of all contact surface defined by the object.
 

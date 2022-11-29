@@ -14,6 +14,7 @@ class FurnitureObject(object):
     rootJointType = "fix"
     urdfSuffix = ""
     srdfSuffix = ""
+    name = ''
 
     def __init__(self) -> None:
         super().__init__()
@@ -24,8 +25,7 @@ class FurnitureObject(object):
         os.unlink(self.urdfFilename)
         os.unlink(self.srdfFilename)
 
-    @classmethod
     @abstractmethod
-    def contact_surfaces(cls, prefix: str = "") -> List[str]:
+    def contact_surfaces(self, prefix: str = "") -> List[str]:
         """Returns the list of all contact surface names defined by the object with optional :param prefix. """
         pass

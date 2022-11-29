@@ -13,6 +13,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 class Table(FurnitureObject):
+    name = 'table'
 
     def __init__(self, pose: np.array, desk_size: Union[List[float], float],
                  leg_display=True) -> None:
@@ -35,8 +36,7 @@ class Table(FurnitureObject):
         with os.fdopen(self.fd_srdf, "w") as f:
             f.write(self.srdf(size=desk_size))
 
-    @classmethod
-    def contact_surfaces(cls, prefix: str = ""):
+    def contact_surfaces(self, prefix: str = ""):
         """
         This function returns the list of all contact surface defined by the object.
 
@@ -44,7 +44,7 @@ class Table(FurnitureObject):
         :return: name as a list of strings [prefix + "desk"]
         """
 
-        return [prefix + "desk"]
+        return [prefix + "table_surface"]
 
     @staticmethod
     def urdf(pos: List[float], rot: List[float], size: List[float], legs=True, material: str = 'brown',
