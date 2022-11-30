@@ -281,7 +281,7 @@ class Shelf(FurnitureObject):
                         <collision>
                             <origin xyz="{0} {0} {-0.6625}" rpy="0 0 0" />
                             <geometry>
-                                <box size="{0.38} {1.20} {0.945}"/>
+                                <box size="{0.38} {1.20} {1.28}"/>
                             </geometry>
                         </collision>
                     </link>
