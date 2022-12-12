@@ -12,6 +12,7 @@ from guided_tamp_benchmark.models.robots import *
 from guided_tamp_benchmark.models.furniture import *
 from guided_tamp_benchmark.tasks.base_task import BaseTask
 from guided_tamp_benchmark.tasks.shelf_task import ShelfTask
+from guided_tamp_benchmark.tasks.waiter_task import WaiterTask
 from guided_tamp_benchmark.tasks.renderer import Renderer
 
 
