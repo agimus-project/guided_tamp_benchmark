@@ -36,3 +36,7 @@ class BaseRobot(object):
     def get_gripper_name(self) -> str:
         """return name of the gripper of the robot"""
         pass
+
+    def get_contact_surfaces(self) -> List[str]:
+        """ Return contact surfaces of the robot"""
+        return []

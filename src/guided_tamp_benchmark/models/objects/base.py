@@ -13,6 +13,7 @@ class BaseObject(object):
     rootJointType = "freeflyer"
     urdfSuffix = ""
     srdfSuffix = ""
+    name = "base"
 
     def __init__(self, create_srdf_file=True):
         self.create_srdf_file = create_srdf_file
