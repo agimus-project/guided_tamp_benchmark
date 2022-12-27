@@ -57,7 +57,10 @@ class Demonstration:
         demo.furniture_poses = data["furniture_poses"]
         demo.furniture_params = data["furniture_params"]
         robot_data = pickle.load(open(Demonstration._get_robot_poses_filepath(task_name, demo_id, robot_name), 'rb'))
-        demo.robot_pose = robot_data[pose_id]
+        valid_pose_id = max(0, min(pose_id, len(robot_data) - 1))
+        if valid_pose_id != pose_id:
+            print(f'WARNING: using {valid_pose_id} pose_id instead of requested {pose_id}')
+        demo.robot_pose = robot_data[valid_pose_id]
         return demo
 
     def save(self, overwrite=False):
