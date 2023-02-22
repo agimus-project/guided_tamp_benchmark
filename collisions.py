@@ -8,8 +8,11 @@ from __future__ import print_function
 import pinocchio as pin
 from pinocchio.visualize import MeshcatVisualizer
 import sys
-
 import numpy as np
+
+from guided_tamp_benchmark.tasks.base_task import BaseTask
+from guided_tamp_benchmark.tasks.configuration import Configuration
+
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 from guided_tamp_benchmark.models.robots.panda_robot import PandaRobot
@@ -82,12 +85,12 @@ def pose_as_matrix_to_pose_as_quat(pose):
 
 
 class Collision:
-    def __init__(self, task):
+    def __init__(self, task: BaseTask):
         self.pin_mod, self.col_mod = create_model(**extract_from_task(task))
         self.task = task
         self.robot_pose = pose_as_matrix_to_pose_as_quat(task.get_robot_pose())
 
-    def is_config_valid(self, config):
+    def is_config_valid(self, configuration: Configuration):
 
         config = np.array(config[:-len(self.task.robot.initial_configuration())] + list(self.robot_pose) + \
                  config[-len(self.task.robot.initial_configuration()):])
@@ -104,7 +107,9 @@ class Collision:
             cp = self.col_mod.collisionPairs[k]
             print("collision pair:", cp.first, ",", cp.second, "- collision:", "Yes" if cr.isCollision() else "No")
 
-    def vizulize_through_pinocchio(self, config):
+    def vizulize_through_pinocchio(self, configuration: Configuration):
+
+        config = configuration.to_numpy()
 
         config = np.array(config[:-len(self.task.robot.initial_configuration())] + list(self.robot_pose) + \
                           config[-len(self.task.robot.initial_configuration()):])
@@ -128,11 +133,12 @@ class Collision:
         input("press enter to continue")
 
 
-task = ShelfTask(demo_id=0, robot=PandaRobot(), robot_pose_id=1)
+task = ShelfTask(demo_id=2, robot=PandaRobot(), robot_pose_id=1)
 
 collision = Collision(task)
 
-config = [0.4, 0.3, 0, 0, 0, 0, 1] + [0, -np.pi / 4, 0, -3 * np.pi / 4, 0, np.pi / 2, np.pi / 4, 0., 0.]
+config = [0.4, -0.3, 0, 0, 0, 0, 1] + [-0.4, 0.3, 0, 0, 0, 0, 1] + [0.4, 0.3, 0, 0, 0, 0, 1] + \
+         [0, -np.pi / 4, 0, -3 * np.pi / 4, 0, np.pi / 2, np.pi / 4, 0., 0.]
 
 collision.is_config_valid(config)
 collision.vizulize_through_pinocchio(config)
