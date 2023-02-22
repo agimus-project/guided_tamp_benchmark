@@ -41,7 +41,7 @@ def create_model(robot, objects, furniture):
     p_r, c_r, _ = pin.buildModelsFromUrdf(robot.urdfFilename, package_dirs=str(get_models_data_directory()),
                                           root_joint=pin.JointModelFreeFlyer())
 
-    for i, model in enumerate(objects + furniture):
+    for i, model in enumerate(reversed(furniture + objects)):
         if i < len(objects):
             p, c, _ = pin.buildModelsFromUrdf(model.urdfFilename, package_dirs=str(get_models_data_directory()),
                                               root_joint=pin.JointModelFreeFlyer())
@@ -60,7 +60,7 @@ def create_model(robot, objects, furniture):
     return p_r, c_r
 
 
-def extract_from_task(task):
+def extract_from_task(task: BaseTask):
     furniture = []
     for i, f in enumerate(task.demo.furniture_ids):
         if f == "table":
@@ -76,24 +76,26 @@ def extract_from_task(task):
     return {"robot": robot, "objects": objects, "furniture": furniture}
 
 
-def pose_as_matrix_to_pose_as_quat(pose):
+def pose_as_matrix_to_pose_as_quat(pose: np.array) -> np.array:
     T = pin.SE3(pose[:3, :3], np.squeeze(pose[:3, 3:]))
     xyz_quat = pin.se3ToXYZQUAT(T)
-    # quat = list(R.from_matrix(task.demo.objects_poses[:3, :3]).as_quat())
-    # t = list(np.squeeze(task.demo.objects_poses[:3, 3:]))
     return xyz_quat
 
 
 class Collision:
+    """The collision class consists of Pinocchio urdf and collision models and functions for collision checking and
+    Pinocchio model rendering."""
+
     def __init__(self, task: BaseTask):
+        """Initilizie with task eg. ShelfTask..."""
         self.pin_mod, self.col_mod = create_model(**extract_from_task(task))
         self.task = task
         self.robot_pose = pose_as_matrix_to_pose_as_quat(task.get_robot_pose())
 
     def is_config_valid(self, configuration: Configuration):
-
-        config = np.array(config[:-len(self.task.robot.initial_configuration())] + list(self.robot_pose) + \
-                 config[-len(self.task.robot.initial_configuration()):])
+        """Returns true if given configuration is collision free"""
+        config = np.concatenate([configuration.to_numpy()[configuration.ndofs_robot:]] + [self.robot_pose] +
+                                [configuration.to_numpy()[:configuration.ndofs_robot]])
 
         # Create data structures
         data = self.pin_mod.createData()
@@ -107,12 +109,10 @@ class Collision:
             cp = self.col_mod.collisionPairs[k]
             print("collision pair:", cp.first, ",", cp.second, "- collision:", "Yes" if cr.isCollision() else "No")
 
-    def vizulize_through_pinocchio(self, configuration: Configuration):
-
-        config = configuration.to_numpy()
-
-        config = np.array(config[:-len(self.task.robot.initial_configuration())] + list(self.robot_pose) + \
-                          config[-len(self.task.robot.initial_configuration()):])
+    def visualize_through_pinocchio(self, configuration: Configuration):
+        """will visualize the given configuration on Pinocchio collision model"""
+        config = np.concatenate([configuration.to_numpy()[configuration.ndofs_robot:]] + [self.robot_pose] +
+                                [configuration.to_numpy()[:configuration.ndofs_robot]])
 
         viz = MeshcatVisualizer(self.pin_mod, self.col_mod, self.col_mod)
 
@@ -137,8 +137,7 @@ task = ShelfTask(demo_id=2, robot=PandaRobot(), robot_pose_id=1)
 
 collision = Collision(task)
 
-config = [0.4, -0.3, 0, 0, 0, 0, 1] + [-0.4, 0.3, 0, 0, 0, 0, 1] + [0.4, 0.3, 0, 0, 0, 0, 1] + \
-         [0, -np.pi / 4, 0, -3 * np.pi / 4, 0, np.pi / 2, np.pi / 4, 0., 0.]
+config = Configuration([0, -np.pi / 4, 0, -3 * np.pi / 4, 0, np.pi / 2, np.pi / 4, 0., 0.], task.demo.objects_poses[:,0])
 
 collision.is_config_valid(config)
 collision.vizulize_through_pinocchio(config)
