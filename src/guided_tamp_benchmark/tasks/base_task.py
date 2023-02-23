@@ -48,8 +48,10 @@ class BaseTask:
         pass
 
     def _check_collision(self, path: List[Configuration]) -> bool:
-        """Return true if every configuration of the path is collision-free. Collisions are check with hpp-fcl library.
+        """Return true if every configuration of the path is collision-free.
+         Collisions are check with pinocchio library.
          """
+
         pass
 
     def compute_lengths(self, path: List[Configuration]) -> Tuple[float, float, float]:
