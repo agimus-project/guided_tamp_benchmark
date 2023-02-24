@@ -20,7 +20,7 @@ class Tray(BaseObject):
         """
 
         super().__init__()
-        self.name == 'tray'
+        self.name = 'tray'
         if isinstance(tray_size, float):
             tray_size = [tray_size] * 3
         assert len(tray_size) == 3
@@ -69,7 +69,6 @@ class Tray(BaseObject):
         :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
         """
         return list()
-
 
     @staticmethod
     def urdf(size: List[float], material: str = 'brown', color_rgba: str = '0.43 0.34 0.24 0.9'):
