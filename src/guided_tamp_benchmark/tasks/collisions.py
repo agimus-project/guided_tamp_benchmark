@@ -12,20 +12,15 @@ import numpy as np
 
 from typing import List
 
-from guided_tamp_benchmark.tasks.base_task import BaseTask
-from guided_tamp_benchmark.models.robots.base import BaseRobot
-from guided_tamp_benchmark.models.furniture.base import FurnitureObject
-from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.tasks.configuration import Configuration
 
+from guided_tamp_benchmark.models.robots.base import BaseRobot
+from guided_tamp_benchmark.models.objects.base import BaseObject
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
-from guided_tamp_benchmark.models.robots.panda_robot import PandaRobot
-from guided_tamp_benchmark.models.furniture.table import Table
-from guided_tamp_benchmark.models.furniture.shelf import Shelf
-from guided_tamp_benchmark.models.objects.object_ycbv import ObjectYCBV
 
-from guided_tamp_benchmark.tasks.shelf_task import ShelfTask
+from guided_tamp_benchmark.models.furniture.base import FurnitureObject
+
 
 def rename_frames(model: pin.Model, model_name: str):
     """Renames the frame names in given model to {previous name}_{model_name}_{i}."""
@@ -43,6 +38,12 @@ def rename_joints(model: pin.Model, model_name: str):
         model.names[i] = f"{model.names[i]}_{model_name}_{i}"
 
 
+def rename_geometry(collision_model: pin.GeometryModel, model_name: str):
+    """Renames the joint names in given model to {previous name}_{model_name}_{i}."""
+    for i, geom in enumerate(collision_model.geometryObjects):
+        geom.name = f"{geom.name}_{model_name}_{i}"
+
+
 def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: list[FurnitureObject],
                  robot_poses: List[pin.SE3]) -> (pin.Model, pin.GeometryModel):
     """Creates pinocchio urdf model and pinocchio collision model from given robots, furniture and objects."""
@@ -57,6 +58,7 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
             p, c, _ = pin.buildModelsFromUrdf(model.urdfFilename, package_dirs=str(get_models_data_directory()))
         rename_joints(p, model.name)
         rename_frames(p, model.name)
+        rename_geometry(c, model.name)
         c.addAllCollisionPairs()
         if i == 0:
             p_r = p
@@ -70,25 +72,20 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
         pin.removeCollisionPairs(p, c, robot.srdfFilename)
         rename_joints(p, robot.name)
         rename_frames(p, robot.name)
+        rename_geometry(c, robot.name)
         p_r, c_r = pin.appendModel(p_r, p, c_r, c, 0, robot_poses[i])
 
-    # c_r.addAllCollisionPairs()
     print("num collision pairs - initial:", len(c_r.collisionPairs))
-    # pin.removeCollisionPairs(p_r, c_r, robot.srdfFilename)
     return p_r, c_r
 
 
-def extract_from_task(task: BaseTask) -> dict:
+def extract_from_task(task) -> dict:
     """Extracts robots, objects, furniture and robot poses from task and returns it in dictionary"""
-    furniture = []
-    for i, f in enumerate(task.demo.furniture_ids):
-        if f == "table":
-            furniture.append(Table(task.demo.furniture_poses[i], **task.demo.furniture_params[i]))
-        elif f == "shelf":
-            furniture.append(Shelf(task.demo.furniture_poses[i], **task.demo.furniture_params[i]))
-    objects = []
-    for i, o in enumerate(task.demo.object_ids):
-        objects.append(ObjectYCBV(f"obj_0000{o[-2:]}"))
+    furniture = task.furniture
+    objects = task.objects
+    for i, obj in enumerate(objects):
+        if obj.name == "tray":
+            objects.pop(i)
 
     # TODO: change for multi robot
     if isinstance(task.robot, list):
@@ -110,7 +107,7 @@ class Collision:
     """The collision class consists of Pinocchio urdf and collision models and functions for collision checking and
     Pinocchio model rendering."""
 
-    def __init__(self, task: BaseTask):
+    def __init__(self, task):
         """Initilizie with task eg. ShelfTask..."""
         self.pin_mod, self.col_mod = create_model(**extract_from_task(task))
         self.task = task
@@ -156,12 +153,17 @@ class Collision:
         input("press enter to continue")
 
 
-task = ShelfTask(demo_id=2, robot=PandaRobot(), robot_pose_id=3)
+if __name__ == '__main__':
+    from guided_tamp_benchmark.models.robots import *
+    from guided_tamp_benchmark.tasks import *
 
-collision = Collision(task)
+    task = WaiterTask(demo_id=0, robot=KukaMobileIIWARobot(), robot_pose_id=0)
 
-config = Configuration([0, -np.pi / 4, 0, -3 * np.pi / 4, 0, np.pi / 2, np.pi / 4, 0., 0.], task.demo.objects_poses[:,0])
+    collision = Collision(task)
 
-collision.is_config_valid(config)
-collision.visualize_through_pinocchio(config)
-pass
+    config = Configuration(task.robot.initial_configuration(),
+                           task.demo.objects_poses[:3, 0])
+
+    collision.is_config_valid(config)
+    collision.visualize_through_pinocchio(config)
+    pass
