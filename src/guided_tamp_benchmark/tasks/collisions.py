@@ -111,7 +111,6 @@ class Collision:
         """Initilizie with task eg. ShelfTask..."""
         self.pin_mod, self.col_mod = create_model(**extract_from_task(task))
         self.task = task
-        # self.robot_pose = pose_as_matrix_to_pose_as_quat(task.get_robot_pose())
 
     def is_config_valid(self, configuration: Configuration) -> bool:
         """Returns true if given configuration is collision free"""
