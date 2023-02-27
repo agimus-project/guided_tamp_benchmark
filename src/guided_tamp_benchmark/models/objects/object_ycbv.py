@@ -7,6 +7,9 @@
 
 import os
 from typing import List
+import xml.etree.ElementTree as ElTree
+import quaternion as npq
+import numpy as np
 
 from guided_tamp_benchmark import models
 from guided_tamp_benchmark.models.objects import BaseObject
@@ -87,6 +90,24 @@ class ObjectYCBV(BaseObject):
         """
         return prefix + f"{self.name}_surface"
 
+    def get_handles_poses(self):
+        """
+        This function parses .srdf file and returns poses for all handles.
+        :return: dictionary with handle names as keys and 4x4 arrays as values
+        """
+        tree = ElTree.parse(self.srdfFilename)
+        handles = {}
+        for child in tree.getroot():
+            if child.tag == 'handle':
+                print(child.attrib['name'])
+                assert child[0].tag == 'position'
+                xyz_wxyz = [float(x) for x in child[0].text.split()]
+                print(xyz_wxyz)
+                pose = np.eye(4)
+                pose[:3, 3] = xyz_wxyz[:3]
+                pose[:3, :3] = npq.as_rotation_matrix(npq.from_float_array(xyz_wxyz[3:]))
+                handles[child.attrib['name']] = pose
+        return handles
 
     @staticmethod
     def urdf(name: str, obj_path: str):
