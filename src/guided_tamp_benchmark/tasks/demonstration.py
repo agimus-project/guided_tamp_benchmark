@@ -20,6 +20,7 @@ class Demonstration:
         self.pose_id: Optional[str] = None
         self.object_ids: Optional[List[str]] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
         self.objects_poses: Optional[np.array] = None  # n*t*4x4 numpy array
+        self.subgoal_objects_poses: Optional[np.array] = None
         self.contacts: Optional[np.array] = None  # n * t np array of boolean grasped/not grasped
         self.robot_pose: Optional[np.array] = None  # 4x4 numpy array
         self.furniture_ids: Optional[List[str]] = None
@@ -52,6 +53,8 @@ class Demonstration:
         demo.pose_id = pose_id
         demo.object_ids = data["object_ids"]
         demo.objects_poses = data["objects_poses"]
+        if "subgoal_objects_poses" in data.keys():
+            demo.subgoal_objects_poses = data["subgoal_objects_poses"]
         demo.contacts = data["contacts"]
         demo.furniture_ids = data["furniture_ids"]
         demo.furniture_poses = data["furniture_poses"]
@@ -72,6 +75,7 @@ class Demonstration:
             demo = dict(object_ids=[], object_poses=[], contacts=[], furniture_ids=[], furniture_poses=[])
             demo["object_ids"] = self.object_ids
             demo["objects_poses"] = self.objects_poses
+            demo["subgoal_objects_poses"] = self.subgoal_objects_poses
             demo["contacts"] = self.contacts
             demo["furniture_ids"] = self.furniture_ids
             demo["furniture_poses"] = self.furniture_poses
@@ -97,6 +101,7 @@ if __name__ == "__main__":
     demo.pose_id = 0
     demo.object_ids = ['CUBOID_0.1_0.2_0.8', 'CUBOID_0.1_0.2_0.8']
     demo.objects_poses = np.eye(4).reshape(1, 1, 4, 4).repeat(T, axis=1).repeat(2, axis=0)
+    demo.subgoal_objects_poses = np.eye(4).reshape(1, 1, 4, 4).repeat(T, axis=1).repeat(2, axis=0)
     demo.contacts = np.zeros((2, T), dtype=bool)
     demo.robot_pose = np.eye(4)
     demo.furniture_ids = ['tunnel']
