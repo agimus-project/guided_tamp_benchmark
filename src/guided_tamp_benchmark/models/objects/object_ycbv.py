@@ -99,10 +99,8 @@ class ObjectYCBV(BaseObject):
         handles = {}
         for child in tree.getroot():
             if child.tag == 'handle':
-                print(child.attrib['name'])
                 assert child[0].tag == 'position'
                 xyz_wxyz = [float(x) for x in child[0].text.split()]
-                print(xyz_wxyz)
                 pose = np.eye(4)
                 pose[:3, 3] = xyz_wxyz[:3]
                 pose[:3, :3] = npq.as_rotation_matrix(npq.from_float_array(xyz_wxyz[3:]))
