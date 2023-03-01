@@ -16,12 +16,13 @@ from guided_tamp_benchmark.tasks.configuration import Configuration
 
 
 class Renderer:
-    def __init__(self, task: BaseTask) -> None:
+    def __init__(self, task: BaseTask, pddl=False) -> None:
         super().__init__()
         self.task = task
         self.scene = Scene()
         'Add robot into the scene'
-        self.robot = Robot(urdf_path=task.robot.urdfFilename, mesh_folder_path=get_models_data_directory(),
+        self.robot = Robot(urdf_path=task.robot.urdfFilename.replace('.urdf', '_pddl.urdf') if pddl else task.robot.urdfFilename, 
+                           mesh_folder_path=get_models_data_directory(),
                            pose=task.get_robot_pose())
         self.scene.add_robot(self.robot)
 
@@ -40,6 +41,7 @@ class Renderer:
         """Create an animation from the demonstration file, that contains the motion of object but not the motion of
          the robot"""
         with self.scene.animation(fps=fps):
+            self.robot[:] = self.task.robot.initial_configuration()
             for object_poses in self.task.demo.objects_poses.transpose(1, 0, 2, 3):
                 for obj, pose in zip(self.objects, object_poses):
                     obj.pose = pose
