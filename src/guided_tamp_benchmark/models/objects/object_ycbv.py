@@ -8,7 +8,7 @@
 import os
 from typing import List
 import xml.etree.ElementTree as ElTree
-import quaternion as npq
+from pinocchio import XYZQUATToSE3
 import numpy as np
 
 from guided_tamp_benchmark import models
@@ -101,10 +101,8 @@ class ObjectYCBV(BaseObject):
             if child.tag == 'handle':
                 assert child[0].tag == 'position'
                 xyz_wxyz = [float(x) for x in child[0].text.split()]
-                pose = np.eye(4)
-                pose[:3, 3] = xyz_wxyz[:3]
-                pose[:3, :3] = npq.as_rotation_matrix(npq.from_float_array(xyz_wxyz[3:]))
-                handles[child.attrib['name']] = pose
+                xyz_xyzw = xyz_wxyz[:3] + xyz_wxyz[4:] + [xyz_wxyz[3]]
+                handles[child.attrib['name']] = np.array(XYZQUATToSE3(xyz_xyzw))
         return handles
 
     @staticmethod
