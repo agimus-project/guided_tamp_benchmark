@@ -2,7 +2,7 @@
 <robot name="obj_000021">
 
   <handle name="handleZpx" clearance="0.04">
-    <position> 0 0 0   0.7071068, 0, 0.7071068, 0</position>
+    <position> 0 0 0   0.7071068 0 0.7071068 0</position>
     <link name="base_link"/>
   </handle>
 
