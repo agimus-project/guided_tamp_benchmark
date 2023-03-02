@@ -75,25 +75,29 @@
         </inertial>
     </link>
 
-    <joint name="world_to_help_0" type="prismatic">
+    <joint name="world_to_help_0_joint" type="prismatic">
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <parent link="world"/>
         <child link="help_link_0"/>
         <axis xyz="1 0 0"/>
-        <limit effort="100" lower="-0.5" upper="1.25" velocity="1"/>
+        <limit effort="100" lower="-3" upper="3" velocity="1"/>
+        <!-- <limit effort="100" lower="-0.5" upper="1.25" velocity="1"/> -->
+        <!-- <limit effort="100" lower="-1" upper="2" velocity="1"/> -->
         <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-5" soft_upper_limit="2.93215314335"/>
     </joint>
 
-    <joint name="help_0_to_help_1" type="prismatic">
+    <joint name="help_0_to_help_1_joint" type="prismatic">
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <parent link="help_link_0"/>
         <child link="help_link_1"/>
         <axis xyz="0 1 0"/>
-        <limit effort="100" lower="0.75" upper="2.45" velocity="1"/>
+        <limit effort="100" lower="-3" upper="3" velocity="1"/>
+        <!-- <limit effort="100" lower="0.75" upper="2.45" velocity="1"/> -->
+        <!-- <limit effort="100" lower="0" upper="2" velocity="1"/> -->
         <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-5" soft_upper_limit="2.93215314335"/>
     </joint>
 
-    <joint name="help_1_to_kmr" type="revolute">
+    <joint name="help_1_to_kmr_joint" type="revolute">
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <parent link="help_link_1"/>
         <child link="kmr_link"/>
