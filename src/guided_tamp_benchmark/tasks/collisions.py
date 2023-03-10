@@ -16,6 +16,7 @@ from guided_tamp_benchmark.tasks.configuration import Configuration
 
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
+from guided_tamp_benchmark.models.furniture.tunnel import Tunnel
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 
@@ -41,7 +42,22 @@ def rename_joints(model: pin.Model, model_name: str):
 def rename_geometry(collision_model: pin.GeometryModel, model_name: str):
     """Renames the joint names in given model to {previous name}_{model_name}_{i}."""
     for i, geom in enumerate(collision_model.geometryObjects):
-        geom.name = f"{geom.name}_{model_name}_{i}"
+        geom.name = f"{geom.name[0:-2]}_{model_name}_{i}"
+
+
+def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod: pin.GeometryModel):
+    disabled_id = []
+    for i, obj in enumerate(full_coll_mod.geometryObjects):
+        for disabled in Tunnel.disabled_robot_collision_for_links:
+            if obj.name.find(disabled) != -1:
+                disabled_id.append(i)
+
+    for obj in rob_coll_mod.geometryObjects:
+        for id in disabled_id:
+            full_coll_mod.removeCollisionPair(pin.CollisionPair(
+                full_coll_mod.getGeometryId(obj.name),
+                id
+            ))
 
 
 def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: list[FurnitureObject],
@@ -50,19 +66,16 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
     p_r = None
     c_r = None
 
-    tunnels = []
-
     for i, model in enumerate(reversed(furniture + objects)):
         if i < len(objects):
             p, c, _ = pin.buildModelsFromUrdf(model.urdfFilename, package_dirs=str(get_models_data_directory()),
                                               root_joint=pin.JointModelFreeFlyer())
         else:
             p, c, _ = pin.buildModelsFromUrdf(model.urdfFilename, package_dirs=str(get_models_data_directory()))
-        if model.name == "tunnel":
-            tunnels =
-        rename_joints(p, model.name + f"{i}")
-        rename_frames(p, model.name + f"{i}")
-        rename_geometry(c, model.name + f"{i}")
+
+        rename_joints(p, model.name + f"_{i}")
+        rename_frames(p, model.name + f"_{i}")
+        rename_geometry(c, model.name + f"_{i}")
         c.addAllCollisionPairs()
         if i == 0:
             p_r = p
@@ -74,10 +87,11 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
         p, c, _ = pin.buildModelsFromUrdf(robot.urdfFilename, package_dirs=str(get_models_data_directory()))
         c.addAllCollisionPairs()
         pin.removeCollisionPairs(p, c, robot.srdfFilename)
-        rename_joints(p, robot.name + f"{i}")
-        rename_frames(p, robot.name + f"{i}")
-        rename_geometry(c, robot.name + f"{i}")
+        rename_joints(p, robot.name + f"_{i}")
+        rename_frames(p, robot.name + f"_{i}")
+        rename_geometry(c, robot.name + f"_{i}")
         p_r, c_r = pin.appendModel(p_r, p, c_r, c, 0, robot_poses[i])
+        remove_collisions_for_tunnel(c_r, c)
 
     print("num collision pairs - initial:", len(c_r.collisionPairs))
     return p_r, c_r
