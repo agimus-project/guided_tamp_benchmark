@@ -55,8 +55,6 @@ class BaseTask:
         Collision(self).visualize_through_pinocchio(configuration)
         return not result
 
-
-
     def _check_path_for_collision(self, path: List[Configuration]) -> Tuple[bool, int]:
         """Return true if every configuration of the path is collision-free. The collision will be ignored if either
         grasp constraint or placement constraint is satisfied. Collisions are check with pinocchio library."""
