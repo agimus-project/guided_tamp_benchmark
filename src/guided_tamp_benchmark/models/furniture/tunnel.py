@@ -14,7 +14,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 class Tunnel(FurnitureObject):
     name = 'tunnel'
-    disabled_robot_collision_for_links = ["right_sideB_0", "left_sideB_0", "top_sideB_0"]
+    disabled_robot_collision_for_links = ["right_sideB", "left_sideB", "top_sideB"]
 
     def __init__(self, pose: np.array, lengths: List[float],
                  tunnel_walls_thickness: float = 0.16, collision_walls_thickness: float = 0.1,
