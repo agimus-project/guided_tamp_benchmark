@@ -58,6 +58,7 @@ class BaseTask:
     def _check_path_for_collision(self, path: List[Configuration]) -> Tuple[bool, int]:
         """Return true if every configuration of the path is collision-free. The collision will be ignored if either
         grasp constraint or placement constraint is satisfied. Collisions are check with pinocchio library."""
+        # TODO: change for param path 0 - 1 function
         for i, config in enumerate(path):
             if self._check_place_constraint(config) or self._check_grasp_constraint(config):
                 path[i] = None
