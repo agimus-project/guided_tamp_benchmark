@@ -62,7 +62,8 @@ class BaseTask:
         # TODO: change for param path 0 - 1 function
         for i, config in enumerate(path):
             if self._check_place_constraint(config) or self._check_grasp_constraint(config):
-                path[i] = None
+                pass
+                # TODO: collision checking for constraints
 
         collision = Collision(self)
         for i, config in enumerate(path):
