@@ -14,6 +14,8 @@ from typing import List
 
 from guided_tamp_benchmark.tasks.configuration import Configuration
 
+from guided_tamp_benchmark.tasks.base_task import BaseTask
+
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.models.furniture.tunnel import Tunnel
@@ -61,7 +63,7 @@ def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod:
 
 
 def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: List[FurnitureObject],
-                 robot_poses: List[pin.SE3]) -> (pin.Model, pin.GeometryModel):
+                 robot_poses: List[pin.SE3], remove_tunnel_collisions: bool) -> (pin.Model, pin.GeometryModel):
     """Creates pinocchio urdf model and pinocchio collision model from given robots, furniture and objects."""
     p_r = None
     c_r = None
@@ -91,7 +93,8 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
         rename_frames(p, robot.name + f"_{i}")
         rename_geometry(c, robot.name + f"_{i}")
         p_r, c_r = pin.appendModel(p_r, p, c_r, c, 0, robot_poses[i])
-        remove_collisions_for_tunnel(c_r, c)
+        if remove_tunnel_collisions:
+            remove_collisions_for_tunnel(c_r, c)
 
     print("num collision pairs - initial:", len(c_r.collisionPairs))
     return p_r, c_r
@@ -125,10 +128,11 @@ class Collision:
     """The collision class consists of Pinocchio urdf and collision models and functions for collision checking and
     Pinocchio model rendering."""
 
-    def __init__(self, task):
+    def __init__(self, task: BaseTask):
         """Initilizie with task eg. ShelfTask..."""
-        self.pin_mod, self.col_mod = create_model(**extract_from_task(task))
         self.task = task
+        self.tunnel = True if task.task_name == "tunnel" else False
+        self.pin_mod, self.col_mod = create_model(remove_tunnel_collisions=self.tunnel, **extract_from_task(task))
 
     def is_config_valid(self, configuration: Configuration) -> bool:
         """Returns true if given configuration is collision free"""
