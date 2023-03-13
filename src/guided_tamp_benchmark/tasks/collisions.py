@@ -14,8 +14,6 @@ from typing import List
 
 from guided_tamp_benchmark.tasks.configuration import Configuration
 
-from guided_tamp_benchmark.tasks.base_task import BaseTask
-
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.models.furniture.tunnel import Tunnel
@@ -46,11 +44,12 @@ def rename_geometry(collision_model: pin.GeometryModel, model_name: str):
         geom.name = f"{geom.name[0:-2]}_{model_name}_{i}"
 
 
-def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod: pin.GeometryModel):
+def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod: pin.GeometryModel,
+                                 disabled_tunnel_links: List[str]):
     """removes collision pairs between all robot links and Tunnel.disabled_robot_collision_for_links"""
     disabled_id = []
     for i, obj in enumerate(full_coll_mod.geometryObjects):
-        for disabled in Tunnel.disabled_robot_collision_for_links:
+        for disabled in disabled_tunnel_links:
             if obj.name.find(disabled) != -1:
                 disabled_id.append(i)
 
@@ -94,7 +93,10 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
         rename_geometry(c, robot.name + f"_{i}")
         p_r, c_r = pin.appendModel(p_r, p, c_r, c, 0, robot_poses[i])
         if remove_tunnel_collisions:
-            remove_collisions_for_tunnel(c_r, c)
+            for i, model in enumerate(reversed(furniture)):
+                if model.name == "tunnel":
+                    suffix = "_" + model.name + f"_{i + len(objects)}"
+                    remove_collisions_for_tunnel(c_r, c, [s + suffix for s in model.disabled_collision_links_for_robot])
 
     print("num collision pairs - initial:", len(c_r.collisionPairs))
     return p_r, c_r
@@ -128,7 +130,7 @@ class Collision:
     """The collision class consists of Pinocchio urdf and collision models and functions for collision checking and
     Pinocchio model rendering."""
 
-    def __init__(self, task: BaseTask):
+    def __init__(self, task):
         """Initilizie with task eg. ShelfTask..."""
         self.task = task
         self.tunnel = True if task.task_name == "tunnel" else False
