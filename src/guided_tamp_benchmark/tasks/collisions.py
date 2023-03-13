@@ -5,7 +5,6 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import pinocchio as pin
-from pinocchio.visualize import MeshcatVisualizer
 import sys
 import numpy as np
 
@@ -155,6 +154,8 @@ class Collision:
 
     def visualize_through_pinocchio(self, configuration: Configuration):
         """will visualize the given configuration on Pinocchio collision model"""
+        from pinocchio.visualize import MeshcatVisualizer
+
         config = configuration.to_numpy()
         viz = MeshcatVisualizer(self.pin_mod, self.col_mod, self.col_mod)
 
