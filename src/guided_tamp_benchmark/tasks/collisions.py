@@ -4,7 +4,6 @@
 # Created on: 20.02.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
-from __future__ import print_function
 import pinocchio as pin
 from pinocchio.visualize import MeshcatVisualizer
 import sys
