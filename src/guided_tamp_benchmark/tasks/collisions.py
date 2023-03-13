@@ -17,10 +17,9 @@ from guided_tamp_benchmark.tasks.configuration import Configuration
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.models.furniture.tunnel import Tunnel
+from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
-
-from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 
 def rename_frames(model: pin.Model, model_name: str):
@@ -46,6 +45,7 @@ def rename_geometry(collision_model: pin.GeometryModel, model_name: str):
 
 
 def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod: pin.GeometryModel):
+    """removes collision pairs between all robot links and Tunnel.disabled_robot_collision_for_links"""
     disabled_id = []
     for i, obj in enumerate(full_coll_mod.geometryObjects):
         for disabled in Tunnel.disabled_robot_collision_for_links:
@@ -60,7 +60,7 @@ def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod:
             ))
 
 
-def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: list[FurnitureObject],
+def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: List[FurnitureObject],
                  robot_poses: List[pin.SE3]) -> (pin.Model, pin.GeometryModel):
     """Creates pinocchio urdf model and pinocchio collision model from given robots, furniture and objects."""
     p_r = None
