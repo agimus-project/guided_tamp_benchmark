@@ -8,7 +8,7 @@ from guided_tamp_benchmark.models.robots import *
 from guided_tamp_benchmark.tasks import *
 from guided_tamp_benchmark.tasks.configuration import Configuration
 
-task = ShelfTask(0, PandaRobot(), 0)
+task = TunnelTask(0, PandaRobot(), 1)
 config = Configuration(task.robot.initial_configuration(), task.demo.objects_poses[:, 0])
 
 # checks if the given configuration is in collision or not
