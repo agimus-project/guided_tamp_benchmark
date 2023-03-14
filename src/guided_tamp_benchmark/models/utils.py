@@ -47,10 +47,10 @@ def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, d
         if child.tag == "gripper" and grippers:
             gripper_dict[child.attrib["name"]] = {"link": child[1].attrib["name"],
                                                   "pose": [float(n) for n in child[0].text.split()],
-                                                  "clearance": child.attrib["clearance"]}
+                                                  "clearance": float(child.attrib["clearance"])}
         if child.tag == "handle" and handles:
             handle_dict[child.attrib["name"]] = {"link": child[1].attrib["name"],
                                                  "pose": [float(n) for n in child[0].text.split()],
-                                                 "clearance": child.attrib["clearance"]}
+                                                 "clearance": float(child.attrib["clearance"])}
 
     return contact_dict, gripper_dict, handle_dict
