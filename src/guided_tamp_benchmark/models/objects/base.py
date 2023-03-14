@@ -48,14 +48,14 @@ class BaseObject(object):
         if self.create_srdf_file:
             os.unlink(self.srdfFilename)
 
-    def get_contacts(self) -> dict:
+    def get_contacts_info(self) -> dict:
         """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
         contacts, _, _ = parser(root, contacts=True, grippers=False, handles=False)
         return contacts
 
-    def get_handles(self) -> dict:
+    def get_handles_info(self) -> dict:
         """returns handles in a dictionary of a form handles["name"] = {"link": str, "pose": list,
          "clearance"" float}"""
         tree = ET.parse(self.srdfFilename)

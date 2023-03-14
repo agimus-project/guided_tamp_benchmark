@@ -34,7 +34,7 @@ class FurnitureObject(object):
         """Returns the list of all contact surface names defined by the object with optional :param prefix. """
         pass
 
-    def get_contacts(self) -> dict:
+    def get_contacts_info(self) -> dict:
         """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
