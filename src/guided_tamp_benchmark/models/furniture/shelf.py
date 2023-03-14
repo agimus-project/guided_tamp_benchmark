@@ -59,8 +59,7 @@ class Shelf(FurnitureObject):
         """
 
         if inside:
-            return f"""
-                <robot name="shelf">
+            return f"""<robot name="shelf">
                     <link name="base_link">
                         <inertial>
                             <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
@@ -310,8 +309,7 @@ class Shelf(FurnitureObject):
         """
 
         if inside_shelf:
-            return f"""
-                <?xml version="1.0"?>
+            return f"""<?xml version="1.0"?>
                 <robot name="shelf">
                 <contact name="top_shelf_surface">
                         <link name="top_desk"/>

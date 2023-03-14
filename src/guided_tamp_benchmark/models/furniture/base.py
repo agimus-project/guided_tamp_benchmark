@@ -9,6 +9,10 @@ from typing import List
 import tempfile
 import os
 
+import xml.etree.ElementTree as ET
+
+from guided_tamp_benchmark.models import parser
+
 
 class FurnitureObject(object):
     rootJointType = "fix"
@@ -29,3 +33,10 @@ class FurnitureObject(object):
     def contact_surfaces(self, prefix: str = "") -> List[str]:
         """Returns the list of all contact surface names defined by the object with optional :param prefix. """
         pass
+
+    def get_contacts(self) -> dict:
+        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        tree = ET.parse(self.srdfFilename)
+        root = tree.getroot()
+        contacts, _, _ = parser(root, contacts=True, grippers=False, handles=False)
+        return contacts
