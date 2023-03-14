@@ -56,7 +56,8 @@ class BaseObject(object):
         return contacts
 
     def get_handles(self) -> dict:
-        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        """returns handles in a dictionary of a form handles["name"] = {"link": str, "pose": list,
+         "clearance"" float}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
         _, _, handles = parser(root, contacts=False, grippers=False, handles=True)
