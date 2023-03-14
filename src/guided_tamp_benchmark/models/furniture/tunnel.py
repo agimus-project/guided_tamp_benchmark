@@ -251,8 +251,7 @@ class Tunnel(FurnitureObject):
         this function generates text for .srdf file
         :return: text of .srdf file with contact surfaces for the tunnel object
         """
-        return f"""
-            <?xml version="1.0"?>
+        return f"""<?xml version="1.0"?>
             <robot name="tunnel">
             </robot>
                 """

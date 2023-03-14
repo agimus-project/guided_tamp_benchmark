@@ -9,6 +9,10 @@ from typing import List
 
 import pinocchio
 
+import xml.etree.ElementTree as ET
+
+from guided_tamp_benchmark.models import parse_contacts_grippers_handles
+
 
 class BaseRobot(object):
     urdfFilename = ''
@@ -40,3 +44,18 @@ class BaseRobot(object):
     def get_contact_surfaces(self) -> List[str]:
         """ Return contact surfaces of the robot"""
         return []
+
+    def get_contacts_info(self) -> dict:
+        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        tree = ET.parse(self.srdfFilename)
+        root = tree.getroot()
+        contacts, _, _ = parser(root, contacts=True, grippers=False, handles=False)
+        return contacts
+
+    def get_grippers_info(self) -> dict:
+        """returns grippers in a dictionary of a form grippers["name"] = {"link": str, "pose": list,
+         "clearance"" float}"""
+        tree = ET.parse(self.srdfFilename)
+        root = tree.getroot()
+        _, grippers, _ = parse_contacts_grippers_handles(root, contacts=False, grippers=True, handles=False)
+        return grippers

@@ -114,8 +114,7 @@ class Tray(BaseObject):
         :param size: size of the tray in [x, y, z]
         :return: text of .srdf file with contact surfaces for the tray object
         """
-        return f"""
-            <?xml version="1.0"?>
+        return f"""<?xml version="1.0"?>
             <robot name="tray">
                 <contact name="tray_surface">
                     <link name="box"/>
