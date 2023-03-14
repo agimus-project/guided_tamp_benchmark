@@ -26,7 +26,7 @@ def get_ycbv_data_directory() -> Path:
 
 
 def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, dict, dict]:
-    contact, gripper, handle = {}, {}, {}
+    contact_dict, gripper_dict, handle_dict = {}, {}, {}
     for child in root:
         if child.tag == "contact" and contacts:
             shapes = child[2].text.split()
@@ -43,12 +43,14 @@ def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, d
                         break
                 parsed_shapes.append(shape)
 
-            contact[child.attrib["name"]] = {"link": child[0].attrib["name"], "shapes": np.array(parsed_shapes)}
+            contact_dict[child.attrib["name"]] = {"link": child[0].attrib["name"], "shapes": np.array(parsed_shapes)}
         if child.tag == "gripper" and grippers:
-            pass
+            gripper_dict[child.attrib["name"]] = {"link": child[1].attrib["name"],
+                                                  "pose": [float(n) for n in child[0].text.split()],
+                                                  "clearance": child.attrib["clearance"]}
         if child.tag == "handle" and handles:
-            handle[child.attrib["name"]] = {"link": child[1].attrib["name"],
-                                             "pose": [float(n) for n in child[0].text.split()],
-                                             "clearance": child.attrib["clearance"]}
+            handle_dict[child.attrib["name"]] = {"link": child[1].attrib["name"],
+                                                 "pose": [float(n) for n in child[0].text.split()],
+                                                 "clearance": child.attrib["clearance"]}
 
-    return contact, gripper, handle
+    return contact_dict, gripper_dict, handle_dict
