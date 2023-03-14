@@ -95,8 +95,6 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
                 if model.name == "tunnel":
                     suffix = "_" + model.name + f"_{i + len(objects)}"
                     remove_collisions_for_tunnel(c_r, c, [s + suffix for s in model.disabled_collision_links_for_robot])
-
-    print("num collision pairs - initial:", len(c_r.collisionPairs))
     return p_r, c_r
 
 
@@ -131,8 +129,8 @@ class Collision:
     def __init__(self, task):
         """Initilizie with task eg. ShelfTask..."""
         self.task = task
-        self.tunnel = True if task.task_name == "tunnel" else False
-        self.pin_mod, self.col_mod = create_model(remove_tunnel_collisions=self.tunnel, **extract_from_task(task))
+        self.pin_mod, self.col_mod = create_model(remove_tunnel_collisions=True if task.task_name == "tunnel" else False
+                                                  , **extract_from_task(task))
 
     def is_config_valid(self, configuration: Configuration) -> bool:
         """Returns true if given configuration is collision free"""

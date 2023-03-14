@@ -52,7 +52,6 @@ class BaseTask:
     def _check_config_for_collision(self, configuration: Configuration) -> bool:
         """Return true if the given configuration is in collision"""
         result = Collision(self).is_config_valid(configuration)
-        Collision(self).visualize_through_pinocchio(configuration)
         return not result
 
     def _check_path_for_collision(self, path: List[Configuration]) -> Tuple[bool, int]:
