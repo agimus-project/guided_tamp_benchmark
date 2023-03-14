@@ -33,7 +33,7 @@ def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, d
             points = child[1].text.split()
             parsed_shapes = []
             while 0 < len(shapes):
-                s = int(shapes.pop(0))
+                s = float(shapes.pop(0))
                 shape = []
                 while True:
                     n = int(shapes.pop(0))
@@ -47,6 +47,8 @@ def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, d
         if child.tag == "gripper" and grippers:
             pass
         if child.tag == "handle" and handles:
-            pass
+            handle[child.attrib["name"]] = {"link": child[1].attrib["name"],
+                                             "pose": [float(n) for n in child[0].text.split()],
+                                             "clearance": child.attrib["clearance"]}
 
     return contact, gripper, handle
