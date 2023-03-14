@@ -11,7 +11,7 @@ import os
 
 import xml.etree.ElementTree as ET
 
-from guided_tamp_benchmark.models import parser
+from guided_tamp_benchmark.models import parse_contacts_grippers_handles
 
 
 class FurnitureObject(object):
@@ -38,5 +38,5 @@ class FurnitureObject(object):
         """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        contacts, _, _ = parser(root, contacts=True, grippers=False, handles=False)
+        contacts, _, _ = parse_contacts_grippers_handles(root, contacts=True, grippers=False, handles=False)
         return contacts

@@ -25,7 +25,7 @@ def get_ycbv_data_directory() -> Path:
     return get_models_data_directory().joinpath('ycbv')
 
 
-def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, dict, dict]:
+def parse_contacts_grippers_handles(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, dict, dict]:
     """parses info from root of elementary tree xml parser of .srdf file. Returns dictionary with the wanted info in
     following format. contacts["name"] = {"link": str, "shapes": np.array}, handles["name"] = {"link": str,
      "pose": list, "clearance"" float}, grippers["name"] = {"link": str, "pose": list, "clearance"" float}"""
@@ -37,7 +37,7 @@ def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, d
                 points = child[1].text.split()
                 parsed_shapes = []
                 while 0 < len(shapes):
-                    s = float(shapes.pop(0))
+                    s = int(shapes.pop(0))
                     shape = []
                     while True:
                         n = int(shapes.pop(0))

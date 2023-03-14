@@ -11,7 +11,7 @@ import os
 
 import xml.etree.ElementTree as ET
 
-from guided_tamp_benchmark.models import parser
+from guided_tamp_benchmark.models import parse_contacts_grippers_handles
 
 
 class BaseObject(object):
@@ -60,5 +60,5 @@ class BaseObject(object):
          "clearance"" float}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        _, _, handles = parser(root, contacts=False, grippers=False, handles=True)
+        _, _, handles = parse_contacts_grippers_handles(root, contacts=False, grippers=False, handles=True)
         return handles

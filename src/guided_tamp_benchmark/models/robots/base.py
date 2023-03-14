@@ -11,7 +11,7 @@ import pinocchio
 
 import xml.etree.ElementTree as ET
 
-from guided_tamp_benchmark.models import parser
+from guided_tamp_benchmark.models import parse_contacts_grippers_handles
 
 
 class BaseRobot(object):
@@ -57,5 +57,5 @@ class BaseRobot(object):
          "clearance"" float}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        _, grippers, _ = parser(root, contacts=False, grippers=True, handles=False)
+        _, grippers, _ = parse_contacts_grippers_handles(root, contacts=False, grippers=True, handles=False)
         return grippers
