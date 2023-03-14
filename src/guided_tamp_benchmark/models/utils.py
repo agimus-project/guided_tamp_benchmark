@@ -7,6 +7,7 @@
 from pathlib import Path
 
 from typing import Tuple
+import numpy as np
 
 
 def get_models_data_directory() -> Path:
@@ -36,13 +37,13 @@ def parser(root, contacts=False, grippers=False, handles=False) -> Tuple[dict, d
                 shape = []
                 while True:
                     n = int(shapes.pop(0))
-                    shape.append(np.array([points[3 * n], points[3 * n + 1], points[3 * n + 2]]))
+                    shape.append([points[3 * n], points[3 * n + 1], points[3 * n + 2]])
                     s -= 1
                     if s == 0:
                         break
                 parsed_shapes.append(shape)
 
-            handle[child.attrib["name"]] = {"link": child[0].attrib["name"], "shapes": parsed_shapes}
+            contact[child.attrib["name"]] = {"link": child[0].attrib["name"], "shapes": np.array(parsed_shapes)}
         if child.tag == "gripper" and grippers:
             pass
         if child.tag == "handle" and handles:
