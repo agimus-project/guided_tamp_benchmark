@@ -55,7 +55,7 @@ class BaseObject(object):
         contacts, _, _ = parser(root, contacts=True, grippers=False, handles=False)
         return contacts
 
-    def get_grippers(self) -> dict:
+    def get_handles(self) -> dict:
         """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
