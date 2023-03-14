@@ -6,7 +6,8 @@
 
 from abc import ABC, abstractmethod
 
-from guided_tamp_benchmark.core.configuration import Configuration
+from guided_tamp_benchmark.core import Configuration
+
 
 class Path(ABC):
     @abstractmethod
