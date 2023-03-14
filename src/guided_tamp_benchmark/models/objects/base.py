@@ -9,6 +9,11 @@ from typing import List
 import tempfile
 import os
 
+import xml.etree.ElementTree as ET
+
+from guided_tamp_benchmark.models import parser
+
+
 class BaseObject(object):
     rootJointType = "freeflyer"
     urdfSuffix = ""
@@ -42,3 +47,17 @@ class BaseObject(object):
         os.unlink(self.urdfFilename)
         if self.create_srdf_file:
             os.unlink(self.srdfFilename)
+
+    def get_contacts(self) -> dict:
+        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        tree = ET.parse(self.srdfFilename)
+        root = tree.getroot()
+        contacts, _, _ = parser(root, contacts=True, grippers=False, handles=False)
+        return contacts
+
+    def get_grippers(self) -> dict:
+        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        tree = ET.parse(self.srdfFilename)
+        root = tree.getroot()
+        _, _, handles = parser(root, contacts=False, grippers=False, handles=True)
+        return handles
