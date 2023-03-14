@@ -129,7 +129,7 @@ class Collision:
     def __init__(self, task):
         """Initilizie with task eg. ShelfTask..."""
         self.task = task
-        self.pin_mod, self.col_mod = create_model(remove_tunnel_collisions=True if task.task_name == "tunnel" else False
+        self.pin_mod, self.col_mod = create_model(remove_tunnel_collisions=task.task_name == "tunnel"
                                                   , **extract_from_task(task))
 
     def is_config_valid(self, configuration: Configuration) -> bool:
