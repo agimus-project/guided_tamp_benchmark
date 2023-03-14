@@ -11,7 +11,7 @@ from guided_tamp_benchmark.tasks.demonstration import Demonstration
 from guided_tamp_benchmark.models.robots import BaseRobot
 from guided_tamp_benchmark.models.objects import *
 from guided_tamp_benchmark.models.furniture import *
-from guided_tamp_benchmark.core.configuration import Configuration
+from guided_tamp_benchmark.core import Configuration
 
 
 class BaseTask:

@@ -5,3 +5,4 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 from .configuration import Configuration
+from .path import Path

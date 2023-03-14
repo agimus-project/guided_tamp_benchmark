@@ -11,7 +11,7 @@ from robomeshcat import Robot, Scene
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 from guided_tamp_benchmark.tasks.base_task import BaseTask
 
-from guided_tamp_benchmark.core.configuration import Configuration
+from guided_tamp_benchmark.core import Configuration
 
 
 class Renderer:
