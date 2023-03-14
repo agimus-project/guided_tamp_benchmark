@@ -13,6 +13,8 @@ from guided_tamp_benchmark.models.objects import *
 from guided_tamp_benchmark.models.furniture import *
 from .configuration import Configuration
 
+from guided_tamp_benchmark.tasks.collisions import Collision
+
 
 class BaseTask:
     def __init__(self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int):
@@ -47,10 +49,29 @@ class BaseTask:
         """ Check if place constraint is satisfied for a given @param configuration."""
         pass
 
-    def _check_collision(self, path: List[Configuration]) -> bool:
-        """Return true if every configuration of the path is collision-free. Collisions are check with hpp-fcl library.
-         """
-        pass
+    def _check_config_for_collision(self, configuration: Configuration) -> bool:
+        """Return true if the given configuration is in collision"""
+        result = Collision(self).is_config_valid(configuration)
+        return not result
+
+    def _check_path_for_collision(self, path: List[Configuration]) -> Tuple[bool, int]:
+        """ Returns tuple (Bool, i), where i is an integer. Return true if configuration number i is in collision.
+         The collision will be ignored if either grasp constraint or placement constraint is satisfied.
+         Collisions are check with pinocchio library. If there are no collisions return (False, -1)"""
+        # TODO: change for param path 0 - 1 function
+        for i, config in enumerate(path):
+            if self._check_place_constraint(config) or self._check_grasp_constraint(config):
+                pass
+                # TODO: collision checking for constraints
+
+        collision = Collision(self)
+        for i, config in enumerate(path):
+            if config is None:
+                continue
+            if not collision.is_config_valid(config):
+                return True, i
+
+        return False, -1
 
     def compute_lengths(self, path: List[Configuration]) -> Tuple[float, float, float]:
         """Compute the lengths of the path: rotation length of robot joints [rad], positional length of objects [m],
