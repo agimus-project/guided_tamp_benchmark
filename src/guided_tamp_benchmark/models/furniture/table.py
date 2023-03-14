@@ -258,8 +258,7 @@ class Table(FurnitureObject):
         :param size: size of the desk in [x, y]
         :return: text of .srdf file with contact surfaces for the table object
         """
-        return f"""
-            <?xml version="1.0"?>
+        return f"""<?xml version="1.0"?>
             <robot name="table">
                 <contact name="table_surface">
                     <link name="desk"/>

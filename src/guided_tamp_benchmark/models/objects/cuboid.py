@@ -130,8 +130,7 @@ class Cuboid(BaseObject):
         dist = [0 if l / 2 < max_handles_depth else l / 2 - max_handles_depth for l in lengths]
         a, b, c = [l / 2 for l in lengths]
 
-        return f"""
-                <?xml version="1.0"?>
+        return f"""<?xml version="1.0"?>
                 <robot name="box">
 
                  <handle name="handleZpx" clearance="{lengths[0]}">
