@@ -45,9 +45,10 @@ class BaseTask:
         """ Check if grasp constraint is satisfied for a given @param configuration."""
         pass
 
-    def _check_place_constraint(self, configuration: Configuration) -> bool:
+    def _check_place_constraint(self, configuration: Configuration, delta) -> bool:
         """ Check if place constraint is satisfied for a given @param configuration."""
-        pass
+        result = Collision(self).is_config_grasp(configuration, delta)
+        return result
 
     def _check_config_for_collision(self, configuration: Configuration) -> bool:
         """Return true if the given configuration is in collision"""
@@ -59,10 +60,10 @@ class BaseTask:
          The collision will be ignored if either grasp constraint or placement constraint is satisfied.
          Collisions are check with pinocchio library. If there are no collisions return (False, -1)"""
         # TODO: change for param path 0 - 1 function
-        for i, config in enumerate(path):
-            if self._check_place_constraint(config) or self._check_grasp_constraint(config):
-                pass
-                # TODO: collision checking for constraints
+        # for i, config in enumerate(path):
+        #     if self._check_place_constraint(config) or self._check_grasp_constraint(config):
+        #         pass
+        #         # TODO: collision checking for constraints
 
         collision = Collision(self)
         for i, config in enumerate(path):

@@ -8,13 +8,12 @@ import pinocchio as pin
 import sys
 import numpy as np
 
-from typing import List
+from typing import List, Tuple
 
-from guided_tamp_benchmark.tasks.configuration import Configuration
+from guided_tamp_benchmark.core.configuration import Configuration
 
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
-from guided_tamp_benchmark.models.furniture.tunnel import Tunnel
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
@@ -25,7 +24,7 @@ def rename_frames(model: pin.Model, model_name: str):
     for i, frame in enumerate(model.frames):
         if i == 0:
             continue
-        frame.name = f"{frame.name}_{model_name}_{i}"
+        frame.name = f"{frame.name}_{model_name}"
 
 
 def rename_joints(model: pin.Model, model_name: str):
@@ -33,7 +32,7 @@ def rename_joints(model: pin.Model, model_name: str):
     for i in range(0, len(model.names)):
         if i == 0:
             continue
-        model.names[i] = f"{model.names[i]}_{model_name}_{i}"
+        model.names[i] = f"{model.names[i]}_{model_name}"
 
 
 def rename_geometry(collision_model: pin.GeometryModel, model_name: str):
@@ -57,6 +56,13 @@ def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod:
                 full_coll_mod.getGeometryId(obj.name),
                 id
             ))
+
+
+def find_frame_in_frames(model: pin.Model, frame: str) -> int:
+    for i, f in enumerate(model.frames):
+        if f.name.find(frame) != -1:
+            return i
+    return -1
 
 
 def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: List[FurnitureObject],
@@ -149,6 +155,52 @@ class Collision:
             return False
         else:
             return True
+
+    def is_config_grasp(self, configuration: Configuration, delta: float) -> Tuple[bool, list]:
+        data = self.pin_mod.createData()
+        geom_data = pin.GeometryData(self.col_mod)
+        pin.forwardKinematics(self.pin_mod, data, configuration.to_numpy())
+        pin.updateFramePlacements(self.pin_mod, data)
+
+        # t = data.oMf[self.pin_mod.getFrameId("")
+
+        task_info = extract_from_task(self.task)
+        robots = task_info["robots"]
+        objects = task_info["objects"]
+        furniture = task_info["furniture"]
+
+        list_of_grasps = []
+        for i, r in enumerate(robots):
+            grippers = r.get_grippers_info()
+            for k_g in grippers:
+
+                frame = grippers[k_g]["link"] + f"_{r.name}_{i}"
+                assert find_frame_in_frames(self.pin_mod, frame) != -1, \
+                    f"frame {frame} isn't inbetween the frames of the given pinocchio model"
+                T_o_lr = data.oMf[find_frame_in_frames(self.pin_mod, frame)]
+                g_pose = grippers[k_g]["pose"][:3] + grippers[k_g]["pose"][-3:] + [grippers[k_g]["pose"][-4]]
+                T_lr_g = pin.XYZQUATToSE3(g_pose)
+                T_o_g = T_o_lr * T_lr_g
+                for j, o in enumerate(reversed(objects)):
+                    handles = o.get_handles_info()
+                    for k_h in handles:
+                        frame = handles[k_h]["link"] + f"_{o.name}_{j}"
+                        assert find_frame_in_frames(self.pin_mod, frame) != -1, \
+                            f"frame {frame} isn't inbetween the frames of the given pinocchio model"
+                        T_o_lo = data.oMf[find_frame_in_frames(self.pin_mod, frame)]
+                        g_pose = handles[k_h]["pose"][:3] + handles[k_h]["pose"][-3:] + \
+                                 [handles[k_h]["pose"][-4]]
+                        T_lo_h = pin.XYZQUATToSE3(g_pose)
+                        T_o_h = T_o_lo * T_lo_h
+
+                        if np.linalg.norm(pin.log(T_o_g.inverse() * T_o_h)) < delta and handles[k_h]["clearance"] <= \
+                                grippers[k_g]["clearance"]:
+                            list_of_grasps.append((f"{r.name}_{i}/{k_g}", f"{o.name}_{j}/{k_h}"))
+
+        if len(list_of_grasps) > 0:
+            return True, list_of_grasps
+        else:
+            return False, []
 
     def visualize_through_pinocchio(self, configuration: Configuration):
         """will visualize the given configuration on Pinocchio collision model"""
