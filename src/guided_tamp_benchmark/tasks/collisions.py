@@ -59,6 +59,7 @@ def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod:
 
 
 def find_frame_in_frames(model: pin.Model, frame: str) -> int:
+    """Will find given frame name or partial frame name in the frames of given pinocchio model."""
     for i, f in enumerate(model.frames):
         if f.name.find(frame) != -1:
             return i
@@ -157,6 +158,10 @@ class Collision:
             return True
 
     def is_config_grasp(self, configuration: Configuration, delta: float) -> Tuple[bool, list]:
+        """This function will check if configuration is in grasp or not. It will return tuple (bool, [(str, str),...])
+        where bool is True if configuration is in grasp and list contains tuples of two string indicating the links and
+        handles that are grasped link/handle and links and grippers that grasp them link/gripper. If there is no grasp
+        the list will be empty."""
         data = self.pin_mod.createData()
         geom_data = pin.GeometryData(self.col_mod)
         pin.forwardKinematics(self.pin_mod, data, configuration.to_numpy())
@@ -201,6 +206,10 @@ class Collision:
             return True, list_of_grasps
         else:
             return False, []
+
+    def disable_collision_between_obj_and_links(self, obj: str, parent_link: str):
+
+        pass
 
     def visualize_through_pinocchio(self, configuration: Configuration):
         """will visualize the given configuration on Pinocchio collision model"""

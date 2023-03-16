@@ -41,14 +41,13 @@ class BaseTask:
         """Returns the list of object instances"""
         return self.objects
 
-    def _check_grasp_constraint(self, configuration: Configuration) -> bool:
+    def _check_grasp_constraint(self, configuration: Configuration, delta) -> Tuple[bool, list]:
         """ Check if grasp constraint is satisfied for a given @param configuration."""
-        pass
+        return Collision(self).is_config_grasp(configuration, delta)
 
-    def _check_place_constraint(self, configuration: Configuration, delta) -> bool:
+    def _check_place_constraint(self, configuration: Configuration) -> bool:
         """ Check if place constraint is satisfied for a given @param configuration."""
-        result = Collision(self).is_config_grasp(configuration, delta)
-        return result
+        pass
 
     def _check_config_for_collision(self, configuration: Configuration) -> bool:
         """Return true if the given configuration is in collision"""
