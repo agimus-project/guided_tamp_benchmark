@@ -329,8 +329,7 @@ class Shelf(FurnitureObject):
                     </robot>
                 """
         else:
-            return f"""
-                <?xml version="1.0"?>
+            return f"""<?xml version="1.0"?>
                 <robot name="shelf">
                 <contact name="top_shelf_surface">
                         <link name="top_desk"/>
