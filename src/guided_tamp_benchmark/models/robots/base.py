@@ -49,7 +49,7 @@ class BaseRobot(object):
         """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        contacts, _, _ = parser(root, contacts=True, grippers=False, handles=False)
+        contacts, _, _ = parse_contacts_grippers_handles(root, contacts=True, grippers=False, handles=False)
         return contacts
 
     def get_grippers_info(self) -> dict:
