@@ -19,7 +19,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 
 
-def rename_frames(model: pin.Model, model_name: str):
+def _rename_frames(model: pin.Model, model_name: str):
     """Renames the frame names in given model to {previous name}_{model_name}_{i}."""
     for i, frame in enumerate(model.frames):
         if i == 0:
@@ -27,7 +27,7 @@ def rename_frames(model: pin.Model, model_name: str):
         frame.name = f"{frame.name}_{model_name}"
 
 
-def rename_joints(model: pin.Model, model_name: str):
+def _rename_joints(model: pin.Model, model_name: str):
     """Renames the joint names in given model to {previous name}_{model_name}_{i}."""
     for i in range(0, len(model.names)):
         if i == 0:
@@ -35,14 +35,14 @@ def rename_joints(model: pin.Model, model_name: str):
         model.names[i] = f"{model.names[i]}_{model_name}"
 
 
-def rename_geometry(collision_model: pin.GeometryModel, model_name: str):
+def _rename_geometry(collision_model: pin.GeometryModel, model_name: str):
     """Renames the joint names in given model to {previous name}_{model_name}_{i}."""
     for i, geom in enumerate(collision_model.geometryObjects):
         geom.name = f"{geom.name[0:-2]}_{model_name}"
 
 
-def remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod: pin.GeometryModel,
-                                 disabled_tunnel_links: List[str]):
+def _remove_collisions_for_tunnel(full_coll_mod: pin.GeometryModel, rob_coll_mod: pin.GeometryModel,
+                                  disabled_tunnel_links: List[str]):
     """removes collision pairs between all robot links and Tunnel.disabled_robot_collision_for_links"""
     disabled_id = []
     for i, obj in enumerate(full_coll_mod.geometryObjects):
@@ -66,8 +66,8 @@ def find_frame_in_frames(model: pin.Model, frame: str) -> int:
     return -1
 
 
-def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: List[FurnitureObject],
-                 robot_poses: List[pin.SE3], remove_tunnel_collisions: bool) -> (pin.Model, pin.GeometryModel):
+def _create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: List[FurnitureObject],
+                  robot_poses: List[pin.SE3], remove_tunnel_collisions: bool) -> (pin.Model, pin.GeometryModel):
     """Creates pinocchio urdf model and pinocchio collision model from given robots, furniture and objects."""
     p_r = None
     c_r = None
@@ -79,9 +79,9 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
         else:
             p, c, _ = pin.buildModelsFromUrdf(model.urdfFilename, package_dirs=str(get_models_data_directory()))
 
-        rename_joints(p, model.name + f"_{i}")
-        rename_frames(p, model.name + f"_{i}")
-        rename_geometry(c, model.name + f"_{i}")
+        _rename_joints(p, model.name + f"_{i}")
+        _rename_frames(p, model.name + f"_{i}")
+        _rename_geometry(c, model.name + f"_{i}")
         c.addAllCollisionPairs()
         if i == 0:
             p_r = p
@@ -93,19 +93,19 @@ def create_model(robots: List[BaseRobot], objects: List[BaseObject], furniture: 
         p, c, _ = pin.buildModelsFromUrdf(robot.urdfFilename, package_dirs=str(get_models_data_directory()))
         c.addAllCollisionPairs()
         pin.removeCollisionPairs(p, c, robot.srdfFilename)
-        rename_joints(p, robot.name + f"_{i}")
-        rename_frames(p, robot.name + f"_{i}")
-        rename_geometry(c, robot.name + f"_{i}")
+        _rename_joints(p, robot.name + f"_{i}")
+        _rename_frames(p, robot.name + f"_{i}")
+        _rename_geometry(c, robot.name + f"_{i}")
         p_r, c_r = pin.appendModel(p_r, p, c_r, c, 0, robot_poses[i])
         if remove_tunnel_collisions:
             for i, model in enumerate(reversed(furniture)):
                 if model.name == "tunnel":
                     suffix = "_" + model.name + f"_{i + len(objects)}"
-                    remove_collisions_for_tunnel(c_r, c, [s + suffix for s in model.disabled_collision_links_for_robot])
+                    _remove_collisions_for_tunnel(c_r, c, [s + suffix for s in model.disabled_collision_links_for_robot])
     return p_r, c_r
 
 
-def extract_from_task(task) -> dict:
+def _extract_from_task(task) -> dict:
     """Extracts robots, objects, furniture and robot poses from task and returns it in dictionary"""
     furniture = task.furniture
     objects = task.objects
@@ -160,8 +160,8 @@ class Collision:
     def __init__(self, task):
         """Initilizie with task eg. ShelfTask..."""
         self.task = task
-        self.pin_mod, self.col_mod = create_model(remove_tunnel_collisions=task.task_name == "tunnel"
-                                                  , **extract_from_task(task))
+        self.pin_mod, self.col_mod = _create_model(remove_tunnel_collisions=task.task_name == "tunnel"
+                                                   , **_extract_from_task(task))
         self.data = self.pin_mod.createData()
 
     def is_config_valid(self, configuration: Configuration) -> bool:
@@ -221,7 +221,7 @@ class Collision:
         pin.forwardKinematics(self.pin_mod, self.data, configuration.to_numpy())
         pin.updateFramePlacements(self.pin_mod, self.data)
 
-        task_info = extract_from_task(self.task)
+        task_info = _extract_from_task(self.task)
         robots = task_info["robots"]
         objects = task_info["objects"]
         furniture = task_info["furniture"]
@@ -269,7 +269,7 @@ class Collision:
 
         # t = data.oMf[self.pin_mod.getFrameId("")
 
-        task_info = extract_from_task(self.task)
+        task_info = _extract_from_task(self.task)
         robots = task_info["robots"]
         objects = task_info["objects"]
         furniture = task_info["furniture"]
