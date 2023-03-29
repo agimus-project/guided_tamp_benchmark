@@ -123,10 +123,34 @@ def extract_from_task(task) -> dict:
     return {"robots": robots, "objects": objects, "furniture": furniture, "robot_poses": robot_poses}
 
 
-def pose_as_matrix_to_pose_as_quat(pose: np.array) -> np.array:
+def pose_as_matrix_to_pose_as_quat(pose: np.ndarray) -> np.ndarray:
     T = pin.SE3(pose[:3, :3], np.squeeze(pose[:3, 3:]))
     xyz_quat = pin.se3ToXYZQUAT(T)
     return xyz_quat
+
+
+def convex_shape(shape_points: np.ndarray, normal: np.ndarray, frame: pin.SE3) -> Tuple[np.ndarray, np.ndarray]:
+    """will create the equiation for convex shape in form of Ax>=b, where A is matrix and b vector."""
+    A, b = [], []
+    normal_transformed = frame.rotation @ normal
+    # normal = frame.homogeneous @ normal
+    for x, p in enumerate(shape_points):
+        p_a, p_b = np.resize(p, 4), np.resize(shape_points[x - 1], 4)
+        p_a[-1], p_b[-1] = 1, 1
+        p_a, p_b = frame.homogeneous @ p_a, frame.homogeneous @ p_b
+        a = np.cross(normal_transformed[:3], (p_a - p_b)[:3])
+        A.append(a[:2])
+        b.append(np.dot(np.array(A[x]), p_b[:2]))
+    return np.array(A), np.array(b)
+
+
+def ortonormalization(n: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """creates 3 orthonormal vector. Vector n is the result between cross product x and y.
+     Thus, n and y are orthogonal."""
+    q1 = n / np.linalg.norm(n)
+    q2 = y / np.linalg.norm(y)
+    q3 = np.cross(y, n) / np.linalg.norm(np.cross(y, n))
+    return q3, q2, q1
 
 
 class Collision:
@@ -158,101 +182,41 @@ class Collision:
             return True
 
     def is_config_placement(self, configuration: Configuration, delta_upper: float = 0.002,
-                            delta_lower: float = -0.0001) -> tuple[bool, list[tuple[str]]]:
+                            delta_lower: float = -0.0001) -> tuple[bool, list[tuple[str, str]]]:
         """This function checks if objects in configutation are in contact. It returns tuple (bool, [(str, str),...])
         where bool is True if configuration has contacts and list containing tuples of two string indicating the contact
         surfaces that are in contact obj_name/surface If there is no contacts the list will be empty."""
 
-        def find_contacts(delta_upper: float, delta_lower: float, furniture, objects, robot=False) -> List:
-            """will find the contacts and return them as list of tuples of (str, str) where strings are the two contact
-            surfaces interacting. Robot argument specifies whether the contats are between furniture and objects or
-            between robots and objects"""
+        def find_info_for_contact_surface(contacts: np.ndarray) -> Tuple[np.ndarray, np.ndarray, pin.SE3]:
 
-            def find_info_for_contact_surface(contacts: np.array) -> Tuple[np.array, np.array, pin.SE3]:
-                def calculate_normal(x, y):
-                    """calculates normal for two vectors via cross products"""
-                    return np.cross(x, y) / np.linalg.norm(np.cross(x, y))
+            # finds the highest cross product in contact surface shape
+            x, y = 0, 0
+            for i in range(len(contacts)):
+                for j in range(i + 1, len(contacts)):
+                    if np.linalg.norm(np.cross(contacts[i] - contacts[0], contacts[j] - contacts[0])) > \
+                            np.linalg.norm(np.cross(contacts[x] - contacts[0], contacts[y] - contacts[0])):
+                        x, y = i, j
 
-                def ortonormalization(n: np.array, y: np.array) -> tuple:
-                    """creates frame for the contact surface and ortonormalizes it"""
-                    q1 = n / np.linalg.norm(n)
-                    q2 = y / np.linalg.norm(y)
-                    q3 = np.cross(y, n) / np.linalg.norm(np.cross(y, n))
-                    return q3, q2, q1
+            n = np.cross(contacts[x] - contacts[0], contacts[y] - contacts[0]) / np.linalg.norm(
+                np.cross(contacts[x] - contacts[0], contacts[y] - contacts[0]))
+            base = np.array(ortonormalization(n, contacts[y] - contacts[0]))
+            T_fl_fp = pin.SE3(base, contacts[0])
+            A, b = convex_shape(contacts, n, T_fl_fp.inverse())
 
-                def convex_shape(shape_points: np.array, normal: np.array, frame: pin.SE3) -> tuple:
-                    """will create the equiation for convex shape in form of Ax>=b, where A is matrix and b vector."""
-                    A, b = [], []
-                    normal_transformed = frame.rotation @ normal
-                    # normal = frame.homogeneous @ normal
-                    for x, p in enumerate(shape_points):
-                        p_a, p_b = np.resize(p, 4), np.resize(shape_points[x - 1], 4)
-                        p_a[-1], p_b[-1] = 1, 1
-                        p_a, p_b = frame.homogeneous @ p_a, frame.homogeneous @ p_b
-                        a = np.cross(normal_transformed[:3], (p_a - p_b)[:3])
-                        A.append(a[:2])
-                        b.append(np.dot(np.array(A[x]), p_b[:2]))
-                    return np.array(A), np.array(b)
+            return A, b, T_fl_fp
 
-                x, y = find_highest_cross_product(contacts)
-                n = calculate_normal(contacts[x] - contacts[0], contacts[y] - contacts[0])
-                base = np.array(ortonormalization(n, contacts[y] - contacts[0]))
-                T_fl_fp = pin.SE3(base, contacts[0])
-                A, b = convex_shape(contacts, n, T_fl_fp.inverse())
+        def are_points_in_convex_shape(A: np.ndarray, b: np.ndarray, points: np.ndarray, T: pin.SE3, d_u, d_l) -> bool:
+            """chceck whether the points satisfy the convex equation Ax>=b, and whether they are in distance d that
+            satisfies d_l < d < d_u"""
+            tmp = 0
+            for x in range(len(points)):
+                T_ol_op = pin.SE3(np.eye(3), points[x])
+                T_fp_op = T * T_ol_op
+                o_shapes.append(T_fp_op.translation)
+                if d_l < T_fp_op.translation[-1] < d_u:
+                    tmp = tmp + 1 if sum(A @ T_fp_op.translation[:2] >= b) == len(b) else tmp
 
-                return A, b, T_fl_fp
-
-            def find_highest_cross_product(shape):
-                """finds highest cross product in contact surface shape"""
-                x, y = 0, 0
-                for i in range(len(shape)):
-                    for j in range(i + 1, len(shape)):
-                        if np.linalg.norm(np.cross(shape[i] - shape[0], shape[j] - shape[0])) > \
-                                np.linalg.norm(np.cross(shape[x] - shape[0], shape[y] - shape[0])):
-                            x, y = i, j
-                return x, y
-
-            def are_points_in_convex_shape(A: np.array, b: np.array, points: np.array, T: pin.SE3, d_u, d_l) -> bool:
-                """chceck whether the points satisfy the convex equation Ax>=b, and whether they are in distance d that
-                satisfies d_l < d < d_u"""
-                tmp = 0
-                for x in range(len(points)):
-                    T_ol_op = pin.SE3(np.eye(3), points[x])
-                    T_fp_op = T * T_ol_op
-                    o_shapes.append(T_fp_op.translation)
-                    if d_l < T_fp_op.translation[-1] < d_u:
-                        tmp = tmp + 1 if sum(A @ T_fp_op.translation[:2] >= b) == len(b) else tmp
-
-                return tmp == len(points)
-
-            def transform_from_link_to_universe(frame: str) -> pin.SE3:
-                return data.oMf[find_frame_in_frames(self.pin_mod, frame)]
-
-            contacts = []
-            for i, f in enumerate(furniture):
-                f_contacts = f.get_contacts_info()
-                for k_fc in f_contacts:
-                    if not robot:
-                        T_o_fl = transform_from_link_to_universe(
-                            f_contacts[k_fc]["link"] + f"_{f.name}_{i + len(objects)}")
-                    else:
-                        T_o_fl = transform_from_link_to_universe(
-                            f_contacts[k_fc]["link"] + f"_{f.name}_{i}")
-                    for j in range(len(f_contacts[k_fc]["shapes"])):
-                        A, b, T_fl_fp = find_info_for_contact_surface(f_contacts[k_fc]["shapes"][j])
-                        for k, o in enumerate(reversed(objects)):
-                            objects_contacts = o.get_contacts_info()
-                            for k_oc in objects_contacts:
-                                T_o_ol = transform_from_link_to_universe(
-                                    objects_contacts[k_oc]["link"] + f"_{o.name}_{k}")
-                                for l in range(len(objects_contacts[k_oc]["shapes"])):
-                                    o_shapes = []
-                                    T_fp_ol = T_fl_fp.inverse() * T_o_fl.inverse() * T_o_ol
-                                    if are_points_in_convex_shape(A, b, objects_contacts[k_oc]["shapes"][l], T_fp_ol,
-                                                                  delta_upper, delta_lower):
-                                        contacts.append((f"{f.name}/{k_fc}", f"{o.name}/{k_oc}"))
-
-            return contacts
+            return tmp == len(points)
 
         pin.forwardKinematics(self.pin_mod, self.data, configuration.to_numpy())
         pin.updateFramePlacements(self.pin_mod, self.data)
@@ -261,13 +225,39 @@ class Collision:
         robots = task_info["robots"]
         objects = task_info["objects"]
         furniture = task_info["furniture"]
+        furniture.reverse()
 
-        contacts = find_contacts(delta_upper, delta_lower, reversed(furniture), objects, robot=False)
-        contacts += find_contacts(delta_upper, delta_lower, robots, objects, robot=True)
+        contacts = []
+        for i, f in enumerate(furniture + robots):
+            f_contacts = f.get_contacts_info()
+            for k_fc in f_contacts:
+                if i < len(furniture):
+                    T_o_fl = self.data.oMf[
+                        find_frame_in_frames(self.pin_mod, f_contacts[k_fc]["link"] + f"_{f.name}_{i + len(objects)}")]
+                else:
+                    T_o_fl = self.data.oMf[
+                        find_frame_in_frames(self.pin_mod,
+                                             f_contacts[k_fc]["link"] + f"_{f.name}_{i - len(furniture)}")]
+                for j in range(len(f_contacts[k_fc]["shapes"])):
+                    A, b, T_fl_fp = find_info_for_contact_surface(f_contacts[k_fc]["shapes"][j])
+                    for k, o in enumerate(reversed(objects)):
+                        objects_contacts = o.get_contacts_info()
+                        for k_oc in objects_contacts:
+                            T_o_ol = self.data.oMf[
+                                find_frame_in_frames(self.pin_mod, objects_contacts[k_oc]["link"] + f"_{o.name}_{k}")]
+                            for l in range(len(objects_contacts[k_oc]["shapes"])):
+                                o_shapes = []
+                                T_fp_ol = T_fl_fp.inverse() * T_o_fl.inverse() * T_o_ol
+                                if are_points_in_convex_shape(A, b, objects_contacts[k_oc]["shapes"][l], T_fp_ol,
+                                                              delta_upper, delta_lower):
+                                    contacts.append((f"{f.name}/{k_fc}", f"{o.name}/{k_oc}"))
+
+        # contacts = find_contacts(delta_upper, delta_lower, reversed(furniture), objects, robot=False)
+        # contacts += find_contacts(delta_upper, delta_lower, robots, objects, robot=True)
         if len(contacts) > 0:
-            return (True, contacts)
+            return True, contacts
         else:
-            return (False, [])
+            return False, []
 
     def is_config_grasp(self, configuration: Configuration, delta: float) -> Tuple[bool, list]:
         """This function will check if configuration is in grasp or not. It will return tuple (bool, [(str, str),...])
