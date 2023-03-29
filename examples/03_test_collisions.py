@@ -6,7 +6,7 @@
 
 from guided_tamp_benchmark.models.robots import *
 from guided_tamp_benchmark.tasks import *
-from guided_tamp_benchmark.core.configuration import Configuration
+from guided_tamp_benchmark.core import Configuration
 
 import numpy as np
 import dill
@@ -35,10 +35,8 @@ print(task._check_place_constraint(configs[0]))
 print(task._check_config_for_collision(configs[0]))
 
 # chcecks if the give path is in collision or not
-path = None # instert your path here
+path = None  # instert your path hereem
 print(task._check_path_for_collision(path, delta=0.0001))
 
 # checks if configuration has grasps or not
 task._check_grasp_constraint(configs[0], delta=0.0001)
-
-pass

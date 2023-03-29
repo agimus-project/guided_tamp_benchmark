@@ -10,7 +10,7 @@ import numpy as np
 
 from typing import List, Tuple
 
-from guided_tamp_benchmark.core.configuration import Configuration
+from guided_tamp_benchmark.core import Configuration
 
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
@@ -138,17 +138,17 @@ class Collision:
         self.task = task
         self.pin_mod, self.col_mod = create_model(remove_tunnel_collisions=task.task_name == "tunnel"
                                                   , **extract_from_task(task))
+        self.data = self.pin_mod.createData()
 
     def is_config_valid(self, configuration: Configuration) -> bool:
         """Returns true if given configuration is collision free"""
         config = configuration.to_numpy()
 
         # Create data structures
-        data = self.pin_mod.createData()
         geom_data = pin.GeometryData(self.col_mod)
 
         # Compute all the collisions
-        if pin.computeCollisions(self.pin_mod, data, self.col_mod, geom_data, config, False):
+        if pin.computeCollisions(self.pin_mod, self.data, self.col_mod, geom_data, config, False):
             for k in range(len(self.col_mod.collisionPairs)):
                 cr = geom_data.collisionResults[k]
                 cp = self.col_mod.collisionPairs[k]
@@ -157,8 +157,8 @@ class Collision:
         else:
             return True
 
-    def is_config_placement(self, configuration: Configuration, delta_upper=0.002, delta_lower=-0.0001) -> Tuple[
-        bool, list]:
+    def is_config_placement(self, configuration: Configuration, delta_upper: float = 0.002,
+                            delta_lower: float = -0.0001) -> tuple[bool, list[tuple[str]]]:
         """This function checks if objects in configutation are in contact. It returns tuple (bool, [(str, str),...])
         where bool is True if configuration has contacts and list containing tuples of two string indicating the contact
         surfaces that are in contact obj_name/surface If there is no contacts the list will be empty."""
@@ -254,9 +254,8 @@ class Collision:
 
             return contacts
 
-        data = self.pin_mod.createData()
-        pin.forwardKinematics(self.pin_mod, data, configuration.to_numpy())
-        pin.updateFramePlacements(self.pin_mod, data)
+        pin.forwardKinematics(self.pin_mod, self.data, configuration.to_numpy())
+        pin.updateFramePlacements(self.pin_mod, self.data)
 
         task_info = extract_from_task(self.task)
         robots = task_info["robots"]
@@ -275,10 +274,8 @@ class Collision:
         where bool is True if configuration is in grasp and list contains tuples of two string indicating the frames and
         handles that are grasped obj_name/frame_id/handle and frames and grippers that grasp them link/frame_id/gripper.
          If there is no grasp the list will be empty."""
-        data = self.pin_mod.createData()
-        geom_data = pin.GeometryData(self.col_mod)
-        pin.forwardKinematics(self.pin_mod, data, configuration.to_numpy())
-        pin.updateFramePlacements(self.pin_mod, data)
+        pin.forwardKinematics(self.pin_mod, self.data, configuration.to_numpy())
+        pin.updateFramePlacements(self.pin_mod, self.data)
 
         # t = data.oMf[self.pin_mod.getFrameId("")
 
@@ -296,7 +293,7 @@ class Collision:
                 rob_frame_id = find_frame_in_frames(self.pin_mod, frame)
                 assert rob_frame_id != -1, \
                     f"frame {frame} isn't inbetween the frames of the given pinocchio model"
-                T_o_lr = data.oMf[rob_frame_id]
+                T_o_lr = self.data.oMf[rob_frame_id]
                 g_pose = grippers[k_g]["pose"][:3] + grippers[k_g]["pose"][-3:] + [grippers[k_g]["pose"][-4]]
                 T_lr_g = pin.XYZQUATToSE3(g_pose)
                 T_o_g = T_o_lr * T_lr_g
@@ -307,7 +304,7 @@ class Collision:
                         obj_frame_id = find_frame_in_frames(self.pin_mod, frame)
                         assert obj_frame_id != -1, \
                             f"frame {frame} isn't inbetween the frames of the given pinocchio model"
-                        T_o_lo = data.oMf[obj_frame_id]
+                        T_o_lo = self.data.oMf[obj_frame_id]
                         g_pose = handles[k_h]["pose"][:3] + handles[k_h]["pose"][-3:] + \
                                  [handles[k_h]["pose"][-4]]
                         T_lo_h = pin.XYZQUATToSE3(g_pose)
