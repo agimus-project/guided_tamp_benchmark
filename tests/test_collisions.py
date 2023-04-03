@@ -32,7 +32,7 @@ def placement_check_cycle(task: BaseTask, configs: List[Configuration], placemen
     return True
 
 
-class MyTestCase(unittest.TestCase):
+class CollisionFunctionsTestCase(unittest.TestCase):
     def test_collision_checking(self):
         # checks whether the collision checking gives out the same results as previously
         data = pickle.load(open("test_configs.pkl", 'rb'))
@@ -65,5 +65,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(placement_check_cycle(ShelfTask(1, PandaRobot(), 1), data["shelf_1_panda_1"]['configs'],
                                                data["shelf_1_panda_1"]['placements']), True)
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()
