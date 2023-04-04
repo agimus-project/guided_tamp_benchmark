@@ -11,15 +11,30 @@ from xml.etree.ElementTree import ParseError
 
 class ParsesTestCase(unittest.TestCase):
     furniture = [Shelf, Table, Tunnel]
-    fur_args = [[{"pose": np.eye(4), "display_inside_shelf": True}, {"pose": np.eye(4), "display_inside_shelf": False}],
-                [{"pose": np.eye(4), "desk_size": 0.5, "leg_display": True},
-                 {"pose": np.eye(4), "desk_size": 0.5, "leg_display": False}],
-                [{"pose": np.eye(4), "lengths": [0.06] * 3}]]
+    fur_args = [
+        [
+            {"pose": np.eye(4), "display_inside_shelf": True},
+            {"pose": np.eye(4), "display_inside_shelf": False},
+        ],
+        [
+            {"pose": np.eye(4), "desk_size": 0.5, "leg_display": True},
+            {"pose": np.eye(4), "desk_size": 0.5, "leg_display": False},
+        ],
+        [{"pose": np.eye(4), "lengths": [0.06] * 3}],
+    ]
     objects = [Cuboid, ObjectYCBV, Tray]
-    obj_args = [[{"lengths": 0.06}],
-                [{"object_name": "obj_000002"}, {"object_name": "obj_000003"}, {"object_name": "obj_000004"},
-                 {"object_name": "obj_000005"}, {"object_name": "obj_000012"}, {"object_name": "obj_000021"}],
-                [{"tray_size": 0.5}]]
+    obj_args = [
+        [{"lengths": 0.06}],
+        [
+            {"object_name": "obj_000002"},
+            {"object_name": "obj_000003"},
+            {"object_name": "obj_000004"},
+            {"object_name": "obj_000005"},
+            {"object_name": "obj_000012"},
+            {"object_name": "obj_000021"},
+        ],
+        [{"tray_size": 0.5}],
+    ]
     robots = [KukaIIWARobot, KukaMobileIIWARobot, UR5Robot, PandaRobot]
 
     def test_robots(self):
@@ -48,5 +63,5 @@ class ParsesTestCase(unittest.TestCase):
                     self.fail()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
