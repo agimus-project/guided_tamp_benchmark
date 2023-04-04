@@ -41,7 +41,7 @@ def parse_contacts_grippers_handles(root, contacts=False, grippers=False, handle
                     shape = []
                     while True:
                         n = int(shapes.pop(0))
-                        shape.append([points[3 * n], points[3 * n + 1], points[3 * n + 2]])
+                        shape.append([float(points[3 * n]), float(points[3 * n + 1]), float(points[3 * n + 2])])
                         s -= 1
                         if s == 0:
                             break

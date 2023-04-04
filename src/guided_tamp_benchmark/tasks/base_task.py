@@ -11,7 +11,7 @@ from guided_tamp_benchmark.tasks.demonstration import Demonstration
 from guided_tamp_benchmark.models.robots import BaseRobot
 from guided_tamp_benchmark.models.objects import *
 from guided_tamp_benchmark.models.furniture import *
-from guided_tamp_benchmark.core import Configuration
+from guided_tamp_benchmark.core import *
 
 from guided_tamp_benchmark.tasks.collisions import Collision
 
@@ -24,6 +24,7 @@ class BaseTask:
         self.objects = self._create_objects(self.demo.object_ids)
         self.furniture = self._create_furniture(self.demo.furniture_ids, self.demo.furniture_poses,
                                                 self.demo.furniture_params)
+        self.collision = Collision(self)
 
     def get_robot(self) -> BaseRobot:
         """Returns the robot instance of the task"""
@@ -41,36 +42,32 @@ class BaseTask:
         """Returns the list of object instances"""
         return self.objects
 
-    def _check_grasp_constraint(self, configuration: Configuration) -> bool:
-        """ Check if grasp constraint is satisfied for a given @param configuration."""
-        pass
+    def _check_grasp_constraint(self, configuration: Configuration, delta: float) -> tuple[bool, list[tuple[str]]]:
+        """ Check if grasp constraint is satisfied for a given @param configuration. It will return tuple
+        (bool, [(str, str),...]) where bool is True if configuration is in grasp and list contains tuples of two string
+         indicating the frames and handles that are grasped obj_name/frame_id/handle and frames and grippers that grasp
+         them link/frame_id/gripper. If there is no grasp the list will be empty."""
+        return self.collision.is_config_grasp(configuration, delta)
 
-    def _check_place_constraint(self, configuration: Configuration) -> bool:
-        """ Check if place constraint is satisfied for a given @param configuration."""
-        pass
+    def _check_place_constraint(self, configuration: Configuration) -> tuple[bool, list[tuple[str]]]:
+        """ Check if place constraint is satisfied for a given @param configuration. This function checks if objects in
+        configutation are in contact. It returns tuple (bool, [(str, str),...]) where bool is True if configuration has
+        contacts and list containing tuples of two string indicating the contact surfaces that are in contact
+        obj_name/surface If there is no contacts the list will be empty."""
+        return self.collision.is_config_placement(configuration)
 
     def _check_config_for_collision(self, configuration: Configuration) -> bool:
         """Return true if the given configuration is in collision"""
-        result = Collision(self).is_config_valid(configuration)
-        return not result
+        return not self.collision.is_config_valid(configuration)
 
-    def _check_path_for_collision(self, path: List[Configuration]) -> Tuple[bool, int]:
-        """ Returns tuple (Bool, i), where i is an integer. Return true if configuration number i is in collision.
+    def _check_path_for_collision(self, path: Path, delta: float) -> Tuple[bool, float]:
+        """ Returns tuple (Bool, t), where t is a float. Return true if configuration at param t is in collision.
          The collision will be ignored if either grasp constraint or placement constraint is satisfied.
-         Collisions are check with pinocchio library. If there are no collisions return (False, -1)"""
-        # TODO: change for param path 0 - 1 function
-        for i, config in enumerate(path):
-            if self._check_place_constraint(config) or self._check_grasp_constraint(config):
-                pass
-                # TODO: collision checking for constraints
-
-        collision = Collision(self)
-        for i, config in enumerate(path):
-            if config is None:
-                continue
-            if not collision.is_config_valid(config):
-                return True, i
-
+         Collisions are check with pinocchio library. If there are no collisions return (False, -1).
+         Argument delta is a step by which the path will be interpolated."""
+        for t in np.arange(0, 1 + delta, delta):
+            if not self.collision.is_config_valid(path.interpolate(t)):
+                return True, t
         return False, -1
 
     def compute_lengths(self, path: List[Configuration]) -> Tuple[float, float, float]:
