@@ -11,30 +11,60 @@ import xml.etree.ElementTree as ElTree
 from pinocchio import XYZQUATToSE3
 import numpy as np
 
-from guided_tamp_benchmark import models
 from guided_tamp_benchmark.models.objects import BaseObject
 from guided_tamp_benchmark.models.utils import get_ycbv_data_directory
 
-class ObjectYCBV(BaseObject):
 
-    _all_handles = ["handleZpx", "handleZmx", "handleYmx", "handleYpx", "handleZpxSm", "handleZmxSm", "handleZpxSp",
-                    "handleZmxSp", "handleZpy", "handleZmy", "handleXmy", "handleXpy", "handleZpySm", "handleZmySm",
-                    "handleZpySp", "handleZmySp", "handleYpz", "handleYmz", "handleXmz", "handleXpz", "handleYpzSm",
-                    "handleYmzSm", "handleYpzSp", "handleYmzSp"]
+class ObjectYCBV(BaseObject):
+    _all_handles = [
+        "handleZpx",
+        "handleZmx",
+        "handleYmx",
+        "handleYpx",
+        "handleZpxSm",
+        "handleZmxSm",
+        "handleZpxSp",
+        "handleZmxSp",
+        "handleZpy",
+        "handleZmy",
+        "handleXmy",
+        "handleXpy",
+        "handleZpySm",
+        "handleZmySm",
+        "handleZpySp",
+        "handleZmySp",
+        "handleYpz",
+        "handleYmz",
+        "handleXmz",
+        "handleXpz",
+        "handleYpzSm",
+        "handleYmzSm",
+        "handleYpzSp",
+        "handleYmzSp",
+    ]
 
     def __init__(self, object_name: str):
         """
         creates an object with attached srdf and urdf files for HPP
 
-        :param object_name: string whit the objecs name, example: "obj_000002" or "obj_000012"
+        :param object_name: string with the objects name, example: "obj_000002" or
+         "obj_000012"
         """
         super().__init__(create_srdf_file=False)
         self.name = object_name
 
-        self.srdfFilename = str(get_ycbv_data_directory().joinpath("srdf/" + object_name + ".srdf"))
+        self.srdfFilename = str(
+            get_ycbv_data_directory().joinpath("srdf/" + object_name + ".srdf")
+        )
         with os.fdopen(self.fd_urdf, "w") as f:
-            f.write(self.urdf(name=self.name,
-                              obj_path=str(get_ycbv_data_directory().joinpath(f"meshes/{self.name}.obj"))))
+            f.write(
+                self.urdf(
+                    name=self.name,
+                    obj_path=str(
+                        get_ycbv_data_directory().joinpath(f"meshes/{self.name}.obj")
+                    ),
+                )
+            )
 
     @classmethod
     def initial_configuration(cls) -> List[float]:
@@ -43,10 +73,13 @@ class ObjectYCBV(BaseObject):
 
         :return: initial configuration of cuboid considering its size
         """
-        return [0.0, 0.0, 0.0, ] + [0, 0, 0, 1]
+        return [
+            0.0,
+            0.0,
+            0.0,
+        ] + [0, 0, 0, 1]
 
     def handles(self, prefix: str = ""):
-
         """
         This function returns list of all handles prepended with the prefix.
         Handle description following:
@@ -55,11 +88,13 @@ class ObjectYCBV(BaseObject):
 
                         b - m/p if the approach is from minus (m) or plus (p)
 
-                        c - x/y/z is coordinate in which the width of the grip is represented
+                        c - x/y/z is coordinate in which the width of the grip is
+                        represented
 
                         S - optional S means that the handle is a side handle
 
-                        d - m/p argument tells if the side handle is on minus or plus side of cuboid on the third axis
+                        d - m/p argument tells if the side handle is on minus or plus
+                        side of cuboid on the third axis
 
         :param prefix: prefix for handle name
         :return: list of handles [prefix + handleAbc, prefix + handleAbc, ...]
@@ -98,17 +133,18 @@ class ObjectYCBV(BaseObject):
         tree = ElTree.parse(self.srdfFilename)
         handles = {}
         for child in tree.getroot():
-            if child.tag == 'handle':
-                assert child[0].tag == 'position'
+            if child.tag == "handle":
+                assert child[0].tag == "position"
                 xyz_wxyz = [float(x) for x in child[0].text.split()]
                 xyz_xyzw = xyz_wxyz[:3] + xyz_wxyz[4:] + [xyz_wxyz[3]]
-                handles[child.attrib['name']] = np.array(XYZQUATToSE3(xyz_xyzw))
+                handles[child.attrib["name"]] = np.array(XYZQUATToSE3(xyz_xyzw))
         return handles
 
     @staticmethod
     def urdf(name: str, obj_path: str):
         """
-        this function generates text for .urdf file with given parameters to create ycbv object
+        this function generates text for .urdf file with given parameters to create
+        ycbv object
 
         :param name: name of the ycbv object to be created
         :return: text of .urdf file with the description of ycbv object

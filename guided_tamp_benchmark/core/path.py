@@ -2,7 +2,8 @@
 
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 13.03.23
-#     Author: Vladimir Petrik <vladimir.petrik@cvut.cz> and David Kovar <kovarda8@fel.cvut.cz>
+#     Author: Vladimir Petrik <vladimir.petrik@cvut.cz> and
+#               David Kovar <kovarda8@fel.cvut.cz>
 
 from abc import ABC, abstractmethod
 

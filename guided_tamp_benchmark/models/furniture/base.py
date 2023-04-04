@@ -18,7 +18,7 @@ class FurnitureObject(object):
     rootJointType = "fix"
     urdfSuffix = ""
     srdfSuffix = ""
-    name = ''
+    name = ""
 
     def __init__(self) -> None:
         super().__init__()
@@ -31,12 +31,16 @@ class FurnitureObject(object):
 
     @abstractmethod
     def contact_surfaces(self, prefix: str = "") -> List[str]:
-        """Returns the list of all contact surface names defined by the object with optional :param prefix. """
+        """Returns the list of all contact surface names defined by the object with
+        optional :param prefix."""
         pass
 
     def get_contacts_info(self) -> dict:
-        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        """returns contacts in a dictionary of a form
+        contacts["name"] = {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        contacts, _, _ = parse_contacts_grippers_handles(root, contacts=True, grippers=False, handles=False)
+        contacts, _, _ = parse_contacts_grippers_handles(
+            root, contacts=True, grippers=False, handles=False
+        )
         return contacts

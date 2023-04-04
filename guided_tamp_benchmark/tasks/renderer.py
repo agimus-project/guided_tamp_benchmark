@@ -19,26 +19,37 @@ class Renderer:
         super().__init__()
         self.task = task
         self.scene = Scene()
-        'Add robot into the scene'
-        self.robot = Robot(urdf_path=task.robot.urdfFilename.replace('.urdf', '_pddl.urdf') if pddl else task.robot.urdfFilename, 
-                           mesh_folder_path=get_models_data_directory(),
-                           pose=task.get_robot_pose())
+        "Add robot into the scene"
+        self.robot = Robot(
+            urdf_path=task.robot.urdfFilename.replace(".urdf", "_pddl.urdf")
+            if pddl
+            else task.robot.urdfFilename,
+            mesh_folder_path=get_models_data_directory(),
+            pose=task.get_robot_pose(),
+        )
         self.scene.add_robot(self.robot)
 
-        'Add static furniture into the scene'
+        "Add static furniture into the scene"
         for f in task.furniture:
-            self.scene.add_robot(Robot(urdf_path=f.urdfFilename, mesh_folder_path=get_models_data_directory()))
+            self.scene.add_robot(
+                Robot(
+                    urdf_path=f.urdfFilename,
+                    mesh_folder_path=get_models_data_directory(),
+                )
+            )
 
-        'Add movable objects into the scene'
+        "Add movable objects into the scene"
         self.objects = []
         for o in task.objects:
-            vo = Robot(urdf_path=o.urdfFilename, mesh_folder_path=get_models_data_directory())
+            vo = Robot(
+                urdf_path=o.urdfFilename, mesh_folder_path=get_models_data_directory()
+            )
             self.objects.append(vo)
             self.scene.add_robot(vo)
 
     def animate_demonstration(self, fps: int = 25):
-        """Create an animation from the demonstration file, that contains the motion of object but not the motion of
-         the robot"""
+        """Create an animation from the demonstration file, that contains the motion of
+        object but not the motion of the robot"""
         with self.scene.animation(fps=fps):
             self.robot[:] = self.task.robot.initial_configuration()
             for object_poses in self.task.demo.objects_poses.transpose(1, 0, 2, 3):

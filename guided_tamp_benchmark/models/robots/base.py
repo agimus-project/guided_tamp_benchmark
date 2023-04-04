@@ -15,11 +15,11 @@ from guided_tamp_benchmark.models import parse_contacts_grippers_handles
 
 
 class BaseRobot(object):
-    urdfFilename = ''
-    srdfFilename = ''
-    urdfSuffix = ''
-    srdfSuffix = ''
-    name = 'robot'
+    urdfFilename = ""
+    srdfFilename = ""
+    urdfSuffix = ""
+    srdfSuffix = ""
+    name = "robot"
 
     @abstractmethod
     def initial_configuration(self) -> List[float]:
@@ -42,20 +42,26 @@ class BaseRobot(object):
         pass
 
     def get_contact_surfaces(self) -> List[str]:
-        """ Return contact surfaces of the robot"""
+        """Return contact surfaces of the robot"""
         return []
 
     def get_contacts_info(self) -> dict:
-        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        """returns contacts in a dictionary of a form contacts["name"] =
+        {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        contacts, _, _ = parse_contacts_grippers_handles(root, contacts=True, grippers=False, handles=False)
+        contacts, _, _ = parse_contacts_grippers_handles(
+            root, contacts=True, grippers=False, handles=False
+        )
         return contacts
 
     def get_grippers_info(self) -> dict:
-        """returns grippers in a dictionary of a form grippers["name"] = {"link": str, "pose": list,
+        """returns grippers in a dictionary of a form grippers["name"] =
+        {"link": str, "pose": list,
          "clearance"" float}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        _, grippers, _ = parse_contacts_grippers_handles(root, contacts=False, grippers=True, handles=False)
+        _, grippers, _ = parse_contacts_grippers_handles(
+            root, contacts=False, grippers=True, handles=False
+        )
         return grippers

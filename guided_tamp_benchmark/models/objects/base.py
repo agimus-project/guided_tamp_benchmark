@@ -24,7 +24,9 @@ class BaseObject(object):
         self.create_srdf_file = create_srdf_file
         self.fd_urdf, self.urdfFilename = tempfile.mkstemp(suffix=".urdf", text=True)
         if self.create_srdf_file:
-            self.fd_srdf, self.srdfFilename = tempfile.mkstemp(suffix=".srdf", text=True)
+            self.fd_srdf, self.srdfFilename = tempfile.mkstemp(
+                suffix=".srdf", text=True
+            )
 
     @abstractmethod
     def initial_configuration(self) -> List[float]:
@@ -34,13 +36,15 @@ class BaseObject(object):
     @classmethod
     @abstractmethod
     def handles(cls, prefix: str = "") -> List[str]:
-        """Returns the list of all handle names defined by the object with optional :param prefix. """
+        """Returns the list of all handle names defined by the object with optional
+        :param prefix."""
         pass
 
     @classmethod
     @abstractmethod
     def contact_surfaces(cls, prefix: str = "") -> List[str]:
-        """Returns the list of all contact surface names defined by the object with optional :param prefix. """
+        """Returns the list of all contact surface names defined by the object with
+        optional :param prefix."""
         pass
 
     def __del__(self):
@@ -49,16 +53,22 @@ class BaseObject(object):
             os.unlink(self.srdfFilename)
 
     def get_contacts_info(self) -> dict:
-        """returns contacts in a dictionary of a form contacts["name"] = {"link": str, "shapes": np.array}"""
+        """returns contacts in a dictionary of a form contacts["name"] =
+        {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        contacts, _, _ = parse_contacts_grippers_handles(root, contacts=True, grippers=False, handles=False)
+        contacts, _, _ = parse_contacts_grippers_handles(
+            root, contacts=True, grippers=False, handles=False
+        )
         return contacts
 
     def get_handles_info(self) -> dict:
-        """returns handles in a dictionary of a form handles["name"] = {"link": str, "pose": list,
+        """returns handles in a dictionary of a form handles["name"] =
+        {"link": str, "pose": list,
          "clearance"" float}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        _, _, handles = parse_contacts_grippers_handles(root, contacts=False, grippers=False, handles=True)
+        _, _, handles = parse_contacts_grippers_handles(
+            root, contacts=False, grippers=False, handles=True
+        )
         return handles

@@ -2,7 +2,7 @@
 name = "guided-tamp-benchmark"
 version = "0.1.0"
 description = "Benchmark for guided task and motion planning for manipulation tasks."
-authors = ["Kateryna Zorina", "David Kovar", "Vladimir Petrik <vladimir.petrik@cvut.cz>"]
+authors = ["Kateryna Zorina <zorinkat@fbmi.cvut.cz>", "David Kovar <kovarda8@fel.cvut.cz>", "Vladimir Petrik <vladimir.petrik@cvut.cz>"]
 license = "BSD-2-Clause license"
 readme = "README.md"
 packages = [{include = "guided_tamp_benchmark"}]
@@ -12,6 +12,7 @@ python = "^3.10"
 numpy = "^1.24.2"
 pin = "^2.6.17"
 dill = "^0.3.6"
+robomeshcat = "^1.1.1"
 
 
 [tool.poetry.group.dev.dependencies]
