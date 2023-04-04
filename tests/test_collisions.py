@@ -4,7 +4,7 @@ import pickle
 from guided_tamp_benchmark.core import *
 from guided_tamp_benchmark.tasks import *
 from guided_tamp_benchmark.models.robots import *
-
+import pathlib
 from typing import Tuple, List
 
 
@@ -35,7 +35,8 @@ def placement_check_cycle(task: BaseTask, configs: List[Configuration], placemen
 class CollisionFunctionsTestCase(unittest.TestCase):
     def test_collision_checking(self):
         # checks whether the collision checking gives out the same results as previously
-        data = pickle.load(open("test_configs.pkl", 'rb'))
+        path = pathlib.Path(__file__).parent.joinpath('test_configs.pkl')
+        data = pickle.load(open(path, 'rb'))
         self.assertEqual(
             collision_check_cycle(WaiterTask(0, KukaMobileIIWARobot(), 1), data["waiter_0_kmr_0"]['configs']),
             (False, -1))
@@ -46,7 +47,8 @@ class CollisionFunctionsTestCase(unittest.TestCase):
 
     def test_grasp_checking(self):
         # checks whether the grasp checking gives out the same results as previously
-        data = pickle.load(open("test_configs.pkl", 'rb'))
+        path = pathlib.Path(__file__).parent.joinpath('test_configs.pkl')
+        data = pickle.load(open(path, 'rb'))
         self.assertEqual(grasp_check_cycle(WaiterTask(0, KukaMobileIIWARobot(), 1), data["waiter_0_kmr_0"]['configs'],
                                            data["waiter_0_kmr_0"]['grasps']), True)
         self.assertEqual(grasp_check_cycle(TunnelTask(0, UR5Robot(), 1), data["tunnel_0_ur_1"]['configs'],
@@ -56,7 +58,8 @@ class CollisionFunctionsTestCase(unittest.TestCase):
 
     def test_placement_checking(self):
         # checks whether the placement checking gives out the same results as previously
-        data = pickle.load(open("test_configs.pkl", 'rb'))
+        path = pathlib.Path(__file__).parent.joinpath('test_configs.pkl')
+        data = pickle.load(open(path, 'rb'))
         self.assertEqual(
             placement_check_cycle(WaiterTask(0, KukaMobileIIWARobot(), 1), data["waiter_0_kmr_0"]['configs'],
                                   data["waiter_0_kmr_0"]['placements']), True)

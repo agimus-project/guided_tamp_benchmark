@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "guided-tamp-benchmark"
+version = "0.1.0"
+description = "Benchmark for guided task and motion planning for manipulation tasks."
+authors = ["Kateryna Zorina", "David Kovar", "Vladimir Petrik <vladimir.petrik@cvut.cz>"]
+license = "BSD-2-Clause license"
+readme = "README.md"
+packages = [{include = "guided_tamp_benchmark"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.24.2"
+pin = "^2.6.17"
+dill = "^0.3.6"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.2"
+ruff = "^0.0.260"
+black = "^23.3.0"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
