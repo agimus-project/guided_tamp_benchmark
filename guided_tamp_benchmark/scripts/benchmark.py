@@ -3,12 +3,55 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 04.04.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+import time
+
+from guided_tamp_benchmark.core import BasePlanner
+from guided_tamp_benchmark.tasks import BaseTask
+from collections import defaultdict
 
 
 class Benchmark:
+    results = defaultdict(
+        lambda: defaultdict(
+            lambda: defaultdict(
+                lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
+            )
+        )
+    )
 
     def __init__(self):
         pass
 
-    def do_benchmark(self):
+    def do_benchmark(
+            self,
+            task: BaseTask,
+            planner: BasePlanner,
+            seeds,
+            planner_arg: dict,
+            max_planning_time: float = 60,
+    ):
+        for s in seeds:
+            try:
+                p = planner(
+                    task=task,
+                    max_planning_time=max_planning_time,
+                    seeds=s,
+                    **planner_arg
+                )
+            except Exception as e:
+                print(e)
+                continue
+            try:
+                res = p.solve()
+            except Exception as e:
+                print("ERROR")
+                print(e)
+                res = false
+            p.solve()
+
+    def save_benchmark(self, results_path: str):
         pass
+
+
+if __name__ == "__main__":
+    pass

@@ -5,11 +5,29 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 
-class BasePlanner:
-    name = None
+from abc import ABC, abstractmethod
 
-    def solve(self):
+
+class BasePlanner(ABC):
+    """
+    Abstract base class for all planners.
+    To create a new planner class, please implement all the abstract functions and
+    properties.
+    """
+
+    @abstractmethod
+    def __init__(self, task, max_planning_time: float, random_seed: int):
         pass
 
-    def path_len(self) -> float:
+    @property
+    @abstractmethod
+    def name(self):
+        pass
+
+    @abstractmethod
+    def solve(self) -> bool:
+        pass
+
+    @abstractmethod
+    def get_planning_time(self):
         pass
