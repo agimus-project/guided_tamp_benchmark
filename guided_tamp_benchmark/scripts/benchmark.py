@@ -23,12 +23,12 @@ class Benchmark:
         pass
 
     def do_benchmark(
-            self,
-            task: BaseTask,
-            planner: BasePlanner,
-            seeds,
-            planner_arg: dict,
-            max_planning_time: float = 60,
+        self,
+        task: BaseTask,
+        planner: BasePlanner,
+        seeds,
+        planner_arg: dict,
+        max_planning_time: float = 60,
     ):
         for s in seeds:
             try:
@@ -41,13 +41,23 @@ class Benchmark:
             except Exception as e:
                 print(e)
                 continue
+            start_solve_t = time.time()
             try:
                 res = p.solve()
             except Exception as e:
                 print("ERROR")
                 print(e)
-                res = false
+                res = False
             p.solve()
+            end_solve_t = time.time()
+
+            if res:
+                self.results[planner.name][task.task_name][task.demo.demo_id][
+                    task.robot.name
+                ][task.demo.pose_id][s]["time"] = (end_solve_t - start_solve_t)
+
+            else:
+                pass
 
     def save_benchmark(self, results_path: str):
         pass
