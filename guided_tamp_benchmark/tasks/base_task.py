@@ -3,6 +3,7 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 15.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+import copy
 
 import numpy as np
 from typing import List, Tuple
@@ -58,7 +59,7 @@ class BaseTask:
         return self.objects
 
     def _check_grasp_constraint(
-        self, configuration: Configuration, delta: float
+        self, configuration: Configuration, delta: float = 0.001
     ) -> tuple[bool, list[tuple[str]]]:
         """Check if grasp constraint is satisfied for a given @param configuration.
         It will return tuple (bool, [(str, str),...]) where bool is True if
@@ -107,7 +108,20 @@ class BaseTask:
 
     def compute_n_grasps(self, path: List[Configuration]) -> int:
         """Compute the amount of grasp-release actions."""
-        pass
+        grasps, previous_grasps = 0, []
+        for c in path:
+            _, current_grasp = self._check_grasp_constraint(c)
+            tmp = len(current_grasp)
+            for pg in previous_grasps:
+                if len(current_grasp) == 0:
+                    tmp = 0
+                for cg in current_grasp:
+                    if pg == cg:
+                        tmp -= 1
+            previous_grasps = copy.deepcopy(current_grasp)
+            grasps += tmp
+
+        return grasps
 
     @staticmethod
     def _create_objects(obj_ids) -> List[BaseObject]:
