@@ -96,6 +96,22 @@ class CollisionFunctionsTestCase(unittest.TestCase):
             True,
         )
 
+    def test_grasp_counting(self):
+        path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
+        data = pickle.load(open(path, "rb"))
+        self.assertEqual(
+            ShelfTask(1, PandaRobot(), 1).compute_n_grasps(
+                data["shelf_1_panda_1"]["configs"]
+            ),
+            2,
+        )
+        self.assertEqual(
+            TunnelTask(0, UR5Robot(), 1).compute_n_grasps(
+                data["tunnel_0_ur_1"]["configs"]
+            ),
+            3,
+        )
+
     def test_placement_checking(self):
         # checks whether the placement checking gives out the same results as previously
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
