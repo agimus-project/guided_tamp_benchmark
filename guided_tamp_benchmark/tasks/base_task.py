@@ -71,7 +71,7 @@ class BaseTask:
 
     def _check_place_constraint(
         self, configuration: Configuration
-    ) -> tuple[bool, list[tuple[str]]]:
+    ) -> tuple[bool, list[tuple[str, str]]]:
         """Check if place constraint is satisfied for a given @param configuration.
         This function checks if objects in configutation are in contact. It returns
         tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
