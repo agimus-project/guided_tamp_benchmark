@@ -29,5 +29,5 @@ class BasePlanner(ABC):
         pass
 
     @abstractmethod
-    def get_planning_time(self):
+    def get_path_as_configurations(self):
         pass
