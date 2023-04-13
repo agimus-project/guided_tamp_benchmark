@@ -24,7 +24,7 @@ from guided_tamp_benchmark.tasks.collisions import Collision
 
 class BaseTask:
     def __init__(
-        self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int
+            self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int
     ):
         self.task_name: str = task_name
         self.robot: BaseRobot = robot
@@ -59,7 +59,7 @@ class BaseTask:
         return self.objects
 
     def _check_grasp_constraint(
-        self, configuration: Configuration, delta: float = 0.001
+            self, configuration: Configuration, delta: float = 0.001
     ) -> tuple[bool, list[tuple[str]]]:
         """Check if grasp constraint is satisfied for a given @param configuration.
         It will return tuple (bool, [(str, str),...]) where bool is True if
@@ -70,7 +70,9 @@ class BaseTask:
         return self.collision.is_config_grasp(configuration, delta)
 
     def _check_place_constraint(
-        self, configuration: Configuration
+            self, configuration: Configuration,
+            delta_upper: float = 0.002,
+            delta_lower: float = -0.0001
     ) -> tuple[bool, list[tuple[str, str]]]:
         """Check if place constraint is satisfied for a given @param configuration.
         This function checks if objects in configutation are in contact. It returns
@@ -78,7 +80,9 @@ class BaseTask:
         and list containing tuples of two string indicating the contact surfaces that
         are in contact obj_name/surface If there is no contacts the list will be empty.
         """
-        return self.collision.is_config_placement(configuration)
+        return self.collision.is_config_placement(configuration,
+                                                  delta_upper=delta_upper,
+                                                  delta_lower=delta_lower)
 
     def _check_config_for_collision(self, configuration: Configuration) -> bool:
         """Return true if the given configuration is in collision"""
@@ -104,6 +108,7 @@ class BaseTask:
 
     def path_is_successful(self, path: List[Configuration]) -> bool:
         """Return true if path solves the given task."""
+
         pass
 
     def compute_n_grasps(self, path: List[Configuration]) -> int:
