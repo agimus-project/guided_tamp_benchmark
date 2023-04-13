@@ -23,12 +23,12 @@ class Benchmark:
         pass
 
     def do_benchmark(
-        self,
-        task: BaseTask,
-        planner: BasePlanner,
-        seeds,
-        planner_arg: dict,
-        max_planning_time: float = 60,
+            self,
+            task: BaseTask,
+            planner: BasePlanner,
+            seeds,
+            planner_arg: dict,
+            max_planning_time: float = 60,
     ):
         for s in seeds:
             try:
@@ -51,13 +51,34 @@ class Benchmark:
             p.solve()
             end_solve_t = time.time()
 
+            print(
+                f"{task.robot.name} robot pose {task.demo.pose_id},"
+                f" seed {s}, solved: {res}")
+            self.results[planner.name][task.task_name][task.demo.demo_id][
+                task.robot.name][task.demo.pose_id][s][
+                "is_solved"] = res
+
             if res:
                 self.results[planner.name][task.task_name][task.demo.demo_id][
-                    task.robot.name
-                ][task.demo.pose_id][s]["time"] = (end_solve_t - start_solve_t)
+                    task.robot.name][task.demo.pose_id][s][
+                    "time"] = (end_solve_t - start_solve_t)
+
+                self.results[planner.name][task.task_name][task.demo.demo_id][
+                    task.robot.name][task.demo.pose_id][s][
+                    "path_len"] = task.compute_lengths(
+                    planner.get_path_as_configurations())
+
+                self.results[planner.name][task.task_name][task.demo.demo_id][
+                    task.robot.name][task.demo.pose_id][s][
+                    "configs"] = planner.get_path_as_configurations()
+
+                self.results[planner.name][task.task_name][task.demo.demo_id][
+                    task.robot.name][task.demo.pose_id][s][
+                    "grasp_number"] = task.compute_n_grasps(
+                    planner.get_path_as_configurations())
 
             else:
-                pass
+                continue
 
     def save_benchmark(self, results_path: str):
         pass
