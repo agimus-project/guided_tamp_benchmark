@@ -13,7 +13,7 @@ from typing import Tuple, List
 
 
 def collision_check_cycle(
-    task: BaseTask, configs: List[Configuration]
+        task: BaseTask, configs: List[Configuration]
 ) -> Tuple[bool, int]:
     for i, c in enumerate(configs):
         if not task.collision.is_config_valid(c):
@@ -23,7 +23,7 @@ def collision_check_cycle(
 
 
 def grasp_check_cycle(
-    task: BaseTask, configs: List[Configuration], graps: list
+        task: BaseTask, configs: List[Configuration], graps: list
 ) -> bool:
     for i, c in enumerate(configs):
         if not task._check_grasp_constraint(c, delta=0.0001) == graps[i]:
@@ -33,7 +33,7 @@ def grasp_check_cycle(
 
 
 def placement_check_cycle(
-    task: BaseTask, configs: List[Configuration], placement: list
+        task: BaseTask, configs: List[Configuration], placement: list
 ) -> bool:
     for i, c in enumerate(configs):
         if not task._check_place_constraint(c) == placement[i]:
@@ -140,6 +140,18 @@ class CollisionFunctionsTestCase(unittest.TestCase):
             ),
             True,
         )
+
+    def test_valid_path(self):
+        path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
+        data = pickle.load(open(path, "rb"))
+        # self.assertEqual(WaiterTask(0, KukaMobileIIWARobot(), 1).path_is_successful(
+        #     data["waiter_0_kmr_0"]["configs"])[0], True)
+        res = TunnelTask(0, UR5Robot(), 1).path_is_successful(
+            data["tunnel_0_ur_1"]["configs"])
+        self.assertEqual(res[0], True, msg=res[1])
+        res = ShelfTask(1, PandaRobot(), 1).path_is_successful(
+            data["shelf_1_panda_1"]["configs"])
+        self.assertEqual(res[0], True, msg=res[1])
 
 
 if __name__ == "__main__":
