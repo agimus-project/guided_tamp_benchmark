@@ -6,6 +6,7 @@
 
 import pinocchio as pin
 import sys
+import copy
 import numpy as np
 
 from typing import List, Tuple
@@ -42,9 +43,9 @@ def _rename_geometry(collision_model: pin.GeometryModel, model_name: str):
 
 
 def _remove_collisions_for_tunnel(
-    full_coll_mod: pin.GeometryModel,
-    rob_coll_mod: pin.GeometryModel,
-    disabled_tunnel_links: List[str],
+        full_coll_mod: pin.GeometryModel,
+        rob_coll_mod: pin.GeometryModel,
+        disabled_tunnel_links: List[str],
 ):
     """removes collision pairs between all robot links and
     Tunnel.disabled_robot_collision_for_links"""
@@ -61,6 +62,19 @@ def _remove_collisions_for_tunnel(
             )
 
 
+def t_xyz_quat_xyzw_to_pin_se3(pose: list) -> pin.SE3:
+    """returns pinocchio SE3 pose from pose made of translation xyz and
+    quaternion xyzw"""
+    return pin.XYZQUATToSE3(pose[:3] + pose[-3:] + [pose[-4]])
+
+
+def check_if_identity(pose1: list, pose2: list, error: float = 0.0001) -> bool:
+    """check if transformation from pose1 to pose2 is identity with given error"""
+    T_o_p1, T_2p_o = pin.XYZQUATToSE3(pose1), pin.XYZQUATToSE3(pose2).inverse()
+    T_2p_p1 = T_2p_o * T_o_p1
+    return T_2p_p1.isIdentity(prec=error)
+
+
 def find_frame_in_frames(model: pin.Model, frame: str) -> int:
     """Will find given frame name or partial frame name in the frames of given pinocchio
     model."""
@@ -71,11 +85,11 @@ def find_frame_in_frames(model: pin.Model, frame: str) -> int:
 
 
 def _create_model(
-    robots: List[BaseRobot],
-    objects: List[BaseObject],
-    furniture: List[FurnitureObject],
-    robot_poses: List[pin.SE3],
-    remove_tunnel_collisions: bool,
+        robots: List[BaseRobot],
+        objects: List[BaseObject],
+        furniture: List[FurnitureObject],
+        robot_poses: List[pin.SE3],
+        remove_tunnel_collisions: bool,
 ) -> (pin.Model, pin.GeometryModel):
     """Creates pinocchio urdf model and pinocchio collision model from given robots,
     furniture and objects."""
@@ -163,7 +177,7 @@ def pose_as_matrix_to_pose_as_quat(pose: np.ndarray) -> np.ndarray:
 
 
 def convex_shape(
-    shape_points: np.ndarray, normal: np.ndarray, frame: pin.SE3
+        shape_points: np.ndarray, normal: np.ndarray, frame: pin.SE3
 ) -> Tuple[np.ndarray, np.ndarray]:
     """will create the equiation for convex shape in form of Ax>=b, where A is matrix
     and b vector."""
@@ -181,7 +195,7 @@ def convex_shape(
 
 
 def ortonormalization(
-    n: np.ndarray, y: np.ndarray
+        n: np.ndarray, y: np.ndarray
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """creates 3 orthonormal vector. Vector n is the result between cross product x and
     y.
@@ -214,7 +228,7 @@ class Collision:
 
         # Compute all the collisions
         if pin.computeCollisions(
-            self.pin_mod, self.data, self.col_mod, geom_data, config, False
+                self.pin_mod, self.data, self.col_mod, geom_data, config, False
         ):
             for k in range(len(self.col_mod.collisionPairs)):
                 cr = geom_data.collisionResults[k]
@@ -232,10 +246,10 @@ class Collision:
             return True
 
     def is_config_placement(
-        self,
-        configuration: Configuration,
-        delta_upper: float = 0.002,
-        delta_lower: float = -0.0001,
+            self,
+            configuration: Configuration,
+            delta_upper: float = 0.002,
+            delta_lower: float = -0.0001,
     ) -> tuple[bool, list[tuple[str, str]]]:
         """This function checks if objects in configutation are in contact. It returns
         tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
@@ -244,14 +258,15 @@ class Collision:
         """
 
         def find_info_for_contact_surface(
-            contacts: np.ndarray,
+                contacts: np.ndarray,
         ) -> Tuple[np.ndarray, np.ndarray, pin.SE3]:
             # finds the highest cross product in contact surface shape
             x, y = 0, 0
             for i in range(len(contacts)):
                 for j in range(i + 1, len(contacts)):
                     if np.linalg.norm(
-                        np.cross(contacts[i] - contacts[0], contacts[j] - contacts[0])
+                            np.cross(contacts[i] - contacts[0],
+                                     contacts[j] - contacts[0])
                     ) > np.linalg.norm(
                         np.cross(contacts[x] - contacts[0], contacts[y] - contacts[0])
                     ):
@@ -269,7 +284,7 @@ class Collision:
             return A, b, T_fl_fp
 
         def are_points_in_convex_shape(
-            A: np.ndarray, b: np.ndarray, points: np.ndarray, T: pin.SE3, d_u, d_l
+                A: np.ndarray, b: np.ndarray, points: np.ndarray, T: pin.SE3, d_u, d_l
         ) -> bool:
             """chceck whether the points satisfy the convex equation Ax>=b, and whether
             they are in distance d that satisfies d_l < d < d_u"""
@@ -294,10 +309,9 @@ class Collision:
         robots = task_info["robots"]
         objects = task_info["objects"]
         furniture = task_info["furniture"]
-        furniture.reverse()
 
         contacts = []
-        for i, f in enumerate(furniture + robots):
+        for i, f in enumerate(furniture[::-1] + robots):
             f_contacts = f.get_contacts_info()
             for k_fc in f_contacts:
                 if i < len(furniture):
@@ -332,12 +346,12 @@ class Collision:
                                 o_shapes = []
                                 T_fp_ol = T_fl_fp.inverse() * T_o_fl.inverse() * T_o_ol
                                 if are_points_in_convex_shape(
-                                    A,
-                                    b,
-                                    objects_contacts[k_oc]["shapes"][m],
-                                    T_fp_ol,
-                                    delta_upper,
-                                    delta_lower,
+                                        A,
+                                        b,
+                                        objects_contacts[k_oc]["shapes"][m],
+                                        T_fp_ol,
+                                        delta_upper,
+                                        delta_lower,
                                 ):
                                     contacts.append(
                                         (f"{f.name}/{k_fc}", f"{o.name}/{k_oc}")
@@ -348,7 +362,7 @@ class Collision:
             return False, []
 
     def is_config_grasp(
-        self, configuration: Configuration, delta: float
+            self, configuration: Configuration, delta: float
     ) -> Tuple[bool, list]:
         """This function will check if configuration is in grasp or not. It will return
         tuple (bool, [(str, str),...]) where bool is True if configuration is in grasp
@@ -375,12 +389,7 @@ class Collision:
                     f" pinocchio model"
                 )
                 T_o_lr = self.data.oMf[rob_frame_id]
-                g_pose = (
-                    grippers[k_g]["pose"][:3]
-                    + grippers[k_g]["pose"][-3:]
-                    + [grippers[k_g]["pose"][-4]]
-                )
-                T_lr_g = pin.XYZQUATToSE3(g_pose)
+                T_lr_g = t_xyz_quat_xyzw_to_pin_se3(grippers[k_g]["pose"])
                 T_o_g = T_o_lr * T_lr_g
                 for j, o in enumerate(reversed(objects)):
                     handles = o.get_handles_info()
@@ -392,17 +401,13 @@ class Collision:
                             f"the given pinocchio model"
                         )
                         T_o_lo = self.data.oMf[obj_frame_id]
-                        g_pose = (
-                            handles[k_h]["pose"][:3]
-                            + handles[k_h]["pose"][-3:]
-                            + [handles[k_h]["pose"][-4]]
-                        )
-                        T_lo_h = pin.XYZQUATToSE3(g_pose)
+                        T_lo_h = t_xyz_quat_xyzw_to_pin_se3(handles[k_h]["pose"])
                         T_o_h = T_o_lo * T_lo_h
 
                         if (
-                            np.linalg.norm(pin.log(T_o_g.inverse() * T_o_h)) < delta
-                            and handles[k_h]["clearance"] <= grippers[k_g]["clearance"]
+                                np.linalg.norm(pin.log(T_o_g.inverse() * T_o_h)) < delta
+                                and handles[k_h]["clearance"] <= grippers[k_g][
+                            "clearance"]
                         ):
                             list_of_grasps.append(
                                 (
@@ -415,6 +420,22 @@ class Collision:
             return True, list_of_grasps
         else:
             return False, []
+
+    def separate_configs(self, configuration: Configuration) -> dict:
+        separated = {}
+        configs = configuration.to_numpy()
+        task_info = _extract_from_task(self.task)
+        robots, objects = task_info["robots"], task_info["objects"]
+
+        sum = 0
+        for i, r in enumerate(robots):
+            separated[r.name] = configs[sum: sum + len(r.initial_configuration())]
+            sum += len(r.initial_configuration())
+
+        for i, o in enumerate(reversed(objects)):
+            separated[o.name] = configs[sum + i * 7:sum + i * 7 + 7]
+
+        return separated
 
     def visualize_through_pinocchio(self, configuration: Configuration):
         """will visualize the given configuration on Pinocchio collision model"""
