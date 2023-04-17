@@ -6,6 +6,7 @@
 import copy
 
 import numpy as np
+import pinocchio as pin
 from typing import List, Tuple
 
 from guided_tamp_benchmark.tasks.demonstration import Demonstration
@@ -19,7 +20,8 @@ from guided_tamp_benchmark.models.furniture import (
 )
 from guided_tamp_benchmark.core import Configuration, Path
 
-from guided_tamp_benchmark.tasks.collisions import Collision
+from guided_tamp_benchmark.tasks.collisions import Collision, \
+    t_xyz_quat_xyzw_to_pin_se3, check_if_identity
 
 
 class BaseTask:
@@ -106,10 +108,87 @@ class BaseTask:
             np.sum([c1.distance(c2) for c1, c2 in zip(path[:-1], path[1:])], axis=0)
         )
 
-    def path_is_successful(self, path: List[Configuration]) -> bool:
+    def path_is_successful(self, path: List[Configuration],
+                           error_robot_distance: float = 0.0001) -> Tuple[bool, str]:
         """Return true if path solves the given task."""
 
-        pass
+        prev_placed = []
+        prev_config = []
+        objects = self.objects
+        for i, obj in enumerate(objects):
+            if obj.name == "tray":
+                objects.pop(i)
+
+        init_config = self.collision.separate_configs(
+            Configuration(self.robot.initial_configuration(),
+                          self.demo.objects_poses[:, 0]))
+        goal_config = self.collision.separate_configs(
+            Configuration(self.robot.initial_configuration(),
+                          self.demo.objects_poses[:, -1]))
+
+        first_config = self.collision.separate_configs(path[0])
+        last_config = self.collision.separate_configs(path[-1])
+
+        for o in objects:
+            if not check_if_identity(init_config[o.name], first_config[o.name]):
+                return False, f"first pose of object {o.name} doesn't match with " \
+                              f"its initial configuration from demonstration"
+            if not check_if_identity(goal_config[o.name], last_config[o.name]):
+                return False, f"flast pose of object {o.name} doesn't match with " \
+                              f"its goal configuration from demonstration"
+
+        if self.compute_lengths([Configuration(init_config[self.robot.name], np.eye(4)),
+                                Configuration(first_config[self.robot.name],
+                                              np.eye(4))]) > error_robot_distance:
+            return False, f"first configuration of robot {self.robot.name} doesn't" \
+                          f" match with its initial configuration"
+
+        if self.compute_lengths([Configuration(goal_config[self.robot.name], np.eye(4)),
+                                Configuration(last_config[self.robot.name],
+                                              np.eye(4))]) > error_robot_distance:
+            return False, f"last configuration of robot {self.robot.name} doesn't" \
+                          f" match with its initial configuration"
+
+        for i, c in enumerate(path):
+            if self._check_config_for_collision(c):
+                return False, f"collision at config {i}"
+
+            grasp = self._check_grasp_constraint(c)
+            place = self._check_place_constraint(c)
+
+            is_constrained = len(objects) * [False]
+            is_placed = []
+
+            for p in place[1]:
+                for j, o in enumerate(objects):
+                    if p[1].find(o.name) != -1:
+                        is_constrained[j] = True
+                    else:
+                        is_placed.append(o.name)
+
+            for g in grasp[1]:
+                for j, o in enumerate(objects):
+                    if g[1].find(o.name) != -1:
+                        is_constrained[j] = True
+
+            if not all(is_constrained):
+                for j, ic in enumerate(is_constrained):
+                    if ic is False:
+                        return False, f"unconstrained object {objects[j].name}" \
+                                      f" at config {i}"
+
+            curr_config = self.collision.separate_configs(c)
+            for pp in prev_placed:
+                for ip in is_placed:
+                    if pp == ip:
+                        if not check_if_identity(prev_config[pp], curr_config[ip]):
+                            return False, f"object {pp}, moved between configuration " \
+                                          f"{i} and {i - 1}, even though its under" \
+                                          f"placement constraint."
+            prev_placed = is_placed
+            prev_config = curr_config
+
+        return True, "path is successful"
 
     def compute_n_grasps(self, path: List[Configuration]) -> int:
         """Compute the amount of grasp-release actions."""
