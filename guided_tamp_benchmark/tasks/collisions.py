@@ -362,7 +362,7 @@ class Collision:
             return False, []
 
     def is_config_grasp(
-            self, configuration: Configuration, delta: float
+            self, configuration: Configuration, delta: float = 0.001
     ) -> Tuple[bool, list]:
         """This function will check if configuration is in grasp or not. It will return
         tuple (bool, [(str, str),...]) where bool is True if configuration is in grasp
