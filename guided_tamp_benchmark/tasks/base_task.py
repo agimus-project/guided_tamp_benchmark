@@ -138,24 +138,26 @@ class BaseTask:
         for o in objects:
             if not check_if_identity(init_config[o.name], first_config[o.name],
                                      error=error_identity):
-                return False, f"first pose of object {o.name} doesn't match with " \
-                              f"its initial configuration from demonstration"
+                return False, f"first pose of object {o.name} doesn't match with" \
+                              f" its initial configuration from demonstration"
             if not check_if_identity(goal_config[o.name], last_config[o.name],
                                      error=error_identity):
-                return False, f"last pose of object {o.name} doesn't match with " \
-                              f"its goal configuration from demonstration"
+                return False, f"last pose of object {o.name} doesn't match with" \
+                              f" its goal configuration from demonstration"
 
         if \
-        self.compute_lengths([Configuration(init_config[self.robot.name], [np.eye(4)]),
-                              Configuration(first_config[self.robot.name],
-                                            [np.eye(4)])])[0] > error_robot_distance:
+                self.compute_lengths(
+                    [Configuration(init_config[self.robot.name], [np.eye(4)]),
+                     Configuration(first_config[self.robot.name],
+                                   [np.eye(4)])])[0] > error_robot_distance:
             return False, f"first configuration of robot {self.robot.name} doesn't" \
                           f" match with its initial configuration"
 
         if \
-        self.compute_lengths([Configuration(goal_config[self.robot.name], [np.eye(4)]),
-                              Configuration(last_config[self.robot.name],
-                                            [np.eye(4)])])[0] > error_robot_distance:
+                self.compute_lengths(
+                    [Configuration(goal_config[self.robot.name], [np.eye(4)]),
+                     Configuration(last_config[self.robot.name],
+                                   [np.eye(4)])])[0] > error_robot_distance:
             return False, f"last configuration of robot {self.robot.name} doesn't" \
                           f" match with its goal configuration"
 
@@ -194,9 +196,9 @@ class BaseTask:
                     if pp == ip:
                         if not check_if_identity(prev_config[pp], curr_config[ip],
                                                  error=error_identity):
-                            return False, f"object {pp}, moved between configuration " \
-                                          f"{i} and {i - 1}, even though its under" \
-                                          f"placement constraint."
+                            return False, f"object {pp}, moved between configuration" \
+                                          f" {i} and {i - 1}, even though its under" \
+                                          f" placement constraint."
             prev_placed = is_placed
             prev_config = curr_config
 
