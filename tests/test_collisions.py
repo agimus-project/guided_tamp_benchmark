@@ -97,6 +97,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         )
 
     def test_grasp_counting(self):
+        # checks whether the grasp counting gives out the same results as previously
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
         self.assertEqual(
@@ -142,17 +143,38 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         )
 
     def test_valid_path(self):
+        # test path_is_successful function
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
-        # self.assertEqual(WaiterTask(0, KukaMobileIIWARobot(), 1).path_is_successful(
-        #     data["waiter_0_kmr_0"]["configs"])[0], True)
+
+        res = WaiterTask(0, KukaMobileIIWARobot(), 1).path_is_successful(
+            data["waiter_0_kmr_0"]["configs"])
+        self.assertEqual(res, (False,
+                               "last configuration of robot kmr_iiwa doesn't"
+                               " match with its goal configuration"),
+                         msg=res[1] + " tunnel task test")
+
         res = TunnelTask(0, UR5Robot(), 1).path_is_successful(
             data["tunnel_0_ur_1"]["configs"])
-        self.assertEqual(res[0], True, msg=res[1])
+        self.assertEqual(res[0], True, msg=res[1] + " tunnel task test")
+
         res = ShelfTask(1, PandaRobot(), 1).path_is_successful(
             data["shelf_1_panda_1"]["configs"])
-        self.assertEqual(res[0], True, msg=res[1])
+        self.assertEqual(res, (False,
+                               "last pose of object obj_000002 doesn't match with its "
+                               "goal configuration from demonstration"),
+                         msg=res[1] + " shelf task 2 test")
 
+        st = ShelfTask(2, PandaRobot(), 1)
+        res = st.path_is_successful([Configuration(st.robot.initial_configuration(),
+                                                   st.demo.subgoal_objects_poses[:, 0]),
+                                     Configuration(st.robot.initial_configuration(),
+                                                   st.demo.subgoal_objects_poses[:,
+                                                   -1])])
+        self.assertEqual(res, (False, 'object obj_000002, moved between configuration '
+                                      '1 and 0, even though its under placement'
+                                      ' constraint.'),
+                         msg=res[1] + " shelf task 3 test")
 
-if __name__ == "__main__":
-    unittest.main()
+        if __name__ == "__main__":
+            unittest.main()
