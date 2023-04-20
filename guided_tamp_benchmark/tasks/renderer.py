@@ -7,7 +7,6 @@
 from typing import List
 
 from robomeshcat import Robot, Scene
-
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 from guided_tamp_benchmark.tasks.base_task import BaseTask
 
@@ -41,9 +40,11 @@ class Renderer:
         "Add movable objects into the scene"
         self.objects = []
         for o in task.objects:
+            if o.name == 'base':
+                continue
             vo = Robot(
-                urdf_path=o.urdfFilename, mesh_folder_path=get_models_data_directory()
-            )
+                urdf_path=o.urdfFilename, mesh_folder_path=get_models_data_directory(),
+                texture=str(get_models_data_directory()) + "/ycbv/meshes/" + o.name + "_texture.png")
             self.objects.append(vo)
             self.scene.add_robot(vo)
 
