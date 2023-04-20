@@ -30,6 +30,9 @@ class Benchmark:
             planner_arg: dict,
             max_planning_time: float = 60,
     ):
+        """runs benchmarking for the given planner with given arguments, on given task
+        and seeds with the specified max planning time. Results will be saved in
+        Benchmark.results dictionary"""
         for s in seeds:
             try:
                 p = planner(
@@ -81,6 +84,7 @@ class Benchmark:
                 continue
 
     def save_benchmark(self, results_path: str):
+        """saves the benchmarking results to the given file"""
         pass
 
 
