@@ -44,7 +44,9 @@ def placement_check_cycle(
 
 class CollisionFunctionsTestCase(unittest.TestCase):
     def test_collision_checking(self):
-        # checks whether the collision checking gives out the same results as previously
+        """
+        checks whether the collision checking gives out the same results as previously
+        """
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
         self.assertEqual(
@@ -68,7 +70,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         )
 
     def test_grasp_checking(self):
-        # checks whether the grasp checking gives out the same results as previously
+        """checks whether the grasp checking gives out the same results as previously"""
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
         self.assertEqual(
@@ -97,7 +99,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         )
 
     def test_grasp_counting(self):
-        # checks whether the grasp counting gives out the same results as previously
+        """checks whether the grasp counting gives out the same results as previously"""
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
         self.assertEqual(
@@ -114,7 +116,9 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         )
 
     def test_placement_checking(self):
-        # checks whether the placement checking gives out the same results as previously
+        """
+        checks whether the placement checking gives out the same results as previously
+        """
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
         self.assertEqual(
@@ -143,7 +147,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         )
 
     def test_valid_path(self):
-        # test path_is_successful function
+        """test path_is_successful function"""
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
 
