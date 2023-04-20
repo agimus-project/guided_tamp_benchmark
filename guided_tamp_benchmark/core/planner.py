@@ -7,6 +7,8 @@
 
 from abc import ABC, abstractmethod
 
+from guided_tamp_benchmark.core import Path
+
 
 class BasePlanner(ABC):
     """
@@ -21,7 +23,7 @@ class BasePlanner(ABC):
 
     @property
     @abstractmethod
-    def name(self):
+    def name(self) -> str:
         pass
 
     @abstractmethod
@@ -29,5 +31,5 @@ class BasePlanner(ABC):
         pass
 
     @abstractmethod
-    def get_path_as_configurations(self):
+    def get_path(self) -> Path:
         pass
