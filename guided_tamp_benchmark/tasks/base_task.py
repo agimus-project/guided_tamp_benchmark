@@ -62,25 +62,33 @@ class BaseTask:
 
     def _check_grasp_constraint(
             self, configuration: Configuration, delta: float = 0.001
-    ) -> tuple[bool, list[tuple[str]]]:
+    ) -> Tuple[bool, List[Tuple[str]]]:
         """Check if grasp constraint is satisfied for a given @param configuration.
         It will return tuple (bool, [(str, str),...]) where bool is True if
         configuration is in grasp and list contains tuples of two string indicating the
         frames and handles that are grasped obj_name/frame_id/handle and frames and
         grippers that grasp them link/frame_id/gripper. If there is no grasp the list
-        will be empty."""
+        will be empty.
+
+        delta
+        """
         return self.collision.is_config_grasp(configuration, delta)
 
     def _check_place_constraint(
             self, configuration: Configuration,
             delta_upper: float = 0.002,
             delta_lower: float = -0.0001
-    ) -> tuple[bool, list[tuple[str, str]]]:
+    ) -> Tuple[bool, List[Tuple[str, str]]]:
         """Check if place constraint is satisfied for a given @param configuration.
         This function checks if objects in configutation are in contact. It returns
         tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
         and list containing tuples of two string indicating the contact surfaces that
         are in contact obj_name/surface If there is no contacts the list will be empty.
+
+        delta_upper: defines max. distance between two contact surfaces for which the
+                        placement constraint is true.
+        delta_lower: defines max. negative distance between two contact surfaces for
+                        which the placement constraint is true.
         """
         return self.collision.is_config_placement(configuration,
                                                   delta_upper=delta_upper,
@@ -116,7 +124,17 @@ class BaseTask:
                            error_placement_lower: float = -0.0001,
                            error_grasp: float = 0.001
                            ) -> Tuple[bool, str]:
-        """Return true if path solves the given task."""
+        """Return true if path solves the given task. The function has the following
+        errors in freedom for specific functions:
+            error_robot_distance: used in checking whether robots first and last joint
+                                    configuration match the init and goal configuration
+            error_identity: used in checking for whether objects moves between two
+                            consecutive configuration when the object is in placement
+                            constraint
+            error_placement_upper: used by _check_place_constraint() function
+            error_placement_lower: used by _check_place_constraint() function
+            error_grasp: used by _check_grasp_constraint() function
+            """
 
         prev_placed = []
         prev_config = []
@@ -136,7 +154,7 @@ class BaseTask:
         last_config = self.collision.separate_configs(path[-1])
 
         for o in objects:
-            if not check_if_identity(init_config[o.name], first_config[o.name],
+            if not check_if_identity(y[o.name], first_config[o.name],
                                      error=error_identity):
                 return False, f"first pose of object {o.name} doesn't match with" \
                               f" its initial configuration from demonstration"
