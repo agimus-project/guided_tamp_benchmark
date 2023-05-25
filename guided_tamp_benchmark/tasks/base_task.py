@@ -53,22 +53,25 @@ class BaseTask:
         return self.demo.robot_pose
 
     def get_furniture(self) -> List[FurnitureObject]:
-        """Returns the List of furniture instances"""
+        """Returns the list of furniture instances"""
         return self.furniture
 
     def get_objects(self) -> List[BaseObject]:
-        """Returns the List of object instances"""
+        """Returns the list of object instances"""
         return self.objects
 
     def _check_grasp_constraint(
             self, configuration: Configuration, delta: float = 0.001
     ) -> Tuple[bool, List[Tuple[str]]]:
         """Check if grasp constraint is satisfied for a given @param configuration.
-        It will return Tuple (bool, [(str, str),...]) where bool is True if
-        configuration is in grasp and List contains Tuples of two string indicating the
+        It will return tuple (bool, [(str, str),...]) where bool is True if
+        configuration is in grasp and list contains tuples of two string indicating the
         frames and handles that are grasped obj_name/frame_id/handle and frames and
-        grippers that grasp them link/frame_id/gripper. If there is no grasp the List
-        will be empty."""
+        grippers that grasp them link/frame_id/gripper. If there is no grasp the list
+        will be empty.
+
+        delta
+        """
         return self.collision.is_config_grasp(configuration, delta)
 
     def _check_place_constraint(
@@ -78,9 +81,14 @@ class BaseTask:
     ) -> Tuple[bool, List[Tuple[str, str]]]:
         """Check if place constraint is satisfied for a given @param configuration.
         This function checks if objects in configutation are in contact. It returns
-        Tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
-        and List containing Tuples of two string indicating the contact surfaces that
-        are in contact obj_name/surface If there is no contacts the List will be empty.
+        tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
+        and list containing tuples of two string indicating the contact surfaces that
+        are in contact obj_name/surface If there is no contacts the list will be empty.
+
+        delta_upper: defines max. distance between two contact surfaces for which the
+                        placement constraint is true.
+        delta_lower: defines max. negative distance between two contact surfaces for
+                        which the placement constraint is true.
         """
         return self.collision.is_config_placement(configuration,
                                                   delta_upper=delta_upper,
@@ -91,7 +99,7 @@ class BaseTask:
         return not self.collision.is_config_valid(configuration)
 
     def _check_path_for_collision(self, path: Path, delta: float) -> Tuple[bool, float]:
-        """Returns Tuple (Bool, t), where t is a float. Return true if configuration at
+        """Returns tuple (Bool, t), where t is a float. Return true if configuration at
          param t is in collision. The collision will be ignored if either grasp
          constraint or placement constraint is satisfied. Collisions are check with
         pinocchio library. If there are no collisions return (False, -1). Argument delta
@@ -116,7 +124,17 @@ class BaseTask:
                            error_placement_lower: float = -0.0001,
                            error_grasp: float = 0.001
                            ) -> Tuple[bool, str]:
-        """Return true if path solves the given task."""
+        """Return true if path solves the given task. The function has the following
+        errors in freedom for specific functions:
+            error_robot_distance: used in checking whether robots first and last joint
+                                    configuration match the init and goal configuration
+            error_identity: used in checking for whether objects moves between two
+                            consecutive configuration when the object is in placement
+                            constraint
+            error_placement_upper: used by _check_place_constraint() function
+            error_placement_lower: used by _check_place_constraint() function
+            error_grasp: used by _check_grasp_constraint() function
+            """
 
         prev_placed = []
         prev_config = []
@@ -136,7 +154,7 @@ class BaseTask:
         last_config = self.collision.separate_configs(path[-1])
 
         for o in objects:
-            if not check_if_identity(init_config[o.name], first_config[o.name],
+            if not check_if_identity(y[o.name], first_config[o.name],
                                      error=error_identity):
                 return False, f"first pose of object {o.name} doesn't match with" \
                               f" its initial configuration from demonstration"

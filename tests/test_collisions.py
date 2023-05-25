@@ -73,6 +73,19 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         """checks whether the grasp checking gives out the same results as previously"""
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
+        task = WaiterTask(0, KukaMobileIIWARobot(), 1)
+        for i, c in enumerate(data["waiter_0_kmr_0"]["configs"]):
+            data["waiter_0_kmr_0"]["grasps"][i] = task._check_place_constraint(c)
+
+        task = TunnelTask(0, UR5Robot(), 1)
+        for i, c in enumerate(data["waiter_0_kmr_0"]["configs"]):
+            data["waiter_0_kmr_0"]["grasps"][i] = task._check_place_constraint(c)
+
+        task = ShelfTask(1, PandaRobot(), 1)
+        for i, c in enumerate(data["waiter_0_kmr_0"]["configs"]):
+            data["waiter_0_kmr_0"]["grasps"][i] = task._check_place_constraint(c)
+
+
         self.assertEqual(
             grasp_check_cycle(
                 WaiterTask(0, KukaMobileIIWARobot(), 1),
@@ -180,5 +193,6 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                                       ' constraint.'),
                          msg=res[1] + " shelf task 3 test")
 
-        if __name__ == "__main__":
-            unittest.main()
+
+if __name__ == "__main__":
+    unittest.main()

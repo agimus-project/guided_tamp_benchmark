@@ -250,7 +250,7 @@ class Collision:
             configuration: Configuration,
             delta_upper: float = 0.002,
             delta_lower: float = -0.0001,
-    ):
+    ) -> Tuple[bool, List[Tuple[str, str]]]:
         """This function checks if objects in configutation are in contact. It returns
         tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
         and list containing tuples of two string indicating the contact surfaces that
@@ -422,6 +422,8 @@ class Collision:
             return False, []
 
     def separate_configs(self, configuration: Configuration) -> dict:
+        """from given configuration this function will create a dictionary of
+        {"object_name" = obj_config, "robot_name" = rob_config,... }"""
         separated = {}
         configs = configuration.to_numpy()
         task_info = _extract_from_task(self.task)
