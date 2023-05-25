@@ -53,21 +53,21 @@ class BaseTask:
         return self.demo.robot_pose
 
     def get_furniture(self) -> List[FurnitureObject]:
-        """Returns the list of furniture instances"""
+        """Returns the List of furniture instances"""
         return self.furniture
 
     def get_objects(self) -> List[BaseObject]:
-        """Returns the list of object instances"""
+        """Returns the List of object instances"""
         return self.objects
 
     def _check_grasp_constraint(
             self, configuration: Configuration, delta: float = 0.001
-    ) -> tuple[bool, list[tuple[str]]]:
+    ) -> Tuple[bool, List[Tuple[str]]]:
         """Check if grasp constraint is satisfied for a given @param configuration.
-        It will return tuple (bool, [(str, str),...]) where bool is True if
-        configuration is in grasp and list contains tuples of two string indicating the
+        It will return Tuple (bool, [(str, str),...]) where bool is True if
+        configuration is in grasp and List contains Tuples of two string indicating the
         frames and handles that are grasped obj_name/frame_id/handle and frames and
-        grippers that grasp them link/frame_id/gripper. If there is no grasp the list
+        grippers that grasp them link/frame_id/gripper. If there is no grasp the List
         will be empty."""
         return self.collision.is_config_grasp(configuration, delta)
 
@@ -75,12 +75,12 @@ class BaseTask:
             self, configuration: Configuration,
             delta_upper: float = 0.002,
             delta_lower: float = -0.0001
-    ) -> tuple[bool, list[tuple[str, str]]]:
+    ) -> Tuple[bool, List[Tuple[str, str]]]:
         """Check if place constraint is satisfied for a given @param configuration.
         This function checks if objects in configutation are in contact. It returns
-        tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
-        and list containing tuples of two string indicating the contact surfaces that
-        are in contact obj_name/surface If there is no contacts the list will be empty.
+        Tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
+        and List containing Tuples of two string indicating the contact surfaces that
+        are in contact obj_name/surface If there is no contacts the List will be empty.
         """
         return self.collision.is_config_placement(configuration,
                                                   delta_upper=delta_upper,
@@ -91,7 +91,7 @@ class BaseTask:
         return not self.collision.is_config_valid(configuration)
 
     def _check_path_for_collision(self, path: Path, delta: float) -> Tuple[bool, float]:
-        """Returns tuple (Bool, t), where t is a float. Return true if configuration at
+        """Returns Tuple (Bool, t), where t is a float. Return true if configuration at
          param t is in collision. The collision will be ignored if either grasp
          constraint or placement constraint is satisfied. Collisions are check with
         pinocchio library. If there are no collisions return (False, -1). Argument delta
