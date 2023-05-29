@@ -8,6 +8,7 @@
 from abc import ABC, abstractmethod
 
 from guided_tamp_benchmark.core import Path
+from guided_tamp_benchmark.core.configuration import Configuration
 
 
 class BasePlanner(ABC):
@@ -27,7 +28,7 @@ class BasePlanner(ABC):
         pass
 
     @abstractmethod
-    def solve(self) -> bool:
+    def solve(self, q_start: Configuration, q_goal: Configuration) -> bool:
         pass
 
     @abstractmethod

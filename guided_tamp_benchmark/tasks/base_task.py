@@ -117,15 +117,16 @@ class BaseTask:
         )
 
     def path_is_successful(self,
-                           path: List[Configuration],
+                           path: Path, delta: float,
                            error_robot_distance: float = 0.0001,
                            error_identity: float = 0.001,
                            error_placement_upper: float = 0.002,
                            error_placement_lower: float = -0.0001,
                            error_grasp: float = 0.001
                            ) -> Tuple[bool, str]:
-        """Return true if path solves the given task. The function has the following
-        errors in freedom for specific functions:
+        """Return true if path solves the given task. Argument delta
+        is a step by which the path will be interpolated.
+        The function has the following errors in freedom for specific functions:
             error_robot_distance: used in checking whether robots first and last joint
                                     configuration match the init and goal configuration
             error_identity: used in checking for whether objects moves between two
@@ -139,9 +140,9 @@ class BaseTask:
         prev_placed = []
         prev_config = []
         objects = self.objects
-        for i, obj in enumerate(objects):
+        for t, obj in enumerate(objects):
             if obj.name == "tray":
-                objects.pop(i)
+                objects.pop(t)
 
         init_config = self.collision.separate_configs(
             Configuration(self.robot.initial_configuration(),
@@ -150,8 +151,8 @@ class BaseTask:
             Configuration(self.robot.initial_configuration(),
                           self.demo.subgoal_objects_poses[:, -1]))
 
-        first_config = self.collision.separate_configs(path[0])
-        last_config = self.collision.separate_configs(path[-1])
+        first_config = self.collision.separate_configs(path.interpolate(0))
+        last_config = self.collision.separate_configs(path.interpolate(1))
 
         for o in objects:
             if not check_if_identity(y[o.name], first_config[o.name],
@@ -179,9 +180,12 @@ class BaseTask:
             return False, f"last configuration of robot {self.robot.name} doesn't" \
                           f" match with its goal configuration"
 
-        for i, c in enumerate(path):
-            if self._check_config_for_collision(c):
-                return False, f"collision at config {i}"
+        res = self._check_path_for_collision(path, delta)
+        if res[0]:
+            return False, f"collision at config {res[1]}"
+
+        for t in np.arange(0, 1 + delta, delta):
+            c = path.interpolate(t)
 
             grasp = self._check_grasp_constraint(c, delta=error_grasp)
             place = self._check_place_constraint(c, delta_upper=error_placement_upper,
@@ -206,7 +210,7 @@ class BaseTask:
                 for j, ic in enumerate(is_constrained):
                     if ic is False:
                         return False, f"unconstrained object {objects[j].name}" \
-                                      f" at config {i}"
+                                      f" at config {t}"
 
             curr_config = self.collision.separate_configs(c)
             for pp in prev_placed:
@@ -215,7 +219,7 @@ class BaseTask:
                         if not check_if_identity(prev_config[pp], curr_config[ip],
                                                  error=error_identity):
                             return False, f"object {pp}, moved between configuration" \
-                                          f" {i} and {i - 1}, even though its under" \
+                                          f" {t} and {t - 1}, even though its under" \
                                           f" placement constraint."
             prev_placed = is_placed
             prev_config = curr_config
