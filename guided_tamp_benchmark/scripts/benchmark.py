@@ -34,11 +34,13 @@ class Benchmark:
             planner_arg: dict,
             q_start: Configuration,
             q_goal: Configuration,
+            delta: float,
             max_planning_time: float = 60
     ):
         """runs benchmarking for the given planner with given arguments, on given task
         and seeds with the specified max planning time. Results will be saved in
-        Benchmark.results dictionary"""
+        Benchmark.results dictionary. Argument delta is a step by which the path returned
+        by planner will be interpolated."""
         for s in seeds:
             try:
                 p = planner(
@@ -67,6 +69,11 @@ class Benchmark:
                 task.robot.name][task.demo.pose_id][s][
                 "is_solved"] = res
 
+            path = p.get_path()
+            path_as_config = []
+            for t in np.arange(0, 1 + delta, delta):
+                path_as_config.append(path.interpolate(t))
+
             if res:
                 self.results[p.name][task.task_name][task.demo.demo_id][
                     task.robot.name][task.demo.pose_id][s][
@@ -75,16 +82,16 @@ class Benchmark:
                 self.results[p.name][task.task_name][task.demo.demo_id][
                     task.robot.name][task.demo.pose_id][s][
                     "path_len"] = task.compute_lengths(
-                    p.get_path_as_configurations())
+                    path_as_config)
 
                 self.results[p.name][task.task_name][task.demo.demo_id][
                     task.robot.name][task.demo.pose_id][s][
-                    "configs"] = p.get_path_as_configurations()
+                    "configs"] = path_as_config
 
                 self.results[p.name][task.task_name][task.demo.demo_id][
                     task.robot.name][task.demo.pose_id][s][
                     "grasp_number"] = task.compute_n_grasps(
-                    p.get_path_as_configurations())
+                    path_as_config)
 
             else:
                 continue
