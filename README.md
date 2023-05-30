@@ -22,3 +22,17 @@ poetry install
 ```
 
 ## Usage
+There are examples of usage in directory examples.
+### Task class
+There are three tasks, Shelf Task, Waiter Task, Tunnel Task.
+Here is an example of task initialization.
+
+```code
+from guided_tamp_benchmark.tasks import ShelfTask
+from guided_tamp_benchmark.models.robots import *
+
+
+task = ShelfTask(0, PandaRobot(), 1)
+```
+
+In this example, Shelf Task with Panda Robot at pose num. 1. with one object was initialized.
