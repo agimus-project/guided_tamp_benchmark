@@ -22,7 +22,7 @@ poetry install
 ```
 
 ## Usage
-There are examples of usage in directory examples.
+There are examples of usage in directory examples. Here are some additional examples.
 ### Task class
 There are three tasks, Shelf Task, Waiter Task, Tunnel Task.
 Here is an example of task initialization.
