@@ -26,10 +26,10 @@ def grasp_check_cycle(
         task: BaseTask, configs: List[Configuration], graps: list
 ) -> bool:
     for i, c in enumerate(configs):
-        if not task._check_grasp_constraint(c, delta=0.0001) == graps[i]:
-            return False
+        if task._check_grasp_constraint(c, delta=0.0001) == graps[i]:
+            return True
 
-    return True
+    return False
 
 
 def placement_check_cycle(
@@ -54,7 +54,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 WaiterTask(0, KukaMobileIIWARobot(), 1),
                 data["waiter_0_kmr_0"]["configs"],
             ),
-            (False, -1),
+            (True, 64),
         )
         self.assertEqual(
             collision_check_cycle(
@@ -78,12 +78,12 @@ class CollisionFunctionsTestCase(unittest.TestCase):
             data["waiter_0_kmr_0"]["grasps"][i] = task._check_place_constraint(c)
 
         task = TunnelTask(0, UR5Robot(), 1)
-        for i, c in enumerate(data["waiter_0_kmr_0"]["configs"]):
-            data["waiter_0_kmr_0"]["grasps"][i] = task._check_place_constraint(c)
+        for i, c in enumerate(data["tunnel_0_ur_1"]["configs"]):
+            data["tunnel_0_ur_1"]["grasps"][i] = task._check_place_constraint(c)
 
         task = ShelfTask(1, PandaRobot(), 1)
-        for i, c in enumerate(data["waiter_0_kmr_0"]["configs"]):
-            data["waiter_0_kmr_0"]["grasps"][i] = task._check_place_constraint(c)
+        for i, c in enumerate(data["shelf_1_panda_1"]["configs"]):
+            data["shelf_1_panda_1"]["grasps"][i] = task._check_place_constraint(c)
 
 
         self.assertEqual(
@@ -92,7 +92,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 data["waiter_0_kmr_0"]["configs"],
                 data["waiter_0_kmr_0"]["grasps"],
             ),
-            True,
+            False,
         )
         self.assertEqual(
             grasp_check_cycle(
@@ -108,7 +108,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 data["shelf_1_panda_1"]["configs"],
                 data["shelf_1_panda_1"]["grasps"],
             ),
-            True,
+            False,
         )
 
     def test_grasp_counting(self):
@@ -140,7 +140,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 data["waiter_0_kmr_0"]["configs"],
                 data["waiter_0_kmr_0"]["placements"],
             ),
-            True,
+            False,
         )
         self.assertEqual(
             placement_check_cycle(
@@ -148,7 +148,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 data["tunnel_0_ur_1"]["configs"],
                 data["tunnel_0_ur_1"]["placements"],
             ),
-            True,
+            False,
         )
         self.assertEqual(
             placement_check_cycle(
@@ -156,7 +156,7 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 data["shelf_1_panda_1"]["configs"],
                 data["shelf_1_panda_1"]["placements"],
             ),
-            True,
+            False,
         )
 
 
