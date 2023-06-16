@@ -6,10 +6,8 @@
 import time
 import pickle
 import numpy as np
-import pinocchio as pin
 
 from guided_tamp_benchmark.core import BasePlanner
-from guided_tamp_benchmark.core.configuration import Configuration
 from guided_tamp_benchmark.tasks import BaseTask
 from collections import defaultdict
 
@@ -37,8 +35,8 @@ class Benchmark:
     ):
         """runs benchmarking for the given planner with given arguments, on given task
         and seeds with the specified max planning time. Results will be saved in
-        Benchmark.results dictionary. Argument delta is a step by which the path returned
-        by planner will be interpolated."""
+        Benchmark.results dictionary. Argument delta is a step by which the path
+        returned by planner will be interpolated."""
         for s in seeds:
             try:
                 p = planner(

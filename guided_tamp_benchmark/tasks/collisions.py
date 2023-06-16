@@ -5,10 +5,12 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import sys
+import pinocchio as pin
 import numpy as np
 
 from typing import List, Tuple
 
+from guided_tamp_benchmark.core.configuration import Configuration
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
