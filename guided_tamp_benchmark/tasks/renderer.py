@@ -21,34 +21,39 @@ class RobotWithTexture(Robot):
 
     def _init_objects(self, overwrite_color=False):
         pin.forwardKinematics(self._model, self._data, self._q)
-        pin.updateGeometryPlacements(self._model, self._data, self._geom_model,
-                                     self._geom_data)
+        pin.updateGeometryPlacements(
+            self._model, self._data, self._geom_model, self._geom_data
+        )
         base = pin.SE3(self._pose)
         for g, f in zip(self._geom_model.geometryObjects, self._geom_data.oMg):
             print(
                 f"from init obj name: {g.name} color: "
-                f"{g.meshColor[:3] if not overwrite_color else self._color}")
+                f"{g.meshColor[:3] if not overwrite_color else self._color}"
+            )
             kwargs = dict(
-                name=f'{self.name}/{g.name}',
+                name=f"{self.name}/{g.name}",
                 color=g.meshColor[:3] if not overwrite_color else self._color,
                 opacity=g.meshColor[3] if self._opacity is None else self._opacity,
                 texture=self.texture,
                 pose=(base * f).homogeneous,
             )
-            if g.meshPath == 'BOX':
-                self._objects[kwargs['name']] = Object.create_cuboid(
-                    lengths=2 * g.geometry.halfSide, **kwargs)
-            elif g.meshPath == 'SPHERE':
-                self._objects[kwargs['name']] = Object.create_sphere(
-                    radius=g.geometry.radius, **kwargs)
-            elif g.meshPath == 'CYLINDER':
+            if g.meshPath == "BOX":
+                self._objects[kwargs["name"]] = Object.create_cuboid(
+                    lengths=2 * g.geometry.halfSide, **kwargs
+                )
+            elif g.meshPath == "SPHERE":
+                self._objects[kwargs["name"]] = Object.create_sphere(
+                    radius=g.geometry.radius, **kwargs
+                )
+            elif g.meshPath == "CYLINDER":
                 radius, length = g.geometry.radius, 2 * g.geometry.halfLength
-                self._objects[kwargs['name']] = Object.create_cylinder(radius=radius,
-                                                                       length=length,
-                                                                       **kwargs)
+                self._objects[kwargs["name"]] = Object.create_cylinder(
+                    radius=radius, length=length, **kwargs
+                )
             else:
-                self._objects[kwargs['name']] = Object.create_mesh(
-                    path_to_mesh=g.meshPath, scale=g.meshScale, **kwargs)
+                self._objects[kwargs["name"]] = Object.create_mesh(
+                    path_to_mesh=g.meshPath, scale=g.meshScale, **kwargs
+                )
 
 
 class Renderer:
@@ -79,8 +84,10 @@ class Renderer:
         self.objects = []
         for o in task.objects:
             texture_path = (
-                    str(get_models_data_directory()) + "/ycbv/meshes/" +
-                    o.name + "_texture.png"
+                str(get_models_data_directory())
+                + "/ycbv/meshes/"
+                + o.name
+                + "_texture.png"
             )
             vo = RobotWithTexture(
                 urdf_path=o.urdfFilename,
@@ -106,8 +113,9 @@ class Renderer:
         with self.scene.animation(fps=fps):
             # self.robot.pos = [-5, -5, 0]
             self.robot[:] = self.task.robot.initial_configuration()
-            for object_poses in self.task.demo.subgoal_objects_poses.transpose(1, 0, 2,
-                                                                               3):
+            for object_poses in self.task.demo.subgoal_objects_poses.transpose(
+                1, 0, 2, 3
+            ):
                 for obj, pose in zip(self.objects, object_poses):
                     obj.pose = pose
                 self.scene.render()

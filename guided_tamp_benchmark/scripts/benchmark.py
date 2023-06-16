@@ -25,13 +25,13 @@ class Benchmark:
         pass
 
     def do_benchmark(
-            self,
-            task: BaseTask,
-            planner: BasePlanner,
-            seeds,
-            planner_arg: dict,
-            delta: float,
-            max_planning_time: float = 60
+        self,
+        task: BaseTask,
+        planner: BasePlanner,
+        seeds,
+        planner_arg: dict,
+        delta: float,
+        max_planning_time: float = 60,
     ):
         """runs benchmarking for the given planner with given arguments, on given task
         and seeds with the specified max planning time. Results will be saved in
@@ -43,7 +43,7 @@ class Benchmark:
                     task=task,
                     max_planning_time=max_planning_time,
                     random_seed=s,
-                    **planner_arg
+                    **planner_arg,
                 )
             except Exception as e:
                 print(e)
@@ -60,10 +60,11 @@ class Benchmark:
 
             print(
                 f"{task.robot.name} robot pose {task.demo.pose_id},"
-                f" seed {s}, solved: {res}")
-            self.results[p.name][task.task_name][task.demo.demo_id][
-                task.robot.name][task.demo.pose_id][s][
-                "is_solved"] = res
+                f" seed {s}, solved: {res}"
+            )
+            self.results[p.name][task.task_name][task.demo.demo_id][task.robot.name][
+                task.demo.pose_id
+            ][s]["is_solved"] = res
 
             path = p.get_path()
             path_as_config = []
@@ -72,22 +73,24 @@ class Benchmark:
 
             if res:
                 self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name][task.demo.pose_id][s][
-                    "time"] = (end_solve_t - start_solve_t)
+                    task.robot.name
+                ][task.demo.pose_id][s]["time"] = (end_solve_t - start_solve_t)
 
                 self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name][task.demo.pose_id][s][
-                    "path_len"] = task.compute_lengths(
-                    path_as_config)
+                    task.robot.name
+                ][task.demo.pose_id][s]["path_len"] = task.compute_lengths(
+                    path_as_config
+                )
 
                 self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name][task.demo.pose_id][s][
-                    "configs"] = path_as_config
+                    task.robot.name
+                ][task.demo.pose_id][s]["configs"] = path_as_config
 
                 self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name][task.demo.pose_id][s][
-                    "grasp_number"] = task.compute_n_grasps(
-                    path_as_config)
+                    task.robot.name
+                ][task.demo.pose_id][s]["grasp_number"] = task.compute_n_grasps(
+                    path_as_config
+                )
 
             else:
                 continue
