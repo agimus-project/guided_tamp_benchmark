@@ -32,8 +32,6 @@ class Benchmark:
             planner: BasePlanner,
             seeds,
             planner_arg: dict,
-            q_start: Configuration,
-            q_goal: Configuration,
             delta: float,
             max_planning_time: float = 60
     ):
@@ -55,7 +53,7 @@ class Benchmark:
 
             start_solve_t = time.time()
             try:
-                res = p.solve(q_start, q_goal)
+                res = p.solve()
             except Exception as e:
                 print("ERROR")
                 print(e)

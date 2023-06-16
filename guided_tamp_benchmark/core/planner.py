@@ -28,7 +28,7 @@ class BasePlanner(ABC):
         pass
 
     @abstractmethod
-    def solve(self, q_start: Configuration, q_goal: Configuration) -> bool:
+    def solve(self) -> bool:
         pass
 
     @abstractmethod
