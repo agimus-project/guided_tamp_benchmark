@@ -4,14 +4,10 @@
 # Created on: 20.02.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
-import pinocchio as pin
 import sys
-import copy
 import numpy as np
 
 from typing import List, Tuple
-
-from guided_tamp_benchmark.core import Configuration
 
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
@@ -76,8 +72,8 @@ def check_if_identity(pose1: list, pose2: list, error: float = 0.0001) -> bool:
 
 
 def find_frame_in_frames(model: pin.Model, frame: str) -> int:
-    """Will find given frame name or partial frame name in the frames of given pinocchio
-    model."""
+    """Will find given frame name or partial frame name in the frames of given
+    pinocchio model."""
     for i, f in enumerate(model.frames):
         if f.name.find(frame) != -1:
             return i
@@ -207,8 +203,8 @@ def ortonormalization(
 
 
 class Collision:
-    """The collision class consists of Pinocchio urdf and collision models and functions
-    for collision checking and Pinocchio model rendering."""
+    """The collision class consists of Pinocchio urdf and collision models and
+    functions for collision checking and Pinocchio model rendering."""
 
     def __init__(self, task):
         """Initilizie with task eg. ShelfTask..."""

@@ -6,7 +6,6 @@
 import copy
 
 import numpy as np
-import pinocchio as pin
 from typing import List, Tuple
 
 from guided_tamp_benchmark.tasks.demonstration import Demonstration
@@ -20,8 +19,7 @@ from guided_tamp_benchmark.models.furniture import (
 )
 from guided_tamp_benchmark.core import Configuration, Path
 
-from guided_tamp_benchmark.tasks.collisions import Collision, \
-    t_xyz_quat_xyzw_to_pin_se3, check_if_identity
+from guided_tamp_benchmark.tasks.collisions import Collision, check_if_identity
 
 
 class BaseTask:
@@ -155,7 +153,7 @@ class BaseTask:
         last_config = self.collision.separate_configs(path.interpolate(1))
 
         for o in objects:
-            if not check_if_identity(y[o.name], first_config[o.name],
+            if not check_if_identity(init_config[o.name], first_config[o.name],
                                      error=error_identity):
                 return False, f"first pose of object {o.name} doesn't match with" \
                               f" its initial configuration from demonstration"

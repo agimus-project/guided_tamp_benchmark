@@ -8,7 +8,6 @@
 from abc import ABC, abstractmethod
 
 from guided_tamp_benchmark.core import Path
-from guided_tamp_benchmark.core.configuration import Configuration
 
 
 class BasePlanner(ABC):

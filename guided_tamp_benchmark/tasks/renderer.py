@@ -25,7 +25,9 @@ class RobotWithTexture(Robot):
                                      self._geom_data)
         base = pin.SE3(self._pose)
         for g, f in zip(self._geom_model.geometryObjects, self._geom_data.oMg):
-            print(f"from init obj name: {g.name} color: {g.meshColor[:3] if not overwrite_color else self._color}")
+            print(
+                f"from init obj name: {g.name} color: "
+                f"{g.meshColor[:3] if not overwrite_color else self._color}")
             kwargs = dict(
                 name=f'{self.name}/{g.name}',
                 color=g.meshColor[:3] if not overwrite_color else self._color,
@@ -47,6 +49,7 @@ class RobotWithTexture(Robot):
             else:
                 self._objects[kwargs['name']] = Object.create_mesh(
                     path_to_mesh=g.meshPath, scale=g.meshScale, **kwargs)
+
 
 class Renderer:
     def __init__(self, task: BaseTask, pddl=False) -> None:
@@ -76,7 +79,8 @@ class Renderer:
         self.objects = []
         for o in task.objects:
             texture_path = (
-                    str(get_models_data_directory()) + "/ycbv/meshes/" + o.name + "_texture.png"
+                    str(get_models_data_directory()) + "/ycbv/meshes/" +
+                    o.name + "_texture.png"
             )
             vo = RobotWithTexture(
                 urdf_path=o.urdfFilename,
@@ -102,7 +106,8 @@ class Renderer:
         with self.scene.animation(fps=fps):
             # self.robot.pos = [-5, -5, 0]
             self.robot[:] = self.task.robot.initial_configuration()
-            for object_poses in self.task.demo.subgoal_objects_poses.transpose(1, 0, 2, 3):
+            for object_poses in self.task.demo.subgoal_objects_poses.transpose(1, 0, 2,
+                                                                               3):
                 for obj, pose in zip(self.objects, object_poses):
                     obj.pose = pose
                 self.scene.render()
