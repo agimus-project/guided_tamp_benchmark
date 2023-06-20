@@ -3,12 +3,11 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 20.02.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+from __future__ import annotations
 
 import sys
 import pinocchio as pin
 import numpy as np
-
-from typing import List, Tuple
 
 from guided_tamp_benchmark.core.configuration import Configuration
 from guided_tamp_benchmark.models.robots.base import BaseRobot
@@ -43,7 +42,7 @@ def _rename_geometry(collision_model: pin.GeometryModel, model_name: str):
 def _remove_collisions_for_tunnel(
     full_coll_mod: pin.GeometryModel,
     rob_coll_mod: pin.GeometryModel,
-    disabled_tunnel_links: List[str],
+    disabled_tunnel_links: list[str],
 ):
     """removes collision pairs between all robot links and
     Tunnel.disabled_robot_collision_for_links"""
@@ -83,10 +82,10 @@ def find_frame_in_frames(model: pin.Model, frame: str) -> int:
 
 
 def _create_model(
-    robots: List[BaseRobot],
-    objects: List[BaseObject],
-    furniture: List[FurnitureObject],
-    robot_poses: List[pin.SE3],
+    robots: list[BaseRobot],
+    objects: list[BaseObject],
+    furniture: list[FurnitureObject],
+    robot_poses: list[pin.SE3],
     remove_tunnel_collisions: bool,
 ) -> (pin.Model, pin.GeometryModel):
     """Creates pinocchio urdf model and pinocchio collision model from given robots,
@@ -176,7 +175,7 @@ def pose_as_matrix_to_pose_as_quat(pose: np.ndarray) -> np.ndarray:
 
 def convex_shape(
     shape_points: np.ndarray, normal: np.ndarray, frame: pin.SE3
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """will create the equiation for convex shape in form of Ax>=b, where A is matrix
     and b vector."""
     A, b = [], []
@@ -194,7 +193,7 @@ def convex_shape(
 
 def ortonormalization(
     n: np.ndarray, y: np.ndarray
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """creates 3 orthonormal vector. Vector n is the result between cross product x and
     y.
      Thus, n and y are orthogonal."""
@@ -248,7 +247,7 @@ class Collision:
         configuration: Configuration,
         delta_upper: float = 0.002,
         delta_lower: float = -0.0001,
-    ) -> Tuple[bool, List[Tuple[str, str]]]:
+    ) -> tuple[bool, list[tuple[str, str]]]:
         """This function checks if objects in configutation are in contact. It returns
         tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
         and list containing tuples of two string indicating the contact surfaces that
@@ -257,7 +256,7 @@ class Collision:
 
         def find_info_for_contact_surface(
             contacts: np.ndarray,
-        ) -> Tuple[np.ndarray, np.ndarray, pin.SE3]:
+        ) -> tuple[np.ndarray, np.ndarray, pin.SE3]:
             # finds the highest cross product in contact surface shape
             x, y = 0, 0
             for i in range(len(contacts)):
@@ -360,7 +359,7 @@ class Collision:
 
     def is_config_grasp(
         self, configuration: Configuration, delta: float = 0.001
-    ) -> Tuple[bool, list]:
+    ) -> tuple[bool, list]:
         """This function will check if configuration is in grasp or not. It will return
         tuple (bool, [(str, str),...]) where bool is True if configuration is in grasp
         and list contains tuples of two string indicating the frames and handles that
