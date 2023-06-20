@@ -13,16 +13,15 @@ from collections import defaultdict
 
 
 class Benchmark:
-    results = defaultdict(
-        lambda: defaultdict(
-            lambda: defaultdict(
-                lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
-            )
-        )
-    )
 
     def __init__(self):
-        pass
+        self.results = defaultdict(
+            lambda: defaultdict(
+                lambda: defaultdict(
+                    lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
+                )
+            )
+        )
 
     def do_benchmark(
         self,
