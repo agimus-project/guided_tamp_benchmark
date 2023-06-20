@@ -13,7 +13,6 @@ from collections import defaultdict
 
 
 class Benchmark:
-
     def __init__(self):
         self.results = defaultdict(
             lambda: defaultdict(
@@ -24,13 +23,13 @@ class Benchmark:
         )
 
     def do_benchmark(
-            self,
-            task: BaseTask,
-            planner: BasePlanner,
-            seeds,
-            planner_arg: dict,
-            delta: float,
-            max_planning_time: float = 60,
+        self,
+        task: BaseTask,
+        planner: BasePlanner,
+        seeds,
+        planner_arg: dict,
+        delta: float,
+        max_planning_time: float = 60,
     ):
         """runs benchmarking for the given planner with given arguments, on given task
         and seeds with the specified max planning time. Results will be saved in
