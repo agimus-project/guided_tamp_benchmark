@@ -16,6 +16,7 @@ In `guided_tamp_benchmark.tasks` are classes with descriptions of benchmarking t
 
 ## Installation
 ```bash
+git clone https://github.com/petrikvladimir/GuidedTAMPBenchmark.git
 conda create -n gtamp python=3.10 poetry
 conda activate gtamp
 poetry install
