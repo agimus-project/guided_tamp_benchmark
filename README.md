@@ -36,3 +36,35 @@ task = ShelfTask(0, PandaRobot(), 1)
 ```
 
 In this example, Shelf Task with Panda Robot at pose num. 1. with one object was initialized.
+
+Description of each task follows.
+
+
+### Shelf Task
+The shelf task is composed of a table, a shelf and a varying
+set of objects that the robotic manipulator is supposed to
+arrange, i.e. to move the objects to the predefined poses
+on the table or on the shelf. The complexity of the task
+is controlled by the number of objects that the robot should
+arrange. This task is challenging for state-of-the-art planners
+because it requires moving multiple objects in a single
+planning task.
+![Logs](images/shelf_task.png)
+### Tunnel Task
+The tunnel task consists of a tunnel and a single object that
+should be transferred through the tunnel. The tunnel is thin
+enough so that the robot can place an object inside the tunnel
+on one side and pick it up from the other side. The challenge
+lies in the narrow passage in the admissible configuration
+space that needs to be discovered by the planner.
+![Logs](images/tunnel_task.png)
+### Waiter Task
+The waiter task simulates the job of waiter, in which a set of
+objects needs to be transferred from one location to another
+distant location. Waiters use a tray to minimize the walked
+distance. In our simulation, a mobile robot is equipped with
+a tray-like space that it can use for transferring objects.
+Discovering the tray in the planning state-space is non-trivial,
+which makes this task challenging for the planners that do
+not utilize demonstrations
+![Logs](images/waiter_task.png)
