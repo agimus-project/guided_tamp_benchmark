@@ -3,10 +3,10 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 15.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
-import copy
+from __future__ import annotations
 
+import copy
 import numpy as np
-from typing import List, Tuple
 
 from guided_tamp_benchmark.tasks.demonstration import Demonstration
 from guided_tamp_benchmark.models.robots import BaseRobot
@@ -50,17 +50,17 @@ class BaseTask:
         """Returns the robot base pose as a 4x4 numpy array"""
         return self.demo.robot_pose
 
-    def get_furniture(self) -> List[FurnitureObject]:
+    def get_furniture(self) -> list[FurnitureObject]:
         """Returns the list of furniture instances"""
         return self.furniture
 
-    def get_objects(self) -> List[BaseObject]:
+    def get_objects(self) -> list[BaseObject]:
         """Returns the list of object instances"""
         return self.objects
 
     def _check_grasp_constraint(
         self, configuration: Configuration, delta: float = 0.001
-    ) -> Tuple[bool, List[Tuple[str]]]:
+    ) -> tuple[bool, list[tuple[str]]]:
         """Check if grasp constraint is satisfied for a given @param configuration.
         It will return tuple (bool, [(str, str),...]) where bool is True if
         configuration is in grasp and list contains tuples of two string indicating the
@@ -77,7 +77,7 @@ class BaseTask:
         configuration: Configuration,
         delta_upper: float = 0.002,
         delta_lower: float = -0.0001,
-    ) -> Tuple[bool, List[Tuple[str, str]]]:
+    ) -> tuple[bool, list[tuple[str, str]]]:
         """Check if place constraint is satisfied for a given @param configuration.
         This function checks if objects in configutation are in contact. It returns
         tuple (bool, [(str, str),...]) where bool is True if configuration has contacts
@@ -97,7 +97,7 @@ class BaseTask:
         """Return true if the given configuration is in collision"""
         return not self.collision.is_config_valid(configuration)
 
-    def _check_path_for_collision(self, path: Path, delta: float) -> Tuple[bool, float]:
+    def _check_path_for_collision(self, path: Path, delta: float) -> tuple[bool, float]:
         """Returns tuple (Bool, t), where t is a float. Return true if configuration at
          param t is in collision. The collision will be ignored if either grasp
          constraint or placement constraint is satisfied. Collisions are check with
@@ -108,7 +108,7 @@ class BaseTask:
                 return True, t
         return False, -1
 
-    def compute_lengths(self, path: List[Configuration]) -> Tuple[float, float, float]:
+    def compute_lengths(self, path: list[Configuration]) -> tuple[float, float, float]:
         """Compute the lengths of the path: rotation length of robot joints [rad],
         positional length of objects [m], and rotational length of objects [rad]."""
         return tuple(
@@ -124,7 +124,7 @@ class BaseTask:
         error_placement_upper: float = 0.002,
         error_placement_lower: float = -0.0001,
         error_grasp: float = 0.001,
-    ) -> Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """Return true if path solves the given task. Argument delta
         is a step by which the path will be interpolated.
         The function has the following errors in freedom for specific functions:
@@ -262,7 +262,7 @@ class BaseTask:
 
         return True, "path is successful"
 
-    def compute_n_grasps(self, path: List[Configuration]) -> int:
+    def compute_n_grasps(self, path: list[Configuration]) -> int:
         """Compute the amount of grasp-release actions."""
         grasps, previous_grasps = 0, []
         for c in path:
@@ -280,7 +280,7 @@ class BaseTask:
         return grasps
 
     @staticmethod
-    def _create_objects(obj_ids) -> List[BaseObject]:
+    def _create_objects(obj_ids) -> list[BaseObject]:
         """Utility function that converts text representation of objects into the object
         instances."""
         obj = []
@@ -300,7 +300,7 @@ class BaseTask:
         return obj
 
     @staticmethod
-    def _create_furniture(fur_id, fur_poses, fur_params) -> List[FurnitureObject]:
+    def _create_furniture(fur_id, fur_poses, fur_params) -> list[FurnitureObject]:
         """Utility function that converts a text representation of furniture object into
         furniture instances."""
         return [
