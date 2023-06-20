@@ -68,7 +68,9 @@ class BaseTask:
         grippers that grasp them link/frame_id/gripper. If there is no grasp the list
         will be empty.
 
-        delta
+        Delta: is a maximal geodesic distance of transformation matrix between the grasp
+        pose and the gripper. If the distance is smaller than delta, object is grasped.
+        Calculated via norm(log(T.inverse*T)).
         """
         return self.collision.is_config_grasp(configuration, delta)
 
