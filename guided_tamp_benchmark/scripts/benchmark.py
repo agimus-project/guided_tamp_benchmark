@@ -43,12 +43,7 @@ class Benchmark:
                     random_seed=s,
                     **planner_arg,
                 )
-            except Exception as e:
-                print(e)
-                continue
-
-            start_solve_t = time.time()
-            try:
+                start_solve_t = time.time()
                 res = p.solve()
             except Exception as e:
                 print("ERROR")
