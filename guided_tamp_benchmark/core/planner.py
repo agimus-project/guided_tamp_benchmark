@@ -29,7 +29,8 @@ class BasePlanner(ABC):
 
     @abstractmethod
     def solve(self) -> bool:
-        """solves the given task, returns bool indicating whether solve was successful or not"""
+        """solves the given task, returns bool indicating whether solve was successful
+        or not"""
         pass
 
     @abstractmethod
