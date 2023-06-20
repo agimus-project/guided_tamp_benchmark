@@ -60,9 +60,11 @@ class Benchmark:
                 f"{task.robot.name} robot pose {task.demo.pose_id},"
                 f" seed {s}, solved: {res}"
             )
-            self.results[p.name][task.task_name][task.demo.demo_id][task.robot.name][
-                task.demo.pose_id
-            ][s]["is_solved"] = res
+            dict_entry = self.results[p.name][task.task_name][task.demo.demo_id][
+                task.robot.name
+            ][task.demo.pose_id][s]
+
+            dict_entry["is_solved"] = res
 
             path = p.get_path()
             path_as_config = []
@@ -70,25 +72,10 @@ class Benchmark:
                 path_as_config.append(path.interpolate(t))
 
             if res:
-                self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name
-                ][task.demo.pose_id][s]["time"] = (end_solve_t - start_solve_t)
-
-                self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name
-                ][task.demo.pose_id][s]["path_len"] = task.compute_lengths(
-                    path_as_config
-                )
-
-                self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name
-                ][task.demo.pose_id][s]["configs"] = path_as_config
-
-                self.results[p.name][task.task_name][task.demo.demo_id][
-                    task.robot.name
-                ][task.demo.pose_id][s]["grasp_number"] = task.compute_n_grasps(
-                    path_as_config
-                )
+                dict_entry["time"] = end_solve_t - start_solve_t
+                dict_entry["path_len"] = task.compute_lengths(path_as_config)
+                dict_entry["configs"] = path_as_config
+                dict_entry["grasp_number"] = task.compute_n_grasps(path_as_config)
 
             else:
                 continue
