@@ -24,12 +24,15 @@ class BasePlanner(ABC):
     @property
     @abstractmethod
     def name(self) -> str:
+        """returns the name of the planner as a string"""
         pass
 
     @abstractmethod
     def solve(self) -> bool:
+        """solves the given task, returns bool indicating whether solve was successful or not"""
         pass
 
     @abstractmethod
     def get_path(self) -> Path:
+        """returns solution as Path class function"""
         pass
