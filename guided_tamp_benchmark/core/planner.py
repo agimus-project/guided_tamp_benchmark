@@ -8,6 +8,7 @@
 from abc import ABC, abstractmethod
 
 from guided_tamp_benchmark.core import Path
+from guided_tamp_benchmark.tasks import BaseTask
 
 
 class BasePlanner(ABC):
@@ -18,8 +19,12 @@ class BasePlanner(ABC):
     """
 
     @abstractmethod
-    def __init__(self, task, max_planning_time: float, random_seed: int):
-        pass
+    def __init__(
+        self, task: BaseTask, max_planning_time: float, random_seed: int, **kwargs
+    ):
+        self.task = task
+        self.max_planning_time = max_planning_time
+        self.random_seed = random_seed
 
     @property
     @abstractmethod

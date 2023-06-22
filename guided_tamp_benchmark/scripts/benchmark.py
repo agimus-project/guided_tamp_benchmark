@@ -3,6 +3,7 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 04.04.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+from __future__ import annotations
 import time
 import pickle
 import numpy as np
@@ -25,7 +26,7 @@ class Benchmark:
     def do_benchmark(
         self,
         task: BaseTask,
-        planner: BasePlanner,
+        planner: type[BasePlanner],
         seeds,
         planner_arg: dict,
         delta: float,
@@ -46,8 +47,7 @@ class Benchmark:
                 start_solve_t = time.time()
                 res = p.solve()
             except Exception as e:
-                print("ERROR")
-                print(e)
+                print(f"ERROR {e}")
                 res = False
             end_solve_t = time.time()
 
@@ -60,11 +60,13 @@ class Benchmark:
             ][task.demo.pose_id][s]
 
             dict_entry["is_solved"] = res
+            if not res:
+                continue
 
             path = p.get_path()
-            path_as_config = []
-            for t in np.arange(0, 1 + delta, delta):
-                path_as_config.append(path.interpolate(t))
+            path_as_config = [
+                path.interpolate(t) for t in np.arange(0, 1 + delta, delta)
+            ]
             del p
 
             if res:
@@ -72,9 +74,6 @@ class Benchmark:
                 dict_entry["path_len"] = task.compute_lengths(path_as_config)
                 dict_entry["configs"] = path_as_config
                 dict_entry["grasp_number"] = task.compute_n_grasps(path_as_config)
-
-            else:
-                continue
 
     def save_benchmark(self, results_path: str):
         """saves the benchmarking results to the given file"""
