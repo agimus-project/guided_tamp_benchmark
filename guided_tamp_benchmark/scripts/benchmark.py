@@ -65,6 +65,7 @@ class Benchmark:
             path_as_config = []
             for t in np.arange(0, 1 + delta, delta):
                 path_as_config.append(path.interpolate(t))
+            del p
 
             if res:
                 dict_entry["time"] = end_solve_t - start_solve_t

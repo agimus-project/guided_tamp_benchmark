@@ -15,6 +15,3 @@ task = ShelfTask(1, PandaRobot(), 2)
 b.do_benchmark(task=task, planner=MultiContactPlanner, seeds=[1],
                planner_arg={"handles_mode": 'exclude_side', "max_iter": 100000, "use_euclidean_distance": True,
                             "optimize_path_iter": 100, "verbose": True}, max_planning_time=60, delta=0.001)
-
-corba_server.reset_problem()
-time.sleep(5)
