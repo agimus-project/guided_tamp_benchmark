@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+title: >-
+  Multi-contact task and motion planning guided by video
+  demonstration.
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Kateryna
+    family-names: Zorina
+    email: kateryna.zorina@cvut.cz
+    affiliation: 'CIIRC, CVUT'
+  - given-names: David
+    family-names: Kovar
+    affiliation: 'CIIRC, CVUT'
+  - given-names: Florent
+    family-names: Lamiraux
+    affiliation: 'LAAS, CNRS'
+  - given-names: Nicolas
+    family-names: Mansard
+    affiliation: 'LAAS, CNRS'
+  - given-names: Josef
+    family-names: Sivic
+    affiliation: 'CIIRC, CVUT'
+  - given-names: Vladimir
+    family-names: Petrik
+    email: vladimir.petrik@cvut.cz
+    affiliation: 'CIIRC, CVUT'
+identifiers:
+  - type: url
+    value: >-
+      https://hal.laas.fr/hal-03945110/file/2022_Kateryna__Video_Guided_Task_and_Motion_Planner.pdf
+    description: Conference paper describing the benchmark.
+abstract: >-
+  This work aims at leveraging instructional video to guide
+  the solving of complex multi-contact task-and-motion
+  planning tasks in robotics. Towards this goal, we propose
+  an extension of the well-established Rapidly-Exploring
+  Random Tree (RRT) planner, which simultaneously grows
+  multiple trees around grasp and release states extracted
+  from the guiding video. Our key novelty lies in combining
+  contact states, and 3D object poses extracted from the
+  guiding video with a traditional planning algorithm that
+  allows us to solve tasks with sequential dependencies, for
+  example, if an object needs to be placed at a specific
+  location to be grasped later. To demonstrate the benefits
+  of the proposed video-guided planning approach, we design
+  a new benchmark with three challenging tasks: (i) 3D
+  rearrangement of multiple objects between a table and a
+  shelf, (ii) multi-contact transfer of an object through a
+  tunnel, and (iii) transferring objects using a tray in a
+  similar way a waiter transfers dishes. We demonstrate the
+  effectiveness of our planning algorithm on several robots,
+  including the Franka Emika Panda and the KUKA KMR iiwa.
