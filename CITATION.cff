@@ -20,6 +20,9 @@ authors:
   - given-names: Nicolas
     family-names: Mansard
     affiliation: 'LAAS, CNRS'
+  - given-names: Justin
+    family-names: Carpentier
+    affiliation: 'INRIA'
   - given-names: Josef
     family-names: Sivic
     affiliation: 'CIIRC, CVUT'
