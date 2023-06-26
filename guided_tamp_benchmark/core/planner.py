@@ -4,11 +4,14 @@
 # Created on: 04.04.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from guided_tamp_benchmark.tasks import BaseTask
+    from guided_tamp_benchmark.core import Path
 
 from abc import ABC, abstractmethod
-
-from guided_tamp_benchmark.core import Path
-from guided_tamp_benchmark.tasks import BaseTask
 
 
 class BasePlanner(ABC):
