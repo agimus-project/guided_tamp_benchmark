@@ -38,6 +38,7 @@ class ParsesTestCase(unittest.TestCase):
     robots = [KukaIIWARobot, KukaMobileIIWARobot, UR5Robot, PandaRobot]
 
     def test_robots(self):
+        """test .srdf parser on robots"""
         for r in self.robots:
             try:
                 r().get_contacts_info()
@@ -46,6 +47,7 @@ class ParsesTestCase(unittest.TestCase):
                 self.fail()
 
     def test_objects(self):
+        """test .srdf parser on objects"""
         for i, o in enumerate(self.objects):
             for arg in self.obj_args[i]:
                 try:
@@ -55,6 +57,7 @@ class ParsesTestCase(unittest.TestCase):
                     self.fail()
 
     def test_furniture(self):
+        """test .srdf parser on furniture"""
         for i, f in enumerate(self.furniture):
             for arg in self.fur_args[i]:
                 try:

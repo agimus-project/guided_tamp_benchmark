@@ -5,12 +5,55 @@
 #     Author: Vladimir Petrik <vladimir.petrik@cvut.cz>
 #
 from typing import List
+import pinocchio as pin
+from robomeshcat import Robot, Scene, Object
 
-from robomeshcat import Robot, Scene
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 from guided_tamp_benchmark.tasks.base_task import BaseTask
 
 from guided_tamp_benchmark.core import Configuration
+
+
+class RobotWithTexture(Robot):
+    def __init__(self, texture, *args, **kwargs) -> None:
+        self.texture = texture
+        super().__init__(*args, **kwargs)
+
+    def _init_objects(self, overwrite_color=False):
+        pin.forwardKinematics(self._model, self._data, self._q)
+        pin.updateGeometryPlacements(
+            self._model, self._data, self._geom_model, self._geom_data
+        )
+        base = pin.SE3(self._pose)
+        for g, f in zip(self._geom_model.geometryObjects, self._geom_data.oMg):
+            print(
+                f"from init obj name: {g.name} color: "
+                f"{g.meshColor[:3] if not overwrite_color else self._color}"
+            )
+            kwargs = dict(
+                name=f"{self.name}/{g.name}",
+                color=g.meshColor[:3] if not overwrite_color else self._color,
+                opacity=g.meshColor[3] if self._opacity is None else self._opacity,
+                texture=self.texture,
+                pose=(base * f).homogeneous,
+            )
+            if g.meshPath == "BOX":
+                self._objects[kwargs["name"]] = Object.create_cuboid(
+                    lengths=2 * g.geometry.halfSide, **kwargs
+                )
+            elif g.meshPath == "SPHERE":
+                self._objects[kwargs["name"]] = Object.create_sphere(
+                    radius=g.geometry.radius, **kwargs
+                )
+            elif g.meshPath == "CYLINDER":
+                radius, length = g.geometry.radius, 2 * g.geometry.halfLength
+                self._objects[kwargs["name"]] = Object.create_cylinder(
+                    radius=radius, length=length, **kwargs
+                )
+            else:
+                self._objects[kwargs["name"]] = Object.create_mesh(
+                    path_to_mesh=g.meshPath, scale=g.meshScale, **kwargs
+                )
 
 
 class Renderer:
@@ -40,11 +83,17 @@ class Renderer:
         "Add movable objects into the scene"
         self.objects = []
         for o in task.objects:
-            if o.name == 'base':
-                continue
-            vo = Robot(
-                urdf_path=o.urdfFilename, mesh_folder_path=get_models_data_directory(),
-                texture=str(get_models_data_directory()) + "/ycbv/meshes/" + o.name + "_texture.png")
+            texture_path = (
+                str(get_models_data_directory())
+                + "/ycbv/meshes/"
+                + o.name
+                + "_texture.png"
+            )
+            vo = RobotWithTexture(
+                urdf_path=o.urdfFilename,
+                mesh_folder_path=get_models_data_directory(),
+                texture=texture_path,
+            )
             self.objects.append(vo)
             self.scene.add_robot(vo)
 
@@ -54,6 +103,19 @@ class Renderer:
         with self.scene.animation(fps=fps):
             self.robot[:] = self.task.robot.initial_configuration()
             for object_poses in self.task.demo.objects_poses.transpose(1, 0, 2, 3):
+                for obj, pose in zip(self.objects, object_poses):
+                    obj.pose = pose
+                self.scene.render()
+
+    def animate_subgoals(self, fps: int = 1):
+        """Create an animation from the demonstration file, that contains the motion of
+        object but not the motion of the robot"""
+        with self.scene.animation(fps=fps):
+            # self.robot.pos = [-5, -5, 0]
+            self.robot[:] = self.task.robot.initial_configuration()
+            for object_poses in self.task.demo.subgoal_objects_poses.transpose(
+                1, 0, 2, 3
+            ):
                 for obj, pose in zip(self.objects, object_poses):
                     obj.pose = pose
                 self.scene.render()

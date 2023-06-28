@@ -3,15 +3,13 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 20.02.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+from __future__ import annotations
 
-import pinocchio as pin
 import sys
+import pinocchio as pin
 import numpy as np
 
-from typing import List, Tuple
-
-from guided_tamp_benchmark.core import Configuration
-
+from guided_tamp_benchmark.core.configuration import Configuration
 from guided_tamp_benchmark.models.robots.base import BaseRobot
 from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
@@ -44,7 +42,7 @@ def _rename_geometry(collision_model: pin.GeometryModel, model_name: str):
 def _remove_collisions_for_tunnel(
     full_coll_mod: pin.GeometryModel,
     rob_coll_mod: pin.GeometryModel,
-    disabled_tunnel_links: List[str],
+    disabled_tunnel_links: list[str],
 ):
     """removes collision pairs between all robot links and
     Tunnel.disabled_robot_collision_for_links"""
@@ -61,9 +59,22 @@ def _remove_collisions_for_tunnel(
             )
 
 
+def t_xyz_quat_xyzw_to_pin_se3(pose: list) -> pin.SE3:
+    """returns pinocchio SE3 pose from pose made of translation xyz and
+    quaternion xyzw"""
+    return pin.XYZQUATToSE3(pose[:3] + pose[-3:] + [pose[-4]])
+
+
+def check_if_identity(pose1: list, pose2: list, error: float = 0.0001) -> bool:
+    """check if transformation from pose1 to pose2 is identity with given error"""
+    T_o_p1, T_2p_o = pin.XYZQUATToSE3(pose1), pin.XYZQUATToSE3(pose2).inverse()
+    T_2p_p1 = T_2p_o * T_o_p1
+    return T_2p_p1.isIdentity(prec=error)
+
+
 def find_frame_in_frames(model: pin.Model, frame: str) -> int:
-    """Will find given frame name or partial frame name in the frames of given pinocchio
-    model."""
+    """Will find given frame name or partial frame name in the frames of given
+    pinocchio model."""
     for i, f in enumerate(model.frames):
         if f.name.find(frame) != -1:
             return i
@@ -71,10 +82,10 @@ def find_frame_in_frames(model: pin.Model, frame: str) -> int:
 
 
 def _create_model(
-    robots: List[BaseRobot],
-    objects: List[BaseObject],
-    furniture: List[FurnitureObject],
-    robot_poses: List[pin.SE3],
+    robots: list[BaseRobot],
+    objects: list[BaseObject],
+    furniture: list[FurnitureObject],
+    robot_poses: list[pin.SE3],
     remove_tunnel_collisions: bool,
 ) -> (pin.Model, pin.GeometryModel):
     """Creates pinocchio urdf model and pinocchio collision model from given robots,
@@ -164,7 +175,7 @@ def pose_as_matrix_to_pose_as_quat(pose: np.ndarray) -> np.ndarray:
 
 def convex_shape(
     shape_points: np.ndarray, normal: np.ndarray, frame: pin.SE3
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """will create the equiation for convex shape in form of Ax>=b, where A is matrix
     and b vector."""
     A, b = [], []
@@ -182,7 +193,7 @@ def convex_shape(
 
 def ortonormalization(
     n: np.ndarray, y: np.ndarray
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """creates 3 orthonormal vector. Vector n is the result between cross product x and
     y.
      Thus, n and y are orthogonal."""
@@ -193,8 +204,8 @@ def ortonormalization(
 
 
 class Collision:
-    """The collision class consists of Pinocchio urdf and collision models and functions
-    for collision checking and Pinocchio model rendering."""
+    """The collision class consists of Pinocchio urdf and collision models and
+    functions for collision checking and Pinocchio model rendering."""
 
     def __init__(self, task):
         """Initilizie with task eg. ShelfTask..."""
@@ -245,7 +256,7 @@ class Collision:
 
         def find_info_for_contact_surface(
             contacts: np.ndarray,
-        ) -> Tuple[np.ndarray, np.ndarray, pin.SE3]:
+        ) -> tuple[np.ndarray, np.ndarray, pin.SE3]:
             # finds the highest cross product in contact surface shape
             x, y = 0, 0
             for i in range(len(contacts)):
@@ -294,10 +305,9 @@ class Collision:
         robots = task_info["robots"]
         objects = task_info["objects"]
         furniture = task_info["furniture"]
-        furniture.reverse()
 
         contacts = []
-        for i, f in enumerate(furniture + robots):
+        for i, f in enumerate(furniture[::-1] + robots):
             f_contacts = f.get_contacts_info()
             for k_fc in f_contacts:
                 if i < len(furniture):
@@ -348,8 +358,8 @@ class Collision:
             return False, []
 
     def is_config_grasp(
-        self, configuration: Configuration, delta: float
-    ) -> Tuple[bool, list]:
+        self, configuration: Configuration, delta: float = 0.001
+    ) -> tuple[bool, list]:
         """This function will check if configuration is in grasp or not. It will return
         tuple (bool, [(str, str),...]) where bool is True if configuration is in grasp
         and list contains tuples of two string indicating the frames and handles that
@@ -375,12 +385,7 @@ class Collision:
                     f" pinocchio model"
                 )
                 T_o_lr = self.data.oMf[rob_frame_id]
-                g_pose = (
-                    grippers[k_g]["pose"][:3]
-                    + grippers[k_g]["pose"][-3:]
-                    + [grippers[k_g]["pose"][-4]]
-                )
-                T_lr_g = pin.XYZQUATToSE3(g_pose)
+                T_lr_g = t_xyz_quat_xyzw_to_pin_se3(grippers[k_g]["pose"])
                 T_o_g = T_o_lr * T_lr_g
                 for j, o in enumerate(reversed(objects)):
                     handles = o.get_handles_info()
@@ -392,12 +397,7 @@ class Collision:
                             f"the given pinocchio model"
                         )
                         T_o_lo = self.data.oMf[obj_frame_id]
-                        g_pose = (
-                            handles[k_h]["pose"][:3]
-                            + handles[k_h]["pose"][-3:]
-                            + [handles[k_h]["pose"][-4]]
-                        )
-                        T_lo_h = pin.XYZQUATToSE3(g_pose)
+                        T_lo_h = t_xyz_quat_xyzw_to_pin_se3(handles[k_h]["pose"])
                         T_o_h = T_o_lo * T_lo_h
 
                         if (
@@ -415,6 +415,24 @@ class Collision:
             return True, list_of_grasps
         else:
             return False, []
+
+    def separate_configs(self, configuration: Configuration) -> dict:
+        """from given configuration this function will create a dictionary of
+        {"object_name" = obj_config, "robot_name" = rob_config,... }"""
+        separated = {}
+        configs = configuration.to_numpy()
+        task_info = _extract_from_task(self.task)
+        robots, objects = task_info["robots"], task_info["objects"]
+
+        sum = 0
+        for i, r in enumerate(robots):
+            separated[r.name] = configs[sum : sum + len(r.initial_configuration())]
+            sum += len(r.initial_configuration())
+
+        for i, o in enumerate(reversed(objects)):
+            separated[o.name] = configs[sum + i * 7 : sum + i * 7 + 7]
+
+        return separated
 
     def visualize_through_pinocchio(self, configuration: Configuration):
         """will visualize the given configuration on Pinocchio collision model"""
