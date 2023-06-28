@@ -20,6 +20,7 @@ class BaseRobot(object):
     urdfSuffix = ""
     srdfSuffix = ""
     name = "robot"
+    robot_type = ""
 
     @abstractmethod
     def initial_configuration(self) -> List[float]:
@@ -65,3 +66,11 @@ class BaseRobot(object):
             root, contacts=False, grippers=True, handles=False
         )
         return grippers
+
+    def footprint_size(self) -> list[float, float]:
+        """Return the size of robots base"""
+        return [0.0, 0.0]
+
+    def footprint_pos(self) -> list[float, float]:
+        """Return the position of robots base"""
+        return [0.0, 0.0]
