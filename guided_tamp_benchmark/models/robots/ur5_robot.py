@@ -15,6 +15,7 @@ class UR5Robot(BaseRobot):
     urdfFilename = str(get_robots_data_directory().joinpath("ur5/ur5.urdf"))
     srdfFilename = str(get_robots_data_directory().joinpath("ur5/ur5.srdf"))
     name = "ur5"
+    robot_type = "fixed"
 
     def __init__(self):
         pass

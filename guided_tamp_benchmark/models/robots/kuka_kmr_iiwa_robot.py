@@ -19,6 +19,7 @@ class KukaMobileIIWARobot(BaseRobot):
         get_robots_data_directory().joinpath("kuka_kmr_iiwa/kuka_kmr_iiwa.srdf")
     )
     name = "kmr_iiwa"
+    robot_type = "mobile"
 
     def __init__(self):
         pass
