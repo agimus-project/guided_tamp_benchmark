@@ -45,3 +45,8 @@ class BasePlanner(ABC):
     def get_path(self) -> Path:
         """returns solution as Path class function"""
         pass
+
+    def reset(self):
+        """Reset internal state of the planner. Called in the benchmark after each
+        planning."""
+        pass
