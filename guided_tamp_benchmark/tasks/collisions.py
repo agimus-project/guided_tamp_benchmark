@@ -309,25 +309,25 @@ class Collision:
         contacts = []
         for i, f in enumerate(furniture[::-1] + robots):
             f_contacts = f.get_contacts_info()
-            for k_fc in f_contacts:
+            for f_fc in f_contacts:
                 if i < len(furniture):
                     T_o_fl = self.data.oMf[
                         find_frame_in_frames(
                             self.pin_mod,
-                            f_contacts[k_fc]["link"] + f"_{f.name}_{i + len(objects)}",
+                            f_contacts[f_fc]["link"] + f"_{f.name}_{i + len(objects)}",
                         )
                     ]
                 else:
                     T_o_fl = self.data.oMf[
                         find_frame_in_frames(
                             self.pin_mod,
-                            f_contacts[k_fc]["link"]
+                            f_contacts[f_fc]["link"]
                             + f"_{f.name}_{i - len(furniture)}",
                         )
                     ]
-                for j in range(len(f_contacts[k_fc]["shapes"])):
+                for j in range(len(f_contacts[f_fc]["shapes"])):
                     A, b, T_fl_fp = find_info_for_contact_surface(
-                        f_contacts[k_fc]["shapes"][j]
+                        f_contacts[f_fc]["shapes"][j]
                     )
                     for k, o in enumerate(reversed(objects)):
                         objects_contacts = o.get_contacts_info()
@@ -350,7 +350,7 @@ class Collision:
                                     delta_lower,
                                 ):
                                     contacts.append(
-                                        (f"{f.name}/{k_fc}", f"{o.name}/{k_oc}")
+                                        (f"{f.name}/{f_fc}", f"{o.name}/{k_oc}")
                                     )
         if len(contacts) > 0:
             return True, contacts
