@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import numpy as np
+import pinocchio as pin
 
 from guided_tamp_benchmark.tasks.demonstration import Demonstration
 from guided_tamp_benchmark.models.robots import BaseRobot
@@ -19,12 +20,13 @@ from guided_tamp_benchmark.models.furniture import (
 )
 from guided_tamp_benchmark.core import Configuration, Path
 
-from guided_tamp_benchmark.tasks.collisions import Collision, check_if_identity
+from guided_tamp_benchmark.tasks.collisions import Collision, check_if_identity, \
+    convex_shape
 
 
 class BaseTask:
     def __init__(
-        self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int
+            self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int
     ):
         self.task_name: str = task_name
         self.robot: BaseRobot = robot
@@ -40,6 +42,31 @@ class BaseTask:
             self.demo.furniture_poses,
             self.demo.furniture_params,
         )
+
+        if self.robot.name != "kmr_iiwa":
+            from guided_tamp_benchmark.models.furniture.box import Box
+            t_robot = self.demo.robot_pose[:3, 3:]
+            t_box = t_robot * np.array([[1], [1], [1 / 2]])
+            box_size = [0.2, 0.2, t_robot[2][0]]
+            T_box = t_robot
+            T_box[:3, 3:] = t_box
+            self.furniture.append(Box(pose=T_box, box_size=box_size))
+            rob_xy = np.array([t_robot[0][0], t_robot[1][0]])
+
+            box_height = 0
+            for i, f in enumerate(self.furniture):
+                f_contacts = f.get_contacts_info()
+                for f_fc in f_contacts:
+                    f_shapes = f_contacts[f_fc]["shapes"]
+                    for f_s in f_shapes:
+                        T_o_f = pin.SE3(self.demo.furniture_poses[i][:3, :3],
+                                        np.squeeze(
+                                            self.demo.furniture_poses[i][:3, 3:]))
+                        A, b = convex_shape(f_s, np.array([0, 0, 1]), T_o_f)
+                        if sum(A @ rob_xy >= b) == len(b):
+
+
+
         self.collision = Collision(self)
 
     def get_robot(self) -> BaseRobot:
@@ -59,7 +86,7 @@ class BaseTask:
         return self.objects
 
     def _check_grasp_constraint(
-        self, configuration: Configuration, delta: float = 0.001
+            self, configuration: Configuration, delta: float = 0.001
     ) -> tuple[bool, list[tuple[str]]]:
         """Check if grasp constraint is satisfied for a given @param configuration.
         It will return tuple (bool, [(str, str),...]) where bool is True if
@@ -75,10 +102,10 @@ class BaseTask:
         return self.collision.is_config_grasp(configuration, delta)
 
     def _check_place_constraint(
-        self,
-        configuration: Configuration,
-        delta_upper: float = 0.002,
-        delta_lower: float = -0.0001,
+            self,
+            configuration: Configuration,
+            delta_upper: float = 0.002,
+            delta_lower: float = -0.0001,
     ) -> tuple[bool, list[tuple[str, str]]]:
         """Check if place constraint is satisfied for a given @param configuration.
         This function checks if objects in configutation are in contact. It returns
@@ -118,14 +145,14 @@ class BaseTask:
         )
 
     def path_is_successful(
-        self,
-        path: Path,
-        delta: float,
-        error_robot_distance: float = 0.0001,
-        error_identity: float = 0.001,
-        error_placement_upper: float = 0.002,
-        error_placement_lower: float = -0.0001,
-        error_grasp: float = 0.001,
+            self,
+            path: Path,
+            delta: float,
+            error_robot_distance: float = 0.0001,
+            error_identity: float = 0.001,
+            error_placement_upper: float = 0.002,
+            error_placement_lower: float = -0.0001,
+            error_grasp: float = 0.001,
     ) -> tuple[bool, str]:
         """Return true if path solves the given task. Argument delta
         is a step by which the path will be interpolated.
@@ -165,7 +192,7 @@ class BaseTask:
 
         for o in objects:
             if not check_if_identity(
-                init_config[o.name], first_config[o.name], error=error_identity
+                    init_config[o.name], first_config[o.name], error=error_identity
             ):
                 return (
                     False,
@@ -173,7 +200,7 @@ class BaseTask:
                     f" its initial configuration from demonstration",
                 )
             if not check_if_identity(
-                goal_config[o.name], last_config[o.name], error=error_identity
+                    goal_config[o.name], last_config[o.name], error=error_identity
             ):
                 return (
                     False,
@@ -182,13 +209,13 @@ class BaseTask:
                 )
 
         if (
-            self.compute_lengths(
-                [
-                    Configuration(init_config[self.robot.name], [np.eye(4)]),
-                    Configuration(first_config[self.robot.name], [np.eye(4)]),
-                ]
-            )[0]
-            > error_robot_distance
+                self.compute_lengths(
+                    [
+                        Configuration(init_config[self.robot.name], [np.eye(4)]),
+                        Configuration(first_config[self.robot.name], [np.eye(4)]),
+                    ]
+                )[0]
+                > error_robot_distance
         ):
             return (
                 False,
@@ -197,13 +224,13 @@ class BaseTask:
             )
 
         if (
-            self.compute_lengths(
-                [
-                    Configuration(goal_config[self.robot.name], [np.eye(4)]),
-                    Configuration(last_config[self.robot.name], [np.eye(4)]),
-                ]
-            )[0]
-            > error_robot_distance
+                self.compute_lengths(
+                    [
+                        Configuration(goal_config[self.robot.name], [np.eye(4)]),
+                        Configuration(last_config[self.robot.name], [np.eye(4)]),
+                    ]
+                )[0]
+                > error_robot_distance
         ):
             return (
                 False,
@@ -251,7 +278,7 @@ class BaseTask:
                 for ip in is_placed:
                     if pp == ip:
                         if not check_if_identity(
-                            prev_config[pp], curr_config[ip], error=error_identity
+                                prev_config[pp], curr_config[ip], error=error_identity
                         ):
                             return (
                                 False,
