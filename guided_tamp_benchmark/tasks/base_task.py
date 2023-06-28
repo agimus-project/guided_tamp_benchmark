@@ -17,11 +17,12 @@ from guided_tamp_benchmark.models.furniture import (
     Table,  # noqa F401
     Shelf,  # noqa F401
     Tunnel,  # noqa F401
+    Box     # noqa F401
 )
 from guided_tamp_benchmark.core import Configuration, Path
 
 from guided_tamp_benchmark.tasks.collisions import Collision, check_if_identity, \
-    convex_shape
+    create_box
 
 
 class BaseTask:
@@ -44,29 +45,8 @@ class BaseTask:
         )
 
         if self.robot.name != "kmr_iiwa":
-            from guided_tamp_benchmark.models.furniture.box import Box
-            t_robot = self.demo.robot_pose[:3, 3:]
-            t_box = t_robot * np.array([[1], [1], [1 / 2]])
-            box_size = [0.2, 0.2, t_robot[2][0]]
-            T_box = t_robot
-            T_box[:3, 3:] = t_box
+            T_box, box_size = create_box(self)
             self.furniture.append(Box(pose=T_box, box_size=box_size))
-            rob_xy = np.array([t_robot[0][0], t_robot[1][0]])
-
-            box_height = 0
-            for i, f in enumerate(self.furniture):
-                f_contacts = f.get_contacts_info()
-                for f_fc in f_contacts:
-                    f_shapes = f_contacts[f_fc]["shapes"]
-                    for f_s in f_shapes:
-                        T_o_f = pin.SE3(self.demo.furniture_poses[i][:3, :3],
-                                        np.squeeze(
-                                            self.demo.furniture_poses[i][:3, 3:]))
-                        A, b = convex_shape(f_s, np.array([0, 0, 1]), T_o_f)
-                        if sum(A @ rob_xy >= b) == len(b):
-
-
-
 
         self.collision = Collision(self)
 
