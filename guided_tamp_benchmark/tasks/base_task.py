@@ -67,6 +67,7 @@ class BaseTask:
 
 
 
+
         self.collision = Collision(self)
 
     def get_robot(self) -> BaseRobot:

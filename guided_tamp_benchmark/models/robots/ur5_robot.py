@@ -32,3 +32,7 @@ class UR5Robot(BaseRobot):
 
     def get_gripper_name(self):
         return "ur5/gripper"
+
+    def footprint_size(self) -> list[float, float]:
+        """Return the size of robots base"""
+        return [0, 0]
