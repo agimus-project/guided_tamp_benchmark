@@ -4,21 +4,34 @@
 # Created on: 04.04.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 from __future__ import annotations
+
+import pathlib
 import time
-import pickle
+import dill
 import numpy as np
 
 from guided_tamp_benchmark.core import BasePlanner
+from guided_tamp_benchmark.scripts.benchmark_result import BenchmarkResult
 from guided_tamp_benchmark.tasks import BaseTask
 from collections import defaultdict
 
 
 class Benchmark:
+    """Benchmark class store results internally in nested dictionaries in a following
+     structure:
+       planer_name -> task_name -> demo_id -> robot_name -> robot_pose_id -> seed_id
+    To get results for you planner for panda in shelf1 task do:
+        res = benchmark['your_planner_name']['shelf1'][0]['panda'][0][0]
+    The 'res' variable is instance of class BenchmarkResult:
+    """
+
     def __init__(self):
         self.results = defaultdict(
             lambda: defaultdict(
                 lambda: defaultdict(
-                    lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
+                    lambda: defaultdict(
+                        lambda: defaultdict(lambda: defaultdict(BenchmarkResult))
+                    )
                 )
             )
         )
@@ -55,12 +68,12 @@ class Benchmark:
                 f"{task.robot.name} robot pose {task.demo.pose_id},"
                 f" seed {s}, solved: {res}"
             )
-            dict_entry = self.results[p.name][task.task_name][task.demo.demo_id][
-                task.robot.name
-            ][task.demo.pose_id][s]
+            benchmark_result: BenchmarkResult = self.results[p.name][task.task_name][
+                task.demo.demo_id
+            ][task.robot.name][task.demo.pose_id][s]
+            benchmark_result.is_solved = res
 
-            dict_entry["is_solved"] = res
-            if not res:
+            if not benchmark_result.is_solved:
                 continue
 
             path = p.get_path()
@@ -69,15 +82,19 @@ class Benchmark:
             ]
             del p
 
-            if res:
-                dict_entry["time"] = end_solve_t - start_solve_t
-                dict_entry["path_len"] = task.compute_lengths(path_as_config)
-                dict_entry["configs"] = path_as_config
-                dict_entry["grasp_number"] = task.compute_n_grasps(path_as_config)
+            benchmark_result.computation_time = end_solve_t - start_solve_t
+            benchmark_result.path_len = task.compute_lengths(path_as_config)
+            benchmark_result.subsampled_path = path_as_config
+            benchmark_result.number_of_grasps = task.compute_n_grasps(path_as_config)
 
-    def save_benchmark(self, results_path: str):
+    def save_benchmark(self, results_path: str | pathlib.Path):
         """saves the benchmarking results to the given file"""
-        pickle.dump(self.results, open(results_path, "wb"))
+        dill.dump(self.results, open(results_path, "wb"))
+
+    def load_benchmark(self, results_path: str | pathlib.Path):
+        """Load the benchmarking results from a given file. The results are stored
+        internally."""
+        self.results = dill.load(open(results_path, "rb"))
 
 
 if __name__ == "__main__":
