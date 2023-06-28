@@ -7,8 +7,7 @@
 import unittest
 from pathlib import Path
 
-from guided_tamp_benchmark.scripts.benchmark import Benchmark
-from guided_tamp_benchmark.scripts.benchmark_result import BenchmarkResult
+from guided_tamp_benchmark.benchmark import Benchmark, BenchmarkResult
 
 
 class TestBenchmarkScript(unittest.TestCase):
@@ -39,11 +38,6 @@ class TestBenchmarkScript(unittest.TestCase):
         self.assertAlmostEqual(res.path_len[2], 3)
         self.assertEqual(res.subsampled_path, list())
         self.assertEqual(res.number_of_grasps, 10)
-
-
-#     self.results[p.name][task.task_name][
-#                 task.demo.demo_id
-#             ][task.robot.name][task.demo.pose_id][s]
 
 
 if __name__ == "__main__":

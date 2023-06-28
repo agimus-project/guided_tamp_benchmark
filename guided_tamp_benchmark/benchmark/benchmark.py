@@ -11,7 +11,7 @@ import dill
 import numpy as np
 
 from guided_tamp_benchmark.core import BasePlanner
-from guided_tamp_benchmark.scripts.benchmark_result import BenchmarkResult
+from guided_tamp_benchmark.benchmark import BenchmarkResult
 from guided_tamp_benchmark.tasks import BaseTask
 from collections import defaultdict
 
@@ -95,7 +95,3 @@ class Benchmark:
         """Load the benchmarking results from a given file. The results are stored
         internally."""
         self.results = dill.load(open(results_path, "rb"))
-
-
-if __name__ == "__main__":
-    pass
