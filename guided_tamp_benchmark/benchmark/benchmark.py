@@ -74,13 +74,14 @@ class Benchmark:
             benchmark_result.is_solved = res
 
             if not benchmark_result.is_solved:
+                p.reset()
                 continue
 
             path = p.get_path()
             path_as_config = [
                 path.interpolate(t) for t in np.arange(0, 1 + delta, delta)
             ]
-            del p
+            p.reset()
 
             benchmark_result.computation_time = end_solve_t - start_solve_t
             benchmark_result.path_len = task.compute_lengths(path_as_config)
