@@ -1,5 +1,5 @@
 from guided_tamp_benchmark.core import Path
-from guided_tamp_benchmark.scripts.benchmark import Benchmark
+from guided_tamp_benchmark.benchmark import Benchmark
 from guided_tamp_benchmark.tasks import ShelfTask, BaseTask
 from guided_tamp_benchmark.models.robots import *
 from guided_tamp_benchmark.core.planner import BasePlanner

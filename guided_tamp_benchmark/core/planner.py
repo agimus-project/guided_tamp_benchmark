@@ -4,10 +4,15 @@
 # Created on: 04.04.23
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from guided_tamp_benchmark.tasks import BaseTask
+    from guided_tamp_benchmark.core import Path
+
 
 from abc import ABC, abstractmethod
-
-from guided_tamp_benchmark.core import Path
 
 
 class BasePlanner(ABC):
@@ -38,4 +43,9 @@ class BasePlanner(ABC):
     @abstractmethod
     def get_path(self) -> Path:
         """returns solution as Path class function"""
+        pass
+
+    def reset(self):
+        """Reset internal state of the planner. Called in the benchmark after each
+        planning."""
         pass
