@@ -23,7 +23,9 @@ class BasePlanner(ABC):
     """
 
     @abstractmethod
-    def __init__(self, task: BaseTask, max_planning_time: float, random_seed: int, **kwargs):
+    def __init__(
+        self, task: BaseTask, max_planning_time: float, random_seed: int, **kwargs
+    ):
         self.task = task
         self.max_planning_time = max_planning_time
         self.random_seed = random_seed
