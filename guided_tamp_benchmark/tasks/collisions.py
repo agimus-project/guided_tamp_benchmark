@@ -9,6 +9,7 @@ import sys
 import copy
 import pinocchio as pin
 import numpy as np
+from typing import TYPE_CHECKING
 
 from guided_tamp_benchmark.core.configuration import Configuration
 from guided_tamp_benchmark.models.robots.base import BaseRobot
@@ -17,8 +18,11 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 
+if TYPE_CHECKING:
+    from guided_tamp_benchmark.tasks import BaseTask
 
-def create_box(task) -> tuple[np.ndarray, list]:
+
+def create_box(task: BaseTask) -> tuple[np.ndarray, list[float]]:
     pin_mod, _ = _create_model(
         remove_tunnel_collisions=task.task_name == "tunnel", **_extract_from_task(task)
     )
@@ -30,11 +34,12 @@ def create_box(task) -> tuple[np.ndarray, list]:
     pin.updateFramePlacements(pin_mod, data)
 
     # o - universe, r - robot, fr - foot of robot
-    T_r_fr = np.eye(4)
-    T_r_fr[:3, 3:] = np.array([task.robot.footprint_pos() + [0]]).T
+    pose_r_fr = np.eye(4)
+    pose_r_fr[:3, 3:] = np.array([task.robot.footprint_pos() + [0]]).T
     box_size = task.robot.footprint_size() + [task.demo.robot_pose[:3, 3:][2][0]]
-    T_o_r = copy.deepcopy(task.demo.robot_pose)
-    T_o_r[:3, 3:] = np.array(
+    assert task.demo.robot_pose is not None
+    pose_o_r = task.demo.robot_pose.copy()
+    pose_o_r[:3, 3:] = np.array(
         [np.squeeze(task.demo.robot_pose[:3, 3:]) * np.array([1, 1, 1 / 2])]
     ).T
     rob_xy = np.array(
@@ -47,7 +52,7 @@ def create_box(task) -> tuple[np.ndarray, list]:
         for f_fc in f_contacts:
             f_shapes = f_contacts[f_fc]["shapes"]
             for f_s in f_shapes:
-                T_o_fl = data.oMf[
+                pose_o_fl = data.oMf[
                     find_frame_in_frames(
                         pin_mod,
                         f_contacts[f_fc]["link"]
@@ -56,26 +61,26 @@ def create_box(task) -> tuple[np.ndarray, list]:
                 ]
                 shape = []
                 for s in f_s:
-                    shape.append(T_o_fl.np @ np.append(s, 1))
+                    shape.append(pose_o_fl.np @ np.append(s, 1))
                 A, b = convex_shape(
                     np.array(shape),
                     np.array([0, 0, 1]),
                     pin.SE3(np.eye(3), np.array([0, 0, 0])),
                 )
                 if sum(A @ rob_xy >= b) == len(b):
-                    if (T_o_fl.np @ np.append(f_s[0], 1))[2] > box_height:
+                    if (pose_o_fl.np @ np.append(f_s[0], 1))[2] > box_height:
                         box_height = (
                             task.demo.robot_pose[:3, 3:][2][0]
-                            - (T_o_fl.np @ np.append(f_s[0], 1))[2]
+                            - (pose_o_fl.np @ np.append(f_s[0], 1))[2]
                         )
 
     box_size[2] = task.demo.robot_pose[:3, 3:][2][0] if box_height == 0 else box_height
-    T_o_r[2][3] = (
-        T_o_r[2][3]
+    pose_o_r[2][3] = (
+        pose_o_r[2][3]
         if box_height == 0
         else task.demo.robot_pose[:3, 3:][2][0] - box_height / 2
     )
-    return T_o_r @ T_r_fr, box_size
+    return pose_o_r @ pose_r_fr, box_size
 
 
 def _rename_frames(model: pin.Model, model_name: str):
@@ -533,4 +538,3 @@ if __name__ == "__main__":
 
     collision.is_config_valid(config)
     collision.visualize_through_pinocchio(config)
-    pass
