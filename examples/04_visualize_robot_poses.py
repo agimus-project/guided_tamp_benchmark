@@ -5,8 +5,8 @@
 #     Author: Vladimir Petrik <vladimir.petrik@cvut.cz>
 #
 
-import imageio
 from pathlib import Path
+from imageio import imwrite
 
 from guided_tamp_benchmark.core import Configuration
 from guided_tamp_benchmark.models.robots import *
@@ -40,9 +40,8 @@ for task_cls in [TunnelTask, ShelfTask]:
                     )
                 )
                 img = r.scene.render_image()
-                imageio.imwrite(
-                    output_folder.joinpath(
-                        f"{task_cls.__name__}_{robot_cls.__name__}_{demo_id}_{robot_pose_id}.png"
-                    ),
-                    img,
+                filename = (
+                    f"{task_cls.__name__}_{robot_cls.__name__}"
+                    f"_{demo_id}_{robot_pose_id}.png"
                 )
+                imwrite(output_folder.joinpath(filename), img)
