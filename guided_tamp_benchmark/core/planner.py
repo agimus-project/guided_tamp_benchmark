@@ -8,6 +8,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from guided_tamp_benchmark.tasks import BaseTask
     from guided_tamp_benchmark.core import Path
 
 
@@ -22,7 +23,7 @@ class BasePlanner(ABC):
     """
 
     @abstractmethod
-    def __init__(self, task, max_planning_time: float, random_seed: int, **kwargs):
+    def __init__(self, task: BaseTask, max_planning_time: float, random_seed: int, **kwargs):
         self.task = task
         self.max_planning_time = max_planning_time
         self.random_seed = random_seed
