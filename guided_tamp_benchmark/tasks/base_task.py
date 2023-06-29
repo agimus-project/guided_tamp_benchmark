@@ -16,10 +16,15 @@ from guided_tamp_benchmark.models.furniture import (
     Table,  # noqa F401
     Shelf,  # noqa F401
     Tunnel,  # noqa F401
+    Box,  # noqa F401
 )
 from guided_tamp_benchmark.core import Configuration, Path
 
-from guided_tamp_benchmark.tasks.collisions import Collision, check_if_identity
+from guided_tamp_benchmark.tasks.collisions import (
+    Collision,
+    check_if_identity,
+    create_box,
+)
 
 
 class BaseTask:
@@ -40,6 +45,11 @@ class BaseTask:
             self.demo.furniture_poses,
             self.demo.furniture_params,
         )
+
+        if self.robot.robot_type == "fixed":
+            box_pose, box_size = create_box(self)
+            self.furniture.append(Box(pose=box_pose, box_size=box_size))
+
         self.collision = Collision(self)
 
     def get_robot(self) -> BaseRobot:

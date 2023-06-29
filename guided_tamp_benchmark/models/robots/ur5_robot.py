@@ -15,6 +15,7 @@ class UR5Robot(BaseRobot):
     urdfFilename = str(get_robots_data_directory().joinpath("ur5/ur5.urdf"))
     srdfFilename = str(get_robots_data_directory().joinpath("ur5/ur5.srdf"))
     name = "ur5"
+    robot_type = "fixed"
 
     def __init__(self):
         pass
@@ -31,3 +32,7 @@ class UR5Robot(BaseRobot):
 
     def get_gripper_name(self):
         return "ur5/gripper"
+
+    def footprint_size(self) -> list[float, float]:
+        """Return the size of robots base"""
+        return [0.2, 0.2]

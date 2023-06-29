@@ -8,6 +8,7 @@ from __future__ import annotations
 import sys
 import pinocchio as pin
 import numpy as np
+from typing import TYPE_CHECKING
 
 from guided_tamp_benchmark.core.configuration import Configuration
 from guided_tamp_benchmark.models.robots.base import BaseRobot
@@ -15,6 +16,70 @@ from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
+
+if TYPE_CHECKING:
+    from guided_tamp_benchmark.tasks import BaseTask
+
+
+def create_box(task: BaseTask) -> tuple[np.ndarray, list[float]]:
+    pin_mod, _ = _create_model(
+        remove_tunnel_collisions=task.task_name == "tunnel", **_extract_from_task(task)
+    )
+    data = pin_mod.createData()
+    config = Configuration(
+        task.robot.initial_configuration(), task.demo.objects_poses[:3, 0]
+    )
+    pin.forwardKinematics(pin_mod, data, config.to_numpy())
+    pin.updateFramePlacements(pin_mod, data)
+
+    # o - universe, r - robot, fr - foot of robot
+    pose_r_fr = np.eye(4)
+    pose_r_fr[:3, 3:] = np.array([task.robot.footprint_pos() + [0]]).T
+    box_size = task.robot.footprint_size() + [task.demo.robot_pose[:3, 3:][2][0]]
+    assert task.demo.robot_pose is not None
+    pose_o_r = task.demo.robot_pose.copy()
+    pose_o_r[:3, 3:] = np.array(
+        [np.squeeze(task.demo.robot_pose[:3, 3:]) * np.array([1, 1, 1 / 2])]
+    ).T
+    rob_xy = np.array(
+        [task.demo.robot_pose[:3, 3:][0][0], task.demo.robot_pose[:3, 3:][1][0]]
+    )
+
+    box_height = 0
+    for i, f in enumerate(reversed(task.furniture)):
+        f_contacts = f.get_contacts_info()
+        for f_fc in f_contacts:
+            f_shapes = f_contacts[f_fc]["shapes"]
+            for f_s in f_shapes:
+                pose_o_fl = data.oMf[
+                    find_frame_in_frames(
+                        pin_mod,
+                        f_contacts[f_fc]["link"]
+                        + f"_{f.name}_{i + len(_extract_from_task(task)['objects'])}",
+                    )
+                ]
+                shape = []
+                for s in f_s:
+                    shape.append(pose_o_fl.np @ np.append(s, 1))
+                A, b = convex_shape(
+                    np.array(shape),
+                    np.array([0, 0, 1]),
+                    pin.SE3(np.eye(3), np.array([0, 0, 0])),
+                )
+                if sum(A @ rob_xy >= b) == len(b):
+                    if (pose_o_fl.np @ np.append(f_s[0], 1))[2] > box_height:
+                        box_height = (
+                            task.demo.robot_pose[:3, 3:][2][0]
+                            - (pose_o_fl.np @ np.append(f_s[0], 1))[2]
+                        )
+
+    box_size[2] = task.demo.robot_pose[:3, 3:][2][0] if box_height == 0 else box_height
+    pose_o_r[2][3] = (
+        pose_o_r[2][3]
+        if box_height == 0
+        else task.demo.robot_pose[:3, 3:][2][0] - box_height / 2
+    )
+    return pose_o_r @ pose_r_fr, box_size
 
 
 def _rename_frames(model: pin.Model, model_name: str):
@@ -309,25 +374,25 @@ class Collision:
         contacts = []
         for i, f in enumerate(furniture[::-1] + robots):
             f_contacts = f.get_contacts_info()
-            for k_fc in f_contacts:
+            for f_fc in f_contacts:
                 if i < len(furniture):
                     T_o_fl = self.data.oMf[
                         find_frame_in_frames(
                             self.pin_mod,
-                            f_contacts[k_fc]["link"] + f"_{f.name}_{i + len(objects)}",
+                            f_contacts[f_fc]["link"] + f"_{f.name}_{i + len(objects)}",
                         )
                     ]
                 else:
                     T_o_fl = self.data.oMf[
                         find_frame_in_frames(
                             self.pin_mod,
-                            f_contacts[k_fc]["link"]
+                            f_contacts[f_fc]["link"]
                             + f"_{f.name}_{i - len(furniture)}",
                         )
                     ]
-                for j in range(len(f_contacts[k_fc]["shapes"])):
+                for j in range(len(f_contacts[f_fc]["shapes"])):
                     A, b, T_fl_fp = find_info_for_contact_surface(
-                        f_contacts[k_fc]["shapes"][j]
+                        f_contacts[f_fc]["shapes"][j]
                     )
                     for k, o in enumerate(reversed(objects)):
                         objects_contacts = o.get_contacts_info()
@@ -350,7 +415,7 @@ class Collision:
                                     delta_lower,
                                 ):
                                     contacts.append(
-                                        (f"{f.name}/{k_fc}", f"{o.name}/{k_oc}")
+                                        (f"{f.name}/{f_fc}", f"{o.name}/{k_oc}")
                                     )
         if len(contacts) > 0:
             return True, contacts
@@ -472,4 +537,3 @@ if __name__ == "__main__":
 
     collision.is_config_valid(config)
     collision.visualize_through_pinocchio(config)
-    pass

@@ -8,3 +8,4 @@ from .base import FurnitureObject
 from .shelf import Shelf
 from .table import Table
 from .tunnel import Tunnel
+from .box import Box

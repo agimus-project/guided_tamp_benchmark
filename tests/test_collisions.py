@@ -60,13 +60,13 @@ class CollisionFunctionsTestCase(unittest.TestCase):
             collision_check_cycle(
                 TunnelTask(0, UR5Robot(), 1), data["tunnel_0_ur_1"]["configs"]
             ),
-            (False, -1),
+            (True, 72),
         )
         self.assertEqual(
             collision_check_cycle(
                 ShelfTask(1, PandaRobot(), 1), data["shelf_1_panda_1"]["configs"]
             ),
-            (False, -1),
+            (True, 0),
         )
 
     def test_grasp_checking(self):
