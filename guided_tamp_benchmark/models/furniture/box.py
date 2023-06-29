@@ -15,9 +15,7 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 class Box(FurnitureObject):
     name = "box"
 
-    def __init__(
-            self, pose: np.array, box_size: Union[List[float], float]
-    ) -> None:
+    def __init__(self, pose: np.array, box_size: Union[List[float], float]) -> None:
         """
         will generate .urdf and .srdf file for environmental object box
         This object can be passed to hpp function loadEnvironmentObject() as argument.
@@ -47,11 +45,11 @@ class Box(FurnitureObject):
 
     @staticmethod
     def urdf(
-            pos: List[float],
-            rot: List[float],
-            size: List[float],
-            material: str = "brown",
-            color_rgba: str = "0.43 0.34 0.24 0.9",
+        pos: List[float],
+        rot: List[float],
+        size: List[float],
+        material: str = "brown",
+        color_rgba: str = "0.43 0.34 0.24 0.9",
     ):
         """
         this function generates text for .urdf file with given parameters to create
@@ -112,6 +110,6 @@ class Box(FurnitureObject):
 
         :return: text of .srdf file of box object
         """
-        return f"""<?xml version="1.0"?>
+        return """<?xml version="1.0"?>
                 <robot name="box">
                 </robot>"""
