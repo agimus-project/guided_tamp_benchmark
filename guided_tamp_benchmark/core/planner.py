@@ -8,7 +8,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from guided_tamp_benchmark.tasks import BaseTask
     from guided_tamp_benchmark.core import Path
 
 
