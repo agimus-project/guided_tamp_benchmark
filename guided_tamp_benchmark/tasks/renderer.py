@@ -58,7 +58,8 @@ class Renderer:
         Arguments:
              task: task with the scene elements description
              pddl: boolean indicating if name _pddl.urdf should be used for a robot
-             scene: optional robomeshcat scene that avoids creating a new meshcat visualizer.
+             scene: optional robomeshcat scene that avoids creating a new meshcat
+                visualizer.
         """
         super().__init__()
         self.task = task
