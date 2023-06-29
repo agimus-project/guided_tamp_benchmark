@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from guided_tamp_benchmark.tasks import BaseTask
     from guided_tamp_benchmark.core import Path
 
-
 from abc import ABC, abstractmethod
 
 
