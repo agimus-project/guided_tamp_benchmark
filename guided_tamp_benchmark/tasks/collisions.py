@@ -61,12 +61,12 @@ def create_box(task: BaseTask) -> tuple[np.ndarray, list[float]]:
                 shape = []
                 for s in f_s:
                     shape.append(pose_o_fl.np @ np.append(s, 1))
-                A, b = convex_shape(
+                a, b = convex_shape(
                     np.array(shape),
                     np.array([0, 0, 1]),
                     pin.SE3(np.eye(3), np.array([0, 0, 0])),
                 )
-                if sum(A @ rob_xy >= b) == len(b):
+                if sum(a @ rob_xy >= b) == len(b):
                     if (pose_o_fl.np @ np.append(f_s[0], 1))[2] > box_height:
                         box_height = (
                             task.demo.robot_pose[:3, 3:][2][0]
@@ -233,8 +233,8 @@ def _extract_from_task(task) -> dict:
 
 
 def pose_as_matrix_to_pose_as_quat(pose: np.ndarray) -> np.ndarray:
-    T = pin.SE3(pose[:3, :3], np.squeeze(pose[:3, 3:]))
-    xyz_quat = pin.se3ToXYZQUAT(T)
+    pose = pin.SE3(pose[:3, :3], np.squeeze(pose[:3, 3:]))
+    xyz_quat = pin.se3ToXYZQUAT(pose)
     return xyz_quat
 
 
@@ -243,17 +243,17 @@ def convex_shape(
 ) -> tuple[np.ndarray, np.ndarray]:
     """will create the equiation for convex shape in form of Ax>=b, where A is matrix
     and b vector."""
-    A, b = [], []
+    a, b = [], []
     normal_transformed = frame.rotation @ normal
     # normal = frame.homogeneous @ normal
     for x, p in enumerate(shape_points):
         p_a, p_b = np.resize(p, 4), np.resize(shape_points[x - 1], 4)
         p_a[-1], p_b[-1] = 1, 1
         p_a, p_b = frame.homogeneous @ p_a, frame.homogeneous @ p_b
-        a = np.cross(normal_transformed[:3], (p_a - p_b)[:3])
-        A.append(a[:2])
-        b.append(np.dot(np.array(A[x]), p_b[:2]))
-    return np.array(A), np.array(b)
+        tmp = np.cross(normal_transformed[:3], (p_a - p_b)[:3])
+        a.append(tmp[:2])
+        b.append(np.dot(np.array(a[x]), p_b[:2]))
+    return np.array(a), np.array(b)
 
 
 def ortonormalization(
@@ -340,24 +340,24 @@ class Collision:
             )
             base = np.array(ortonormalization(n, contacts[y] - contacts[0]))
             pose_fl_fp = pin.SE3(base, contacts[0])
-            A, b = convex_shape(contacts, n, pose_fl_fp.inverse())
+            a, b = convex_shape(contacts, n, pose_fl_fp.inverse())
 
-            return A, b, pose_fl_fp
+            return a, b, pose_fl_fp
 
         def are_points_in_convex_shape(
-            A: np.ndarray, b: np.ndarray, points: np.ndarray, T: pin.SE3, d_u, d_l
+            a: np.ndarray, b: np.ndarray, points: np.ndarray, pose: pin.SE3, d_u, d_l
         ) -> bool:
             """chceck whether the points satisfy the convex equation Ax>=b, and whether
             they are in distance d that satisfies d_l < d < d_u"""
             tmp = 0
             for x in range(len(points)):
                 pose_ol_op = pin.SE3(np.eye(3), points[x])
-                pose_fp_op = T * pose_ol_op
+                pose_fp_op = pose * pose_ol_op
                 o_shapes.append(pose_fp_op.translation)
                 if d_l < pose_fp_op.translation[-1] < d_u:
                     tmp = (
                         tmp + 1
-                        if sum(A @ pose_fp_op.translation[:2] >= b) == len(b)
+                        if sum(a @ pose_fp_op.translation[:2] >= b) == len(b)
                         else tmp
                     )
 
@@ -391,7 +391,7 @@ class Collision:
                         )
                     ]
                 for j in range(len(f_contacts[f_fc]["shapes"])):
-                    A, b, pose_fl_fp = find_info_for_contact_surface(
+                    a, b, pose_fl_fp = find_info_for_contact_surface(
                         f_contacts[f_fc]["shapes"][j]
                     )
                     for k, o in enumerate(reversed(objects)):
@@ -411,7 +411,7 @@ class Collision:
                                     * pose_o_ol
                                 )
                                 if are_points_in_convex_shape(
-                                    A,
+                                    a,
                                     b,
                                     objects_contacts[k_oc]["shapes"][m],
                                     pose_fp_ol,
