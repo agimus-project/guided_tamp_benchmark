@@ -18,8 +18,9 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 from guided_tamp_benchmark.models.utils import get_models_data_directory
 
 
-def create_box(task):
-    pin_mod, col_mod = _create_model(
+def create_box(task) -> tuple[np.ndarray, list]:
+
+    pin_mod, _ = _create_model(
         remove_tunnel_collisions=task.task_name == "tunnel",
         **_extract_from_task(task))
     data = pin_mod.createData()
@@ -28,16 +29,16 @@ def create_box(task):
     )
     pin.forwardKinematics(pin_mod, data, config.to_numpy())
     pin.updateFramePlacements(pin_mod, data)
-    task_info = _extract_from_task(task)
-    objects = task_info["objects"]
 
-    t_robot = copy.deepcopy(np.squeeze(task.demo.robot_pose[:3, 3:]))
-    pos_f = task.robot.footprint_pos()
-    t_box = t_robot * np.array([1, 1, 1 / 2]) + np.array(pos_f + [0])
-    box_size = task.robot.footprint_size() + [t_robot[2]]
-    T_box = copy.deepcopy(task.demo.robot_pose)
-    T_box[:3, 3:] = np.array([t_box]).T
-    rob_xy = np.array([t_robot[0], t_robot[1]])
+    # o - universe, r - robot, fr - foot of robot
+    T_r_fr = np.eye(4)
+    T_r_fr[:3, 3:] = np.array([task.robot.footprint_pos() + [0]]).T
+    box_size = task.robot.footprint_size() + [task.demo.robot_pose[:3, 3:][2][0]]
+    T_o_r = copy.deepcopy(task.demo.robot_pose)
+    T_o_r[:3, 3:] = np.array(
+        [np.squeeze(task.demo.robot_pose[:3, 3:]) * np.array([1, 1, 1 / 2])]).T
+    rob_xy = np.array(
+        [task.demo.robot_pose[:3, 3:][0][0], task.demo.robot_pose[:3, 3:][1][0]])
 
     box_height = 0
     for i, f in enumerate(reversed(task.furniture)):
@@ -48,7 +49,8 @@ def create_box(task):
                 T_o_fl = data.oMf[
                     find_frame_in_frames(
                         pin_mod,
-                        f_contacts[f_fc]["link"] + f"_{f.name}_{i + len(objects)}",
+                        f_contacts[f_fc][
+                            "link"] + f"_{f.name}_{i + len(_extract_from_task(task)['objects'])}",
                     )
                 ]
                 shape = []
@@ -58,11 +60,13 @@ def create_box(task):
                                     pin.SE3(np.eye(3), np.array([0, 0, 0])))
                 if sum(A @ rob_xy >= b) == len(b):
                     if (T_o_fl.np @ np.append(f_s[0], 1))[2] > box_height:
-                        box_height = t_robot[2] - (T_o_fl.np @ np.append(f_s[0], 1))[2]
+                        box_height = task.demo.robot_pose[:3, 3:][2][0] - \
+                                     (T_o_fl.np @ np.append(f_s[0], 1))[2]
 
-    box_size[2] = t_robot[2] if box_height == 0 else box_height
-    T_box[2][3] = T_box[2][3] if box_height == 0 else t_robot[2] - box_height / 2
-    return T_box, box_size
+    box_size[2] = task.demo.robot_pose[:3, 3:][2][0] if box_height == 0 else box_height
+    T_o_r[2][3] = T_o_r[2][3] if box_height == 0 else task.demo.robot_pose[:3, 3:][2][
+                                                          0] - box_height / 2
+    return T_o_r @ T_r_fr, box_size
 
 
 def _rename_frames(model: pin.Model, model_name: str):
