@@ -17,9 +17,7 @@ r = None
 
 for task_cls in [TunnelTask, ShelfTask]:
     for robot_cls in [PandaRobot, UR5Robot, KukaIIWARobot]:
-        output_folder = Path(
-            f"/tmp/robot_poses/{robot_cls.__name__}/{task_cls.__name__}"
-        )
+        output_folder = Path(f"/tmp/robot_poses/{task_cls.__name__}")
         output_folder.mkdir(parents=True, exist_ok=True)
 
         for demo_id in range(0, 10):
@@ -43,5 +41,8 @@ for task_cls in [TunnelTask, ShelfTask]:
                 )
                 img = r.scene.render_image()
                 imageio.imwrite(
-                    output_folder.joinpath(f"{demo_id}_{robot_pose_id}.png"), img
+                    output_folder.joinpath(
+                        f"{task_cls.__name__}_{robot_cls.__name__}_{demo_id}_{robot_pose_id}.png"
+                    ),
+                    img,
                 )
