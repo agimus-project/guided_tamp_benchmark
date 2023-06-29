@@ -39,4 +39,4 @@ class PandaRobot(BaseRobot):
 
     def footprint_pos(self) -> list[float, float]:
         """Return the position of robots base"""
-        return [0.0, 0.05]
+        return [-0.05, 0.0]
