@@ -20,7 +20,7 @@ class BaseRobot(object):
     urdfSuffix = ""
     srdfSuffix = ""
     name = "robot"
-    robot_type = ""
+    robot_type = ""  # either mobile or fixed
 
     @abstractmethod
     def initial_configuration(self) -> List[float]:

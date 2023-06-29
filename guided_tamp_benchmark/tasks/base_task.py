@@ -46,9 +46,9 @@ class BaseTask:
             self.demo.furniture_params,
         )
 
-        if self.robot.name != "kmr_iiwa":
-            T_box, box_size = create_box(self)
-            self.furniture.append(Box(pose=T_box, box_size=box_size))
+        if self.robot.robot_type == "fixed":
+            box_pose, box_size = create_box(self)
+            self.furniture.append(Box(pose=box_pose, box_size=box_size))
 
         self.collision = Collision(self)
 

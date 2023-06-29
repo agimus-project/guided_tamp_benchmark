@@ -4,8 +4,8 @@
 # Created on: 13.10.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
+from __future__ import annotations
 import os
-from typing import List, Union
 import numpy as np
 from pinocchio.rpy import matrixToRpy
 
@@ -15,15 +15,13 @@ from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 class Box(FurnitureObject):
     name = "box"
 
-    def __init__(self, pose: np.array, box_size: Union[List[float], float]) -> None:
+    def __init__(self, pose: np.ndarray, box_size: list[float] | float) -> None:
         """
         will generate .urdf and .srdf file for environmental object box
         This object can be passed to hpp function loadEnvironmentObject() as argument.
         :param pose: 4x4 pose matrix
-        :param desk_size: size of the box in [x, y, z] or single float for symmetric
+        :param box_size: size of the box in [x, y, z] or single float for symmetric
          box size
-        :param leg_display: True if legs should be displayed, else table will appear as
-        a box
         """
 
         super().__init__()
@@ -45,22 +43,22 @@ class Box(FurnitureObject):
 
     @staticmethod
     def urdf(
-        pos: List[float],
-        rot: List[float],
-        size: List[float],
+        pos: list[float],
+        rot: list[float],
+        size: list[float],
         material: str = "brown",
         color_rgba: str = "0.43 0.34 0.24 0.9",
     ):
         """
         this function generates text for .urdf file with given parameters to create
-        table object
+        box object
 
         :param pos: position of the box in [x, y, z]
         :param rot: rotation of the box in [r, p, y]
         :param size: size of the box in [x, y, z]
         :param material: optional material name
-        :param color_rgba:  optional color of table
-        :return: text of .urdf file with the description of table object
+        :param color_rgba:  optional color of the box
+        :return: text of .urdf file with the description of box object
         """
 
         return f"""<robot name="box">
@@ -105,11 +103,14 @@ class Box(FurnitureObject):
     @staticmethod
     def srdf():
         """
-        this function generates text for .srdf file with given parameters to create
-        contact surfaces
+        Generates text for SRDF file. For box, it does not contain contact surfaces
+        nor handles, i.e. xml contains only header.
 
         :return: text of .srdf file of box object
         """
         return """<?xml version="1.0"?>
                 <robot name="box">
                 </robot>"""
+
+    def contact_surfaces(self, prefix: str = "") -> list[str]:
+        return []
