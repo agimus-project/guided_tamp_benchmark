@@ -44,6 +44,16 @@ class Demonstration:
         )
 
     @staticmethod
+    def get_demonstration_ids(task_name: str) -> list[int]:
+        """Get valid demonstration IDs for a given task name."""
+        datadir = Demonstration._get_data_directory()
+        return [
+            int(d.name[len(task_name) + 1 : -4])
+            for d in datadir.iterdir()
+            if d.name.startswith(task_name) and not d.name.endswith("poses.pkl")
+        ]
+
+    @staticmethod
     def _get_robot_poses_filepath(
         task_name: str, demo_id: int, robot_name: str
     ) -> Path:
@@ -51,6 +61,14 @@ class Demonstration:
         return Demonstration._get_data_directory().joinpath(
             f"{task_name}_{demo_id}_{robot_name}_poses.pkl"
         )
+
+    @staticmethod
+    def get_number_of_robot_poses(task_name: str, demo_id: int, robot_name: str) -> int:
+        """Get number of robot poses for a given task_name demonstration id and robot
+        name."""
+        fn = Demonstration._get_robot_poses_filepath(task_name, demo_id, robot_name)
+        robot_data = pickle.load(open(fn, "rb"))
+        return len(robot_data)
 
     @staticmethod
     def load(task_name, demo_id, robot_name, pose_id):

@@ -11,17 +11,21 @@ from imageio import imwrite
 from guided_tamp_benchmark.core import Configuration
 from guided_tamp_benchmark.models.robots import *
 from guided_tamp_benchmark.tasks import *
+from guided_tamp_benchmark.tasks.demonstration import Demonstration
 from guided_tamp_benchmark.tasks.renderer import Renderer
 
 r = None
 
-for task_cls in [TunnelTask, ShelfTask]:
+for task_cls, task_name in [(TunnelTask, "tunnel"), (ShelfTask, "shelf")]:
     for robot_cls in [PandaRobot, UR5Robot, KukaIIWARobot]:
         output_folder = Path(f"/tmp/robot_poses/{task_cls.__name__}")
         output_folder.mkdir(parents=True, exist_ok=True)
 
-        for demo_id in range(0, 10):
-            for robot_pose_id in range(0, 10):
+        for demo_id in Demonstration.get_demonstration_ids(task_name):
+            nposes = Demonstration.get_number_of_robot_poses(
+                task_name, demo_id, robot_cls.name
+            )
+            for robot_pose_id in range(0, nposes):
                 try:
                     task = task_cls(
                         demo_id=demo_id, robot=robot_cls(), robot_pose_id=robot_pose_id
