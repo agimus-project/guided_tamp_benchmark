@@ -26,10 +26,6 @@ class RobotWithTexture(Robot):
         )
         base = pin.SE3(self._pose)
         for g, f in zip(self._geom_model.geometryObjects, self._geom_data.oMg):
-            print(
-                f"from init obj name: {g.name} color: "
-                f"{g.meshColor[:3] if not overwrite_color else self._color}"
-            )
             kwargs = dict(
                 name=f"{self.name}/{g.name}",
                 color=g.meshColor[:3] if not overwrite_color else self._color,
@@ -57,10 +53,17 @@ class RobotWithTexture(Robot):
 
 
 class Renderer:
-    def __init__(self, task: BaseTask, pddl=False) -> None:
+    def __init__(self, task: BaseTask, pddl=False, scene=None) -> None:
+        """Create a renderer for a given task.
+        Arguments:
+             task: task with the scene elements description
+             pddl: boolean indicating if name _pddl.urdf should be used for a robot
+             scene: optional robomeshcat scene that avoids creating a new meshcat
+                visualizer.
+        """
         super().__init__()
         self.task = task
-        self.scene = Scene()
+        self.scene = Scene() if scene is None else scene
         "Add robot into the scene"
         self.robot = Robot(
             urdf_path=task.robot.urdfFilename.replace(".urdf", "_pddl.urdf")
@@ -124,7 +127,11 @@ class Renderer:
         """Animate the path by setting the robot configuration and object poses."""
         with self.scene.animation(fps=fps):
             for c in path:
-                self.robot[:] = c.q
-                for pose, obj in zip(c.poses, self.objects):
-                    obj.pose = pose
-                self.scene.render()
+                self.render_configuration(c)
+
+    def render_configuration(self, c: Configuration):
+        """Update the robot pose and object poses, call render afterward."""
+        self.robot[:] = c.q
+        for pose, obj in zip(c.poses, self.objects):
+            obj.pose = pose
+        self.scene.render()
