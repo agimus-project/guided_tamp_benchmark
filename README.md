@@ -19,6 +19,11 @@ Additional resources:
 [Video overview](https://youtu.be/P8Nld03eai0)
 
 ## Installation
+Stable version:
+```bash
+pip install guided-tamp-benchmark
+```
+For development:
 ```bash
 git clone https://github.com/agimus-project/guided_tamp_benchmark.git
 conda create -n gtamp python=3.10 poetry
@@ -67,7 +72,8 @@ is controlled by the number of objects that the robot should
 arrange. This task is challenging for state-of-the-art planners
 because it requires moving multiple objects in a single
 planning task.
-![Logs](images/shelf_task.png)
+
+![](https://raw.githubusercontent.com/agimus-project/guided_tamp_benchmark/main/images/shelf_task.png)
 ### Tunnel Task
 The tunnel task consists of a tunnel and a single object that
 should be transferred through the tunnel. The tunnel is thin
@@ -75,7 +81,7 @@ enough so that the robot can place an object inside the tunnel
 on one side and pick it up from the other side. The challenge
 lies in the narrow passage in the admissible configuration
 space that needs to be discovered by the planner.
-![Logs](images/tunnel_task.png)
+![](https://raw.githubusercontent.com/agimus-project/guided_tamp_benchmark/main/images/tunnel_task.png)
 ### Waiter Task
 The waiter task simulates the job of waiter, in which a set of
 objects needs to be transferred from one location to another
@@ -85,7 +91,7 @@ a tray-like space that it can use for transferring objects.
 Discovering the tray in the planning state-space is non-trivial,
 which makes this task challenging for the planners that do
 not utilize demonstrations
-![Logs](images/waiter_task.png)
+![](https://raw.githubusercontent.com/agimus-project/guided_tamp_benchmark/main/images/waiter_task.png)
 
 ### Robots
 We implemented following robots for benchmarking:
