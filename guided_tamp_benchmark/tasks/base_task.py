@@ -64,11 +64,9 @@ class BaseTask:
         """Sets the robot base pose (4x4 numpy array)"""
         self.demo.robot_pose = pose
         if self.robot.robot_type == "fixed":
-            " Move (recreate) box under the robot "
+            "Move (recreate) box under the robot"
             box_pose, box_size = create_box(self)
             self.furniture[-1] = Box(pose=box_pose, box_size=box_size)
-
-
 
     def get_furniture(self) -> list[FurnitureObject]:
         """Returns the list of furniture instances"""

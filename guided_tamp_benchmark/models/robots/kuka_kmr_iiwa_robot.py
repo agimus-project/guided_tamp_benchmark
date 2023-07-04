@@ -25,7 +25,7 @@ class KukaMobileIIWARobot(BaseRobot):
         pass
 
     def initial_configuration(self) -> List[float]:
-        """ Return the initial configuration of the robot. """
+        """Return the initial configuration of the robot."""
         return [
             0.2,
             2.2,
@@ -38,7 +38,7 @@ class KukaMobileIIWARobot(BaseRobot):
             np.pi / 2,
             np.pi / 4,
             0,
-            0
+            0,
         ]
 
     def reach_m(self):
