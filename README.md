@@ -1,4 +1,6 @@
 # GuidedTAMPBenchmark
+[![PyPI version](https://badge.fury.io/py/guided-tamp-benchmark.svg)](https://badge.fury.io/py/guided-tamp-benchmark)
+![static_code_analysis](https://github.com/agimus-project/guided_tamp_benchmark/actions/workflows/static_code_analysis_and_tests.yml/badge.svg)
 
 This repository contains code for benchmarking/evaluating task-and-motion-planners guided by video demonstration. 
 The code was used in ICRA 2023 submission entitled 
