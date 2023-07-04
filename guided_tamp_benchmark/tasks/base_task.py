@@ -67,6 +67,7 @@ class BaseTask:
             "Move (recreate) box under the robot"
             box_pose, box_size = create_box(self)
             self.furniture[-1] = Box(pose=box_pose, box_size=box_size)
+        self.collision = Collision(self)
 
     def get_furniture(self) -> list[FurnitureObject]:
         """Returns the list of furniture instances"""
