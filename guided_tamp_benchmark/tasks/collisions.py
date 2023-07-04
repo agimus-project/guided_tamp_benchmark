@@ -8,6 +8,7 @@ from __future__ import annotations
 import sys
 import pinocchio as pin
 import numpy as np
+from typing import TYPE_CHECKING
 
 from guided_tamp_benchmark.core.configuration import Configuration
 from guided_tamp_benchmark.models.robots.base import BaseRobot
@@ -15,6 +16,70 @@ from guided_tamp_benchmark.models.objects.base import BaseObject
 from guided_tamp_benchmark.models.furniture.base import FurnitureObject
 
 from guided_tamp_benchmark.models.utils import get_models_data_directory
+
+if TYPE_CHECKING:
+    from guided_tamp_benchmark.tasks import BaseTask
+
+
+def create_box(task: BaseTask) -> tuple[np.ndarray, list[float]]:
+    pin_mod, _ = _create_model(
+        remove_tunnel_collisions=task.task_name == "tunnel", **_extract_from_task(task)
+    )
+    data = pin_mod.createData()
+    config = Configuration(
+        task.robot.initial_configuration(), task.demo.objects_poses[:3, 0]
+    )
+    pin.forwardKinematics(pin_mod, data, config.to_numpy())
+    pin.updateFramePlacements(pin_mod, data)
+
+    # o - universe, r - robot, fr - foot of robot
+    pose_r_fr = np.eye(4)
+    pose_r_fr[:3, 3:] = np.array([task.robot.footprint_pos() + [0]]).T
+    box_size = task.robot.footprint_size() + [task.demo.robot_pose[:3, 3:][2][0]]
+    assert task.demo.robot_pose is not None
+    pose_o_r = task.demo.robot_pose.copy()
+    pose_o_r[:3, 3:] = np.array(
+        [np.squeeze(task.demo.robot_pose[:3, 3:]) * np.array([1, 1, 1 / 2])]
+    ).T
+    rob_xy = np.array(
+        [task.demo.robot_pose[:3, 3:][0][0], task.demo.robot_pose[:3, 3:][1][0]]
+    )
+
+    box_height = 0
+    for i, f in enumerate(reversed(task.furniture)):
+        f_contacts = f.get_contacts_info()
+        for f_fc in f_contacts:
+            f_shapes = f_contacts[f_fc]["shapes"]
+            for f_s in f_shapes:
+                pose_o_fl = data.oMf[
+                    find_frame_in_frames(
+                        pin_mod,
+                        f_contacts[f_fc]["link"]
+                        + f"_{f.name}_{i + len(_extract_from_task(task)['objects'])}",
+                    )
+                ]
+                shape = []
+                for s in f_s:
+                    shape.append(pose_o_fl.np @ np.append(s, 1))
+                a, b = convex_shape(
+                    np.array(shape),
+                    np.array([0, 0, 1]),
+                    pin.SE3(np.eye(3), np.array([0, 0, 0])),
+                )
+                if sum(a @ rob_xy >= b) == len(b):
+                    if (pose_o_fl.np @ np.append(f_s[0], 1))[2] > box_height:
+                        box_height = (
+                            task.demo.robot_pose[:3, 3:][2][0]
+                            - (pose_o_fl.np @ np.append(f_s[0], 1))[2]
+                        )
+
+    box_size[2] = task.demo.robot_pose[:3, 3:][2][0] if box_height == 0 else box_height
+    pose_o_r[2][3] = (
+        pose_o_r[2][3]
+        if box_height == 0
+        else task.demo.robot_pose[:3, 3:][2][0] - box_height / 2
+    )
+    return pose_o_r @ pose_r_fr, box_size
 
 
 def _rename_frames(model: pin.Model, model_name: str):
@@ -67,9 +132,9 @@ def t_xyz_quat_xyzw_to_pin_se3(pose: list) -> pin.SE3:
 
 def check_if_identity(pose1: list, pose2: list, error: float = 0.0001) -> bool:
     """check if transformation from pose1 to pose2 is identity with given error"""
-    T_o_p1, T_2p_o = pin.XYZQUATToSE3(pose1), pin.XYZQUATToSE3(pose2).inverse()
-    T_2p_p1 = T_2p_o * T_o_p1
-    return T_2p_p1.isIdentity(prec=error)
+    pose_o_p1, pose_2p_o = pin.XYZQUATToSE3(pose1), pin.XYZQUATToSE3(pose2).inverse()
+    pose_2p_p1 = pose_2p_o * pose_o_p1
+    return pose_2p_p1.isIdentity(prec=error)
 
 
 def find_frame_in_frames(model: pin.Model, frame: str) -> int:
@@ -168,8 +233,8 @@ def _extract_from_task(task) -> dict:
 
 
 def pose_as_matrix_to_pose_as_quat(pose: np.ndarray) -> np.ndarray:
-    T = pin.SE3(pose[:3, :3], np.squeeze(pose[:3, 3:]))
-    xyz_quat = pin.se3ToXYZQUAT(T)
+    pose = pin.SE3(pose[:3, :3], np.squeeze(pose[:3, 3:]))
+    xyz_quat = pin.se3ToXYZQUAT(pose)
     return xyz_quat
 
 
@@ -178,17 +243,17 @@ def convex_shape(
 ) -> tuple[np.ndarray, np.ndarray]:
     """will create the equiation for convex shape in form of Ax>=b, where A is matrix
     and b vector."""
-    A, b = [], []
+    a, b = [], []
     normal_transformed = frame.rotation @ normal
     # normal = frame.homogeneous @ normal
     for x, p in enumerate(shape_points):
         p_a, p_b = np.resize(p, 4), np.resize(shape_points[x - 1], 4)
         p_a[-1], p_b[-1] = 1, 1
         p_a, p_b = frame.homogeneous @ p_a, frame.homogeneous @ p_b
-        a = np.cross(normal_transformed[:3], (p_a - p_b)[:3])
-        A.append(a[:2])
-        b.append(np.dot(np.array(A[x]), p_b[:2]))
-    return np.array(A), np.array(b)
+        tmp = np.cross(normal_transformed[:3], (p_a - p_b)[:3])
+        a.append(tmp[:2])
+        b.append(np.dot(np.array(a[x]), p_b[:2]))
+    return np.array(a), np.array(b)
 
 
 def ortonormalization(
@@ -274,25 +339,25 @@ class Collision:
                 np.cross(contacts[x] - contacts[0], contacts[y] - contacts[0])
             )
             base = np.array(ortonormalization(n, contacts[y] - contacts[0]))
-            T_fl_fp = pin.SE3(base, contacts[0])
-            A, b = convex_shape(contacts, n, T_fl_fp.inverse())
+            pose_fl_fp = pin.SE3(base, contacts[0])
+            a, b = convex_shape(contacts, n, pose_fl_fp.inverse())
 
-            return A, b, T_fl_fp
+            return a, b, pose_fl_fp
 
         def are_points_in_convex_shape(
-            A: np.ndarray, b: np.ndarray, points: np.ndarray, T: pin.SE3, d_u, d_l
+            a: np.ndarray, b: np.ndarray, points: np.ndarray, pose: pin.SE3, d_u, d_l
         ) -> bool:
             """chceck whether the points satisfy the convex equation Ax>=b, and whether
             they are in distance d that satisfies d_l < d < d_u"""
             tmp = 0
             for x in range(len(points)):
-                T_ol_op = pin.SE3(np.eye(3), points[x])
-                T_fp_op = T * T_ol_op
-                o_shapes.append(T_fp_op.translation)
-                if d_l < T_fp_op.translation[-1] < d_u:
+                pose_ol_op = pin.SE3(np.eye(3), points[x])
+                pose_fp_op = pose * pose_ol_op
+                o_shapes.append(pose_fp_op.translation)
+                if d_l < pose_fp_op.translation[-1] < d_u:
                     tmp = (
                         tmp + 1
-                        if sum(A @ T_fp_op.translation[:2] >= b) == len(b)
+                        if sum(a @ pose_fp_op.translation[:2] >= b) == len(b)
                         else tmp
                     )
 
@@ -309,30 +374,30 @@ class Collision:
         contacts = []
         for i, f in enumerate(furniture[::-1] + robots):
             f_contacts = f.get_contacts_info()
-            for k_fc in f_contacts:
+            for f_fc in f_contacts:
                 if i < len(furniture):
-                    T_o_fl = self.data.oMf[
+                    pose_o_fl = self.data.oMf[
                         find_frame_in_frames(
                             self.pin_mod,
-                            f_contacts[k_fc]["link"] + f"_{f.name}_{i + len(objects)}",
+                            f_contacts[f_fc]["link"] + f"_{f.name}_{i + len(objects)}",
                         )
                     ]
                 else:
-                    T_o_fl = self.data.oMf[
+                    pose_o_fl = self.data.oMf[
                         find_frame_in_frames(
                             self.pin_mod,
-                            f_contacts[k_fc]["link"]
+                            f_contacts[f_fc]["link"]
                             + f"_{f.name}_{i - len(furniture)}",
                         )
                     ]
-                for j in range(len(f_contacts[k_fc]["shapes"])):
-                    A, b, T_fl_fp = find_info_for_contact_surface(
-                        f_contacts[k_fc]["shapes"][j]
+                for j in range(len(f_contacts[f_fc]["shapes"])):
+                    a, b, pose_fl_fp = find_info_for_contact_surface(
+                        f_contacts[f_fc]["shapes"][j]
                     )
                     for k, o in enumerate(reversed(objects)):
                         objects_contacts = o.get_contacts_info()
                         for k_oc in objects_contacts:
-                            T_o_ol = self.data.oMf[
+                            pose_o_ol = self.data.oMf[
                                 find_frame_in_frames(
                                     self.pin_mod,
                                     objects_contacts[k_oc]["link"] + f"_{o.name}_{k}",
@@ -340,17 +405,21 @@ class Collision:
                             ]
                             for m in range(len(objects_contacts[k_oc]["shapes"])):
                                 o_shapes = []
-                                T_fp_ol = T_fl_fp.inverse() * T_o_fl.inverse() * T_o_ol
+                                pose_fp_ol = (
+                                    pose_fl_fp.inverse()
+                                    * pose_o_fl.inverse()
+                                    * pose_o_ol
+                                )
                                 if are_points_in_convex_shape(
-                                    A,
+                                    a,
                                     b,
                                     objects_contacts[k_oc]["shapes"][m],
-                                    T_fp_ol,
+                                    pose_fp_ol,
                                     delta_upper,
                                     delta_lower,
                                 ):
                                     contacts.append(
-                                        (f"{f.name}/{k_fc}", f"{o.name}/{k_oc}")
+                                        (f"{f.name}/{f_fc}", f"{o.name}/{k_oc}")
                                     )
         if len(contacts) > 0:
             return True, contacts
@@ -384,9 +453,9 @@ class Collision:
                     f"frame {frame} isn't inbetween the frames of the given"
                     f" pinocchio model"
                 )
-                T_o_lr = self.data.oMf[rob_frame_id]
-                T_lr_g = t_xyz_quat_xyzw_to_pin_se3(grippers[k_g]["pose"])
-                T_o_g = T_o_lr * T_lr_g
+                pose_o_lr = self.data.oMf[rob_frame_id]
+                pose_lr_g = t_xyz_quat_xyzw_to_pin_se3(grippers[k_g]["pose"])
+                pose_o_g = pose_o_lr * pose_lr_g
                 for j, o in enumerate(reversed(objects)):
                     handles = o.get_handles_info()
                     for k_h in handles:
@@ -396,12 +465,13 @@ class Collision:
                             f"frame {frame} isn't inbetween the frames of "
                             f"the given pinocchio model"
                         )
-                        T_o_lo = self.data.oMf[obj_frame_id]
-                        T_lo_h = t_xyz_quat_xyzw_to_pin_se3(handles[k_h]["pose"])
-                        T_o_h = T_o_lo * T_lo_h
+                        pose_o_lo = self.data.oMf[obj_frame_id]
+                        pose_lo_h = t_xyz_quat_xyzw_to_pin_se3(handles[k_h]["pose"])
+                        pose_o_h = pose_o_lo * pose_lo_h
 
                         if (
-                            np.linalg.norm(pin.log(T_o_g.inverse() * T_o_h)) < delta
+                            np.linalg.norm(pin.log(pose_o_g.inverse() * pose_o_h))
+                            < delta
                             and handles[k_h]["clearance"] <= grippers[k_g]["clearance"]
                         ):
                             list_of_grasps.append(
@@ -472,4 +542,3 @@ if __name__ == "__main__":
 
     collision.is_config_valid(config)
     collision.visualize_through_pinocchio(config)
-    pass
