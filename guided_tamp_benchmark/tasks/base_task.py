@@ -60,6 +60,15 @@ class BaseTask:
         """Returns the robot base pose as a 4x4 numpy array"""
         return self.demo.robot_pose
 
+    def set_robot_pose(self, pose: np.array):
+        """Sets the robot base pose (4x4 numpy array)"""
+        self.demo.robot_pose = pose
+        if self.robot.robot_type == "fixed":
+            "Move (recreate) box under the robot"
+            box_pose, box_size = create_box(self)
+            self.furniture[-1] = Box(pose=box_pose, box_size=box_size)
+        self.collision = Collision(self)
+
     def get_furniture(self) -> list[FurnitureObject]:
         """Returns the list of furniture instances"""
         return self.furniture
