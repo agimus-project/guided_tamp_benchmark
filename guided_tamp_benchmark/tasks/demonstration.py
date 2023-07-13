@@ -23,6 +23,8 @@ class Demonstration:
         ] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
         self.objects_poses: Optional[np.array] = None  # n*t*4x4 numpy array
         self.subgoal_objects_poses: Optional[np.array] = None
+        self.start_objects_poses: Optional[np.array] = None
+        self.goal_objects_poses: Optional[np.array] = None
         self.contacts: Optional[
             np.array
         ] = None  # n * t np array of boolean grasped/not grasped
