@@ -28,7 +28,7 @@ class KukaMobileIIWARobot(BaseRobot):
         """Return the initial configuration of the robot."""
         return [
             0.2,
-            1.5,
+            2.2,
             -np.pi,
             0,
             -np.pi / 4,
