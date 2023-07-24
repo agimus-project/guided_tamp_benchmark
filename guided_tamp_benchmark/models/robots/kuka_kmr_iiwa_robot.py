@@ -25,11 +25,21 @@ class KukaMobileIIWARobot(BaseRobot):
         pass
 
     def initial_configuration(self) -> List[float]:
-        """ Return the initial configuration of the robot. """
-        # return [0.2, 1.5, -np.pi, 0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0]  # waiter
-        return [0.2, 2.2, -np.pi, 0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0]  # waiter
-        # return [0.2, 1.5, np.pi / 2, 0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0] # kme shelf0
-        # return [0.2, 1.75, np.pi / 2, 0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0] # kmr shelf1
+        """Return the initial configuration of the robot."""
+        return [
+            0.2,
+            1.5,
+            -np.pi,
+            0,
+            -np.pi / 4,
+            0,
+            -np.pi / 2,
+            0,
+            np.pi / 2,
+            np.pi / 4,
+            0,
+            0,
+        ]
 
     def reach_m(self):
         """
