@@ -90,6 +90,10 @@ class Benchmark:
 
     def save_benchmark(self, results_path: str | pathlib.Path):
         """saves the benchmarking results to the given file"""
+        if pathlib.Path(results_path).exists():
+            new_res = self.results.copy()
+            self.load_benchmark(results_path)
+            self.results.update(new_res)
         dill.dump(self.results, open(results_path, "wb"))
 
     def load_benchmark(self, results_path: str | pathlib.Path):
