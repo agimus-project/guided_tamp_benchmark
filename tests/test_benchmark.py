@@ -13,21 +13,21 @@ from guided_tamp_benchmark.benchmark import Benchmark, BenchmarkResult
 class TestBenchmarkScript(unittest.TestCase):
     def test_saving(self):
         path = Path("/tmp/results.pkl")
-        b = Benchmark()
-        b.save_benchmark(path)
+        b = Benchmark(path)
+        b.save_benchmark()
         self.assertTrue(path.exists())
 
     def test_save_load(self):
         path = Path("/tmp/results1.pkl")
-        b = Benchmark()
+        b = Benchmark(path)
         b.results["planner"]["shelf1"][0]["panda"][0][0] = BenchmarkResult(
             True, 10.0, (1, 2, 3.0), list(), 10
         )
-        b.save_benchmark(path)
+        b.save_benchmark()
         self.assertTrue(path.exists())
         del b
-        b = Benchmark()
-        b.load_benchmark(path)
+        b = Benchmark(path)
+        b.load_benchmark()
         self.assertTrue("planner" in b.results)
         self.assertTrue("shelf1" in b.results["planner"])
         res: BenchmarkResult = b.results["planner"]["shelf1"][0]["panda"][0][0]
