@@ -25,16 +25,20 @@ class Benchmark:
     The 'res' variable is instance of class BenchmarkResult:
     """
 
-    def __init__(self):
-        self.results = defaultdict(
-            lambda: defaultdict(
+    def __init__(self, results_path: str | pathlib.Path):
+        self.results_path = results_path
+        if pathlib.Path(results_path).exists():
+            self.load_benchmark()
+        else:
+            self.results = defaultdict(
                 lambda: defaultdict(
                     lambda: defaultdict(
-                        lambda: defaultdict(lambda: defaultdict(BenchmarkResult))
+                        lambda: defaultdict(
+                            lambda: defaultdict(lambda: defaultdict(BenchmarkResult))
+                        )
                     )
                 )
             )
-        )
 
     def do_benchmark(
         self,
@@ -88,11 +92,13 @@ class Benchmark:
             benchmark_result.subsampled_path = path_as_config
             benchmark_result.number_of_grasps = task.compute_n_grasps(path_as_config)
 
-    def save_benchmark(self, results_path: str | pathlib.Path):
+    def save_benchmark(self):
         """saves the benchmarking results to the given file"""
-        dill.dump(self.results, open(results_path, "wb"))
+        with open(self.results_path, "wb") as f:
+            dill.dump(self.results, f)
 
-    def load_benchmark(self, results_path: str | pathlib.Path):
+    def load_benchmark(self):
         """Load the benchmarking results from a given file. The results are stored
         internally."""
-        self.results = dill.load(open(results_path, "rb"))
+        with open(self.results_path, "rb") as f:
+            self.results = dill.load(f)

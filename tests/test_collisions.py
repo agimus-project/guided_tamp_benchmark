@@ -13,7 +13,7 @@ from typing import Tuple, List
 
 
 def collision_check_cycle(
-        task: BaseTask, configs: List[Configuration]
+    task: BaseTask, configs: List[Configuration]
 ) -> Tuple[bool, int]:
     for i, c in enumerate(configs):
         if not task.collision.is_config_valid(c):
@@ -23,7 +23,7 @@ def collision_check_cycle(
 
 
 def grasp_check_cycle(
-        task: BaseTask, configs: List[Configuration], graps: list
+    task: BaseTask, configs: List[Configuration], graps: list
 ) -> bool:
     for i, c in enumerate(configs):
         if task._check_grasp_constraint(c, delta=0.0001) == graps[i]:
@@ -33,7 +33,7 @@ def grasp_check_cycle(
 
 
 def placement_check_cycle(
-        task: BaseTask, configs: List[Configuration], placement: list
+    task: BaseTask, configs: List[Configuration], placement: list
 ) -> bool:
     for i, c in enumerate(configs):
         if not task._check_place_constraint(c) == placement[i]:
@@ -54,19 +54,19 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 WaiterTask(0, KukaMobileIIWARobot(), 1),
                 data["waiter_0_kmr_0"]["configs"],
             ),
-            (True, 64),
+            (False, -1),
         )
         self.assertEqual(
             collision_check_cycle(
-                TunnelTask(0, UR5Robot(), 1), data["tunnel_0_ur_1"]["configs"]
+                TunnelTask(0, PandaRobot(), 0), data["tunnel_0_panda_0"]["configs"]
             ),
-            (True, 72),
+            (False, -1),
         )
         self.assertEqual(
             collision_check_cycle(
-                ShelfTask(1, PandaRobot(), 1), data["shelf_1_panda_1"]["configs"]
+                ShelfTask(1, UR5Robot(), 3), data["shelf_1_ur_3"]["configs"]
             ),
-            (True, 0),
+            (False, -1),
         )
 
     def test_grasp_checking(self):
@@ -74,17 +74,6 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
         task = WaiterTask(0, KukaMobileIIWARobot(), 1)
-        for i, c in enumerate(data["waiter_0_kmr_0"]["configs"]):
-            data["waiter_0_kmr_0"]["grasps"][i] = task._check_place_constraint(c)
-
-        task = TunnelTask(0, UR5Robot(), 1)
-        for i, c in enumerate(data["tunnel_0_ur_1"]["configs"]):
-            data["tunnel_0_ur_1"]["grasps"][i] = task._check_place_constraint(c)
-
-        task = ShelfTask(1, PandaRobot(), 1)
-        for i, c in enumerate(data["shelf_1_panda_1"]["configs"]):
-            data["shelf_1_panda_1"]["grasps"][i] = task._check_place_constraint(c)
-
 
         self.assertEqual(
             grasp_check_cycle(
@@ -92,23 +81,23 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 data["waiter_0_kmr_0"]["configs"],
                 data["waiter_0_kmr_0"]["grasps"],
             ),
-            False,
+            True,
         )
         self.assertEqual(
             grasp_check_cycle(
-                TunnelTask(0, UR5Robot(), 1),
-                data["tunnel_0_ur_1"]["configs"],
-                data["tunnel_0_ur_1"]["grasps"],
+                TunnelTask(0, PandaRobot(), 0),
+                data["tunnel_0_panda_0"]["configs"],
+                data["tunnel_0_panda_0"]["grasps"],
             ),
             True,
         )
         self.assertEqual(
             grasp_check_cycle(
-                ShelfTask(1, PandaRobot(), 1),
-                data["shelf_1_panda_1"]["configs"],
-                data["shelf_1_panda_1"]["grasps"],
+                ShelfTask(1, UR5Robot(), 3),
+                data["shelf_1_ur_3"]["configs"],
+                data["shelf_1_ur_3"]["grasps"],
             ),
-            False,
+            True,
         )
 
     def test_grasp_counting(self):
@@ -116,16 +105,22 @@ class CollisionFunctionsTestCase(unittest.TestCase):
         path = pathlib.Path(__file__).parent.joinpath("test_configs.pkl")
         data = pickle.load(open(path, "rb"))
         self.assertEqual(
-            ShelfTask(1, PandaRobot(), 1).compute_n_grasps(
-                data["shelf_1_panda_1"]["configs"]
+            WaiterTask(0, KukaMobileIIWARobot(), 0).compute_n_grasps(
+                data["waiter_0_kmr_0"]["configs"]
             ),
-            2,
+            data["waiter_0_kmr_0"]["n_grasps"],
         )
         self.assertEqual(
-            TunnelTask(0, UR5Robot(), 1).compute_n_grasps(
-                data["tunnel_0_ur_1"]["configs"]
+            ShelfTask(1, UR5Robot(), 3).compute_n_grasps(
+                data["shelf_1_ur_3"]["configs"]
             ),
-            3,
+            data["shelf_1_ur_3"]["n_grasps"],
+        )
+        self.assertEqual(
+            TunnelTask(0, PandaRobot(), 0).compute_n_grasps(
+                data["tunnel_0_panda_0"]["configs"]
+            ),
+            data["tunnel_0_panda_0"]["n_grasps"],
         )
 
     def test_placement_checking(self):
@@ -140,23 +135,23 @@ class CollisionFunctionsTestCase(unittest.TestCase):
                 data["waiter_0_kmr_0"]["configs"],
                 data["waiter_0_kmr_0"]["placements"],
             ),
-            False,
+            True,
         )
         self.assertEqual(
             placement_check_cycle(
-                TunnelTask(0, UR5Robot(), 1),
-                data["tunnel_0_ur_1"]["configs"],
-                data["tunnel_0_ur_1"]["placements"],
+                TunnelTask(0, PandaRobot(), 0),
+                data["tunnel_0_panda_0"]["configs"],
+                data["tunnel_0_panda_0"]["placements"],
             ),
-            False,
+            True,
         )
         self.assertEqual(
             placement_check_cycle(
-                ShelfTask(1, PandaRobot(), 1),
-                data["shelf_1_panda_1"]["configs"],
-                data["shelf_1_panda_1"]["placements"],
+                ShelfTask(1, UR5Robot(), 3),
+                data["shelf_1_ur_3"]["configs"],
+                data["shelf_1_ur_3"]["placements"],
             ),
-            False,
+            True,
         )
 
 

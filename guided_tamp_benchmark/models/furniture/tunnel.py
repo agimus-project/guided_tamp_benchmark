@@ -180,18 +180,18 @@ class Tunnel(FurnitureObject):
         <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
     </inertial>
     <visual>
-        <origin xyz="{0} {lengths[1] / 2 + 2.5} {lengths[2] / 2}" rpy="0 0 0" />
+        <origin xyz="{0} {lengths[1] / 2 + 5} {lengths[2] / 2}" rpy="0 0 0" />
         <geometry>
-            <box size="{collision_thickness} 5 5"/>
+            <box size="{collision_thickness} 10 10"/>
         </geometry>
         <material name="red">
         <color rgba="1 0 0 {walls_alpha}"/>
         </material>
     </visual>
     <collision>
-        <origin xyz="{0} {lengths[1] / 2 + 2.5} {lengths[2] / 2}" rpy="0 0 0" />
+        <origin xyz="{0} {lengths[1] / 2 + 5} {lengths[2] / 2}" rpy="0 0 0" />
         <geometry>
-            <box size="{collision_thickness} 5 5"/>
+            <box size="{collision_thickness} 10 10"/>
         </geometry>
     </collision>
 </link>
@@ -202,18 +202,18 @@ class Tunnel(FurnitureObject):
         <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
     </inertial>
     <visual>
-        <origin xyz="{0} {-lengths[1] / 2 - 2.5} {lengths[2] / 2}" rpy="0 0 0" />
+        <origin xyz="{0} {-lengths[1] / 2 - 5} {lengths[2] / 2}" rpy="0 0 0" />
         <geometry>
-            <box size="{collision_thickness} 5 5"/>
+            <box size="{collision_thickness} 10 10"/>
         </geometry>
         <material name="red">
         <color rgba="1 0 0 {walls_alpha}"/>
         </material>
     </visual>
     <collision>
-        <origin xyz="{0} {-lengths[1] / 2 - 2.5} {lengths[2] / 2}" rpy="0 0 0" />
+        <origin xyz="{0} {-lengths[1] / 2 - 5} {lengths[2] / 2}" rpy="0 0 0" />
         <geometry>
-            <box size="{collision_thickness} 5 5"/>
+            <box size="{collision_thickness} 10 10"/>
         </geometry>
     </collision>
 </link>
@@ -224,18 +224,18 @@ class Tunnel(FurnitureObject):
         <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
     </inertial>
     <visual>
-        <origin xyz="{0} {0} {lengths[2] / 2 + (2.5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
+        <origin xyz="{0} {0} {lengths[2] / 2 + (5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
         <geometry>
-            <box size="{collision_thickness} {lengths[1]} {2.5 - lengths[2]}"/>
+            <box size="{collision_thickness} {lengths[1]} {5 - lengths[2]}"/>
         </geometry>
         <material name="red">
         <color rgba="1 0 0 {walls_alpha}"/>
         </material>
     </visual>
     <collision>
-        <origin xyz="{0} {0} {lengths[2] / 2 + (2.5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
+        <origin xyz="{0} {0} {lengths[2] / 2 + (5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
         <geometry>
-            <box size="{collision_thickness} {lengths[1]} {2.5 - lengths[2]}"/>
+            <box size="{collision_thickness} {lengths[1]} {5 - lengths[2]}"/>
         </geometry>
     </collision>
 </link>

@@ -272,9 +272,10 @@ class Collision:
     """The collision class consists of Pinocchio urdf and collision models and
     functions for collision checking and Pinocchio model rendering."""
 
-    def __init__(self, task):
+    def __init__(self, task, verbose=False):
         """Initilizie with task eg. ShelfTask..."""
         self.task = task
+        self.verbose = verbose
         self.pin_mod, self.col_mod = _create_model(
             remove_tunnel_collisions=task.task_name == "tunnel",
             **_extract_from_task(task),
@@ -295,14 +296,8 @@ class Collision:
             for k in range(len(self.col_mod.collisionPairs)):
                 cr = geom_data.collisionResults[k]
                 cp = self.col_mod.collisionPairs[k]
-                print(
-                    "collision pair:",
-                    cp.first,
-                    ",",
-                    cp.second,
-                    "- collision:",
-                    "Yes" if cr.isCollision() else "No",
-                )
+                if self.verbose and cr.isCollision():
+                    print(f"Collision at pair {cp.first}-{cp.second}")
             return False
         else:
             return True
