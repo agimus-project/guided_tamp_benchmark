@@ -61,6 +61,7 @@ class Benchmark:
                     random_seed=s,
                     **planner_arg,
                 )
+                task = p.task
                 start_solve_t = time.time()
                 res = p.solve()
             except Exception as e:
