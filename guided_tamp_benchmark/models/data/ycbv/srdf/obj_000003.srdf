@@ -1,6 +1,11 @@
 <?xml version="1.0" ?>
 <robot name="obj_000003">
 
+    <handle name="fake_1" clearance="0.05">
+        <position> 0 0 0  1 0 0  0 </position>
+        <link name="base_link"/>
+    </handle>
+
     <handle name="handleZpx" clearance="0.05">
         <position> 0 0 0.05  0.71920114  0.01363871  0.69452447  -0.0141233</position>
         <link name="base_link"/>
