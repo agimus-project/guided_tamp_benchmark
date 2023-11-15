@@ -9,6 +9,14 @@ from pathlib import Path
 from typing import Tuple
 import numpy as np
 
+from guided_tamp_benchmark.models.robots import (
+    PandaRobot,
+    UR5Robot,
+    KukaIIWARobot,
+    KukaMobileIIWARobot,
+    BaseRobot,
+)
+
 
 def get_models_data_directory() -> Path:
     """Get path to the data of the models."""
@@ -26,7 +34,7 @@ def get_ycbv_data_directory() -> Path:
 
 
 def parse_contacts_grippers_handles(
-    root, contacts=False, grippers=False, handles=False
+        root, contacts=False, grippers=False, handles=False
 ) -> Tuple[dict, dict, dict]:
     """parses info from root of elementary tree xml parser of .srdf file. Returns
     dictionary with the wanted info in following format.
@@ -83,3 +91,17 @@ def parse_contacts_grippers_handles(
                 raise NameError("srdf file is mssing handles!")
 
     return contact_dict, gripper_dict, handle_dict
+
+
+def get_robot(robot_name: str) -> BaseRobot:
+    """Returns a robot instance based on robot name"""
+    if robot_name == "panda":
+        return PandaRobot()
+    elif robot_name == "ur5":
+        return UR5Robot()
+    elif robot_name == "kuka_iiwa":
+        return KukaIIWARobot()
+    elif robot_name == "kmr_iiwa":
+        return KukaMobileIIWARobot()
+    else:
+        raise ValueError(f"Unknown robot '{robot_name}'")
