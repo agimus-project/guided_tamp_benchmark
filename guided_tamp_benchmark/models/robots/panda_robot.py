@@ -15,7 +15,7 @@ class PandaRobot(BaseRobot):
     urdfFilename = str(get_robots_data_directory().joinpath("franka_panda/panda.urdf"))
     srdfFilename = str(get_robots_data_directory().joinpath("franka_panda/panda.srdf"))
     name = "panda"
-    robot_type = "fixed"
+    robot_type = "unfixed"
 
     def __init__(self):
         pass
