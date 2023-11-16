@@ -1202,7 +1202,7 @@ version = "1.24.2"
 description = "Fundamental package for array computing in Python"
 category = "main"
 optional = false
-python-versions = ">=3.8, <3.12"
+python-versions = ">=3.8"
 files = [
     {file = "numpy-1.24.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:eef70b4fc1e872ebddc38cddacc87c19a3709c0e3e5d20bf3954c147b1dd941d"},
     {file = "numpy-1.24.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:e8d2859428712785e8a8b7d2b3ef0a1d1565892367b32f915c4a4df44d0e64f5"},
