@@ -14,6 +14,8 @@ jobs:
         shell: bash -l {0}
     steps:
       - uses: actions/checkout@v3
+      - with:
+          python-version: '3.10'
       - uses: conda-incubator/setup-miniconda@v2
       - name: Conda install
         shell: bash -l {0}
