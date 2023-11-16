@@ -7,6 +7,8 @@
 from pathlib import Path
 from typing import Tuple
 
+import numpy as np
+
 
 def get_models_data_directory() -> Path:
     """Get path to the data of the models."""
