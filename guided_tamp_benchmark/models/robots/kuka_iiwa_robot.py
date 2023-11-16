@@ -17,9 +17,11 @@ class KukaIIWARobot(BaseRobot):
 
     def __init__(self):
         self.urdfFilename = str(
-            get_robots_data_directory().joinpath("kuka_iiwa/kuka_iiwa.urdf"))
+            get_robots_data_directory().joinpath("kuka_iiwa/kuka_iiwa.urdf")
+        )
         self.srdfFilename = str(
-            get_robots_data_directory().joinpath("kuka_iiwa/kuka_iiwa.srdf"))
+            get_robots_data_directory().joinpath("kuka_iiwa/kuka_iiwa.srdf")
+        )
 
     def initial_configuration(self) -> List[float]:
         """Return the initial configuration of the robot."""

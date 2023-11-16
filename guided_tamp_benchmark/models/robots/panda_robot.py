@@ -17,9 +17,11 @@ class PandaRobot(BaseRobot):
 
     def __init__(self):
         self.urdfFilename = str(
-            get_robots_data_directory().joinpath("franka_panda/panda.urdf"))
+            get_robots_data_directory().joinpath("franka_panda/panda.urdf")
+        )
         self.srdfFilename = str(
-            get_robots_data_directory().joinpath("franka_panda/panda.srdf"))
+            get_robots_data_directory().joinpath("franka_panda/panda.srdf")
+        )
 
     def initial_configuration(self) -> List[float]:
         """Return the initial configuration of the robot."""

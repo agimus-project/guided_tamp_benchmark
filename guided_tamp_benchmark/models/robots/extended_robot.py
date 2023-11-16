@@ -31,11 +31,15 @@ def get_robot(robot_name: str) -> BaseRobot:
 
 
 class ExtendedRobot(BaseRobot):
-
     def __init__(self, robot_name: str):
         self.robot = get_robot(robot_name)
-        self.urdfFilename = self.robot.urdfFilename[:self.robot.urdfFilename.find(
-            self.robot.name + ".urdf")] + self.robot.name + "_extended.urdf"
+        self.urdfFilename = (
+            self.robot.urdfFilename[
+                : self.robot.urdfFilename.find(self.robot.name + ".urdf")
+            ]
+            + self.robot.name
+            + "_extended.urdf"
+        )
 
         self.srdfFilename = self.robot.srdfFilename
         self.name = "extended_" + self.robot.name

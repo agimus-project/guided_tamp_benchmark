@@ -26,7 +26,7 @@ def get_ycbv_data_directory() -> Path:
 
 
 def parse_contacts_grippers_handles(
-        root, contacts=False, grippers=False, handles=False
+    root, contacts=False, grippers=False, handles=False
 ) -> Tuple[dict, dict, dict]:
     """parses info from root of elementary tree xml parser of .srdf file. Returns
     dictionary with the wanted info in following format.
