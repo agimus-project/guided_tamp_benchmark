@@ -13,7 +13,6 @@ import pinocchio
 import xml.etree.ElementTree as ET
 
 
-
 class BaseRobot(object):
     urdfFilename = ""
     srdfFilename = ""
@@ -51,7 +50,7 @@ class BaseRobot(object):
         {"link": str, "shapes": np.array}"""
         tree = ET.parse(self.srdfFilename)
         root = tree.getroot()
-        contacts, _, _ = parse_contacts_grippers_handles(
+        contacts, _, _ = self._parse_contacts_grippers_handles(
             root, contacts=True, grippers=False, handles=False
         )
         return contacts
@@ -75,8 +74,9 @@ class BaseRobot(object):
         """Return the position of robots base"""
         return [0.0, 0.0]
 
+    @staticmethod
     def _parse_contacts_grippers_handles(
-            self, root, contacts=False, grippers=False, handles=False
+            root, contacts=False, grippers=False, handles=False
     ) -> Tuple[dict, dict, dict]:
         """parses info from root of elementary tree xml parser of .srdf file. Returns
         dictionary with the wanted info in following format.
@@ -133,5 +133,3 @@ class BaseRobot(object):
                     raise NameError("srdf file is mssing handles!")
 
         return contact_dict, gripper_dict, handle_dict
-
-
