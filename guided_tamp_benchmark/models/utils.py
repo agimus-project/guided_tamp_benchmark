@@ -5,8 +5,8 @@
 #     Author: Vladimir Petrik <vladimir.petrik@cvut.cz>
 #
 from pathlib import Path
-from typing import Tuple
 
+from typing import Tuple
 import numpy as np
 
 
