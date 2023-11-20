@@ -34,7 +34,6 @@ class ExtendedRobot(BaseRobot):
     def __init__(self, robot_name: str):
         self.robot = get_robot(robot_name)
         self.urdfFilename = self.robot.urdfFilename.replace(".urdf", "_extended.urdf")
-
         self.srdfFilename = self.robot.srdfFilename
         self.name = "extended_" + self.robot.name
         self.robot_type = self.robot.robot_type
@@ -54,6 +53,3 @@ class ExtendedRobot(BaseRobot):
 
     def get_contact_surfaces(self):
         return self.robot.get_contact_surfaces()
-
-
-c = ExtendedRobot('panda')

@@ -12,16 +12,13 @@ from guided_tamp_benchmark.models.utils import get_robots_data_directory
 
 
 class PandaRobot(BaseRobot):
-    name = "panda"
-    robot_type = "fixed"
 
     def __init__(self):
-        self.urdfFilename = str(
-            get_robots_data_directory().joinpath("franka_panda/panda.urdf")
-        )
-        self.srdfFilename = str(
-            get_robots_data_directory().joinpath("franka_panda/panda.srdf")
-        )
+        dir = get_robots_data_directory()
+        self.urdfFilename = str(dir.joinpath("franka_panda/panda.urdf"))
+        self.srdfFilename = str(dir.joinpath("franka_panda/panda.srdf"))
+        self.name = "panda"
+        self.robot_type = "fixed"
 
     def initial_configuration(self) -> List[float]:
         """Return the initial configuration of the robot."""

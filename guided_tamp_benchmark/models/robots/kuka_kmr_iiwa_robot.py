@@ -12,16 +12,13 @@ from guided_tamp_benchmark.models.utils import get_robots_data_directory
 
 
 class KukaMobileIIWARobot(BaseRobot):
-    name = "kmr_iiwa"
-    robot_type = "mobile"
 
     def __init__(self):
-        self.urdfFilename = str(
-            get_robots_data_directory().joinpath("kuka_kmr_iiwa/kuka_kmr_iiwa.urdf")
-        )
-        self.srdfFilename = str(
-            get_robots_data_directory().joinpath("kuka_kmr_iiwa/kuka_kmr_iiwa.srdf")
-        )
+        dir = get_robots_data_directory()
+        self.urdfFilename = str(dir.joinpath("kuka_kmr_iiwa/kuka_kmr_iiwa.urdf"))
+        self.srdfFilename = str(dir.joinpath("kuka_kmr_iiwa/kuka_kmr_iiwa.srdf"))
+        self.name = "kmr_iiwa"
+        self.robot_type = "mobile"
 
     def initial_configuration(self) -> List[float]:
         """Return the initial configuration of the robot."""
