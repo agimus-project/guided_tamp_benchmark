@@ -32,6 +32,10 @@ def get_robot(robot_name: str) -> BaseRobot:
 
 class ExtendedRobot(BaseRobot):
     def __init__(self, robot_name: str):
+        """
+        extended robot class, will create an extended robot for the given robot name
+        with additional joint for the extended planner
+        """
         self.robot = get_robot(robot_name)
         self.urdfFilename = self.robot.urdfFilename.replace(".urdf", "_extended.urdf")
         self.srdfFilename = self.robot.srdfFilename
@@ -39,7 +43,9 @@ class ExtendedRobot(BaseRobot):
         self.robot_type = self.robot.robot_type
 
     def initial_configuration(self) -> List[float]:
-        """Return the initial configuration of the robot."""
+        """
+         :return: initial configuration of the robot
+         """
         return [0] + self.robot.initial_configuration()
 
     def reach_m(self):
@@ -49,7 +55,13 @@ class ExtendedRobot(BaseRobot):
         return self.robot.reach_m()
 
     def get_gripper_name(self):
+        """
+        :return: gripper name as string
+        """
         return self.robot.get_gripper_name()
 
     def get_contact_surfaces(self):
+        """
+        :return: robot contact surfaces
+        """
         return self.robot.get_contact_surfaces()
