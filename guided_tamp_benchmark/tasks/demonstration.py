@@ -116,9 +116,10 @@ class Demonstration:
                 "Please, remove it manually before saving."
             )
         else:
+            # TODO: any reason we init with empty lists?
             demo = dict(
                 object_ids=[],
-                object_poses=[],
+                # object_poses=[],
                 contacts=[],
                 furniture_ids=[],
                 furniture_poses=[],
@@ -151,31 +152,85 @@ class Demonstration:
 
 if __name__ == "__main__":
     """Example of creating a demonstration."""
-    T = 5
+    frame_n = 20
+    subgoal_n = 2
+    # # 1. Create fake demonstration with 02 object mowing to the left a bit
+    # demo = Demonstration()
+    # demo.task_name = "shelf"
+    # demo.demo_id = 9
+    # demo.robot_name = "panda"
+    # demo.pose_id = 0
+    # demo.object_ids = ["YCBV_02"]
+    # start_pose = np.eye(4)
+    # start_pose[0, 3] = 0.
+    # start_pose[2, 3] = 0.11
+    # step = np.zeros((4, 4))
+    # step[1, 3] = 0.01
+    # end_pose = start_pose - (frame_n - 3) * step
+    # object_poses = [start_pose] * 3 + [start_pose - i * step for i in range(frame_n -
+    #                                                                        6)]\
+    #                + [end_pose] * 3
+    # demo.objects_poses = np.array([object_poses])
+    # demo.subgoal_objects_poses = np.array([[start_pose, end_pose]])
+    # demo.contacts = np.array([[0] * 3 + [1] * (frame_n - 6) + [0] * 3])
+    # demo.robot_pose = np.eye(4)
+    # demo.robot_pose[0, 3] = -0.38
+    # demo.furniture_ids = ["table"]
+    # demo.furniture_poses = np.eye(4).reshape(1, 4, 4)
+    # demo.furniture_params = [{'desk_size': [1.5, 1.0, 0.75], 'leg_display': True}]
+    # demo.save(overwrite=True)
+
+    # from renderer import Renderer
+    # from shelf_task import ShelfTask
+    # from guided_tamp_benchmark.models.robots.panda_robot import PandaRobot
+    # import time
+    # task = ShelfTask(9, PandaRobot(), 0)
+    # r = Renderer(task)
+    # r.animate_demonstration()
+    # time.sleep(5)
+    # # """Example of loading the demonstration """
+    # # d = Demonstration.load("test", 0, "panda", 0)
+    #
+    # Convert old demo to new demo
     demo = Demonstration()
-    demo.task_name = "test"
-    demo.demo_id = 0
+    old_demo_path = demo._get_data_directory().joinpath('demo_08.pkl')
+    old_demo = pickle.load(open(old_demo_path, 'rb'))
+
+    ##################################################
+    # To fill manually
+
+    demo.task_name = "shelf"
+    demo.demo_id = 8
     demo.robot_name = "panda"
     demo.pose_id = 0
-    demo.object_ids = ["CUBOID_0.1_0.2_0.8", "CUBOID_0.1_0.2_0.8"]
-    demo.objects_poses = (
-        np.eye(4).reshape(1, 1, 4, 4).repeat(T, axis=1).repeat(2, axis=0)
-    )
-    demo.subgoal_objects_poses = (
-        np.eye(4).reshape(1, 1, 4, 4).repeat(T, axis=1).repeat(2, axis=0)
-    )
-    demo.contacts = np.zeros((2, T), dtype=bool)
+    obj_grasp_release = [[(83, 123)], [(18, 66)]]
     demo.robot_pose = np.eye(4)
-    demo.furniture_ids = ["tunnel"]
-    demo.furniture_poses = np.eye(4).reshape(1, 4, 4)
+    demo.robot_pose[0, 3] = -0.38
+    demo.furniture_ids = ["table", "shelf"]
     demo.furniture_params = [
-        {
-            "lengths": [0.1, 0.2, 0.3],
-            "tunnel_walls_thickness": 0.16,
-            "collision_walls_thickness": 0.1,
-        }
+        {'desk_size': [1.5, 0.7, 0.78], 'leg_display': True},
+        {'display_inside_shelf': True}
     ]
+    table_pose = np.eye(4)
+    shelf_pose = np.eye(4)
+    shelf_pose[:3, 3] = [0., 0.6, 0.415]
+    shelf_pose[:3, :3] = np.array([[0., -1., 0.],
+                                   [1., 0., 0.],
+                                   [0., 0., 1.]])
+    demo.furniture_poses = np.array([table_pose, shelf_pose])
+    ##################################################
+
+    demo.object_ids = [obj_id.upper() for obj_id in old_demo['object_ids']]
+    demo.objects_poses = old_demo['full_obj_poses']
+    demo.objects_poses[:, :, 2, 3] -= 0.03
+    demo.contacts = np.zeros(old_demo['full_obj_poses'].shape[:2])
+    for obj_id, grasp_rel_seq in enumerate(obj_grasp_release):
+        for grasp, release in grasp_rel_seq:
+            demo.contacts[obj_id, grasp:release] = 1
     demo.save(overwrite=True)
 
-    """Example of loading the demonstration """
-    d = Demonstration.load("test", 0, "panda", 0)
+
+    # task = ShelfTask(8, PandaRobot(), 0)
+    # r = Renderer(task)
+    # r.animate_demonstration()
+    # time.sleep(5)
