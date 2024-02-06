@@ -273,10 +273,12 @@ class Shelf(FurnitureObject):
         <color rgba="{color_rgba}"/>
         </material>
     </visual>
-    <origin xyz=" {-0.01} {0} {-0.0125}" rpy="0 0 0" />
-    <geometry>
-        <box size="{0.40} {1.20} {0.025}"/>
-    </geometry>
+    <collision>
+    <origin xyz="{-0.01} {0} {-0.0125}" rpy="0 0 0" />
+        <geometry>
+            <box size="{0.40} {1.20} {0.025}"/>
+        </geometry>
+    </collision>
 </link>
 <link name="box">
     <inertial>
