@@ -12,7 +12,7 @@ from guided_tamp_benchmark.models.utils import get_models_data_directory
 from guided_tamp_benchmark.tasks.base_task import BaseTask
 
 from guided_tamp_benchmark.core import Configuration
-
+import numpy as np
 
 class RobotWithTexture(Robot):
     def __init__(self, texture, *args, **kwargs) -> None:
@@ -110,15 +110,13 @@ class Renderer:
                     obj.pose = pose
                 self.scene.render()
 
-    def animate_subgoals(self, fps: int = 1):
+    def animate_subgoals(self, subgoal_poses: np.array, fps: int = 1):
         """Create an animation from the demonstration file, that contains the motion of
         object but not the motion of the robot"""
         with self.scene.animation(fps=fps):
             # self.robot.pos = [-5, -5, 0]
             self.robot[:] = self.task.robot.initial_configuration()
-            for object_poses in self.task.demo.subgoal_objects_poses.transpose(
-                1, 0, 2, 3
-            ):
+            for object_poses in subgoal_poses:
                 for obj, pose in zip(self.objects, object_poses):
                     obj.pose = pose
                 self.scene.render()
