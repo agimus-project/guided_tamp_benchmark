@@ -80,7 +80,7 @@
         <parent link="panda_link1"/>
         <child link="panda_link2"/>
         <axis xyz="0 0 1"/>
-        <limit effort="87" lower="-1.8326" upper="1.8326" velocity="2.1750"/>
+        <limit effort="87" lower="-1.6628" upper="1.6628" velocity="2.3925"/>
     </joint>
     <link name="panda_link3">
         <inertial>
@@ -107,7 +107,7 @@
         <parent link="panda_link2"/>
         <child link="panda_link3"/>
         <axis xyz="0 0 1"/>
-        <limit effort="87" lower="-2.9671" upper="2.9671" velocity="2.1750"/>
+        <limit effort="87" lower="-2.7973" upper="2.7973" velocity="2.3925"/>
     </joint>
     <link name="panda_link4">
         <inertial>
@@ -129,12 +129,12 @@
         </collision>
     </link>
     <joint name="panda_joint4" type="revolute">
-        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.0718" soft_upper_limit="-0.0698"/>
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.0718" soft_upper_limit="0.0175"/>
         <origin rpy="1.57079632679 0 0" xyz="0.0825 0 0"/>
         <parent link="panda_link3"/>
         <child link="panda_link4"/>
         <axis xyz="0 0 1"/>
-        <limit effort="87" lower="-3.1416" upper="0.0" velocity="2.1750"/>
+        <limit effort="87" lower="-2.9718" upper="-0.0825" velocity="2.3925"/>
     </joint>
     <link name="panda_link5">
         <inertial>
@@ -161,7 +161,7 @@
         <parent link="panda_link4"/>
         <child link="panda_link5"/>
         <axis xyz="0 0 1"/>
-        <limit effort="12" lower="-2.9671" upper="2.9671" velocity="2.6100"/>
+        <limit effort="12" lower="-2.7973" upper="2.7973" velocity="2.8710"/>
     </joint>
     <link name="panda_link6">
         <inertial>
@@ -188,7 +188,7 @@
         <parent link="panda_link5"/>
         <child link="panda_link6"/>
         <axis xyz="0 0 1"/>
-        <limit effort="12" lower="-0.0873" upper="3.8223" velocity="2.6100"/>
+        <limit effort="12" lower="0.0825" upper="3.6525" velocity="2.8710"/>
     </joint>
     <link name="panda_link7">
         <inertial>
@@ -215,7 +215,7 @@
         <parent link="panda_link6"/>
         <child link="panda_link7"/>
         <axis xyz="0 0 1"/>
-        <limit effort="12" lower="-2.9671" upper="2.9671" velocity="2.6100"/>
+        <limit effort="12" lower="-2.7973" upper="2.7973" velocity="2.8710"/>
     </joint>
     <link name="panda_link8">
         <inertial>
@@ -230,6 +230,37 @@
         <child link="panda_link8"/>
         <axis xyz="0 0 0"/>
     </joint>
+
+    <!-- CAMERA MOUNT JOINT -->
+  <joint name="panda_camera_mount_joint" type="fixed">
+    <parent link="panda_link8"/>
+    <child link="panda_camera_mount"/>
+    <origin rpy="0 0 -0.7853981633974483" xyz="0 0 0"/>
+  </joint>
+  <link name="panda_camera_mount">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+       <mass value="0.1"/>
+       <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.05 0.0 0.03"/>
+      <geometry>
+        <box size="0.03 0.10 0.04"/>
+<!--        <box size="0.05 0.13 0.07"/>-->
+      </geometry>
+      <material name="panda_white">
+        <color rgba="0.5 0.5 0.5 0.5"/>
+  	  </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.05 0.0 0.03"/>
+      <geometry>
+        <box size="0.05 0.13 0.07"/>
+      </geometry>
+    </collision>
+  </link>
+
     <joint name="panda_hand_joint" type="fixed">
         <parent link="panda_link8"/>
         <child link="panda_hand"/>
@@ -299,14 +330,14 @@
         <child link="panda_leftfinger"/>
         <origin rpy="0 0 0" xyz="0 0 0.0584"/>
         <axis xyz="0 1 0"/>
-        <limit effort="20" lower="0.0" upper="0.04" velocity="0.2"/>
+        <limit effort="20" lower="0.0" upper="0.041" velocity="0.2"/>
     </joint>
     <joint name="panda_finger_joint2" type="prismatic">
         <parent link="panda_hand"/>
         <child link="panda_rightfinger"/>
         <origin rpy="0 0 0" xyz="0 0 0.0584"/>
         <axis xyz="0 -1 0"/>
-        <limit effort="20" lower="0.0" upper="0.04" velocity="0.2"/>
+        <limit effort="20" lower="0.0" upper="0.041" velocity="0.2"/>
         <mimic joint="panda_finger_joint1"/>
     </joint>
 </robot>
