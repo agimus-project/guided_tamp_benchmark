@@ -81,11 +81,20 @@ class Benchmark:
             if not benchmark_result.is_solved:
                 p.reset()
                 continue
-
-            path = p.get_path()
-            path_as_config = [
-                path.interpolate(t) for t in np.arange(0, 1 + delta, delta)
-            ]
+            try:
+                path = p.get_path()
+                path_as_config = [
+                    path.interpolate(t) for t in np.arange(0, 1 + delta, delta)
+                ]
+            except Exception as e:
+                print('encountered path error')
+                path_as_config = []
+                for t in np.arange(0, 1 + delta, delta):
+                    try:
+                        q = path.interpolate(t)
+                        path_as_config.append(q)
+                    except:
+                        path_as_config.append(path_as_config[-1])                
             p.reset()
 
             benchmark_result.computation_time = end_solve_t - start_solve_t
