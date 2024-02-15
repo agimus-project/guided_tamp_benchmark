@@ -39,7 +39,7 @@ class ExtendedRobot(BaseRobot):
         self.robot = get_robot(robot_name)
         self.urdfFilename = self.robot.urdfFilename.replace(".urdf", "_extended.urdf")
         self.srdfFilename = self.robot.srdfFilename
-        self.name = "extended_" + self.robot.name
+        self.name = "" + self.robot.name
         self.robot_type = self.robot.robot_type
 
     def initial_configuration(self) -> List[float]:

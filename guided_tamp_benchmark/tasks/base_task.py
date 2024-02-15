@@ -36,7 +36,7 @@ class BaseTask:
         self.demo = Demonstration.load(
             task_name,
             demo_id=demo_id,
-            robot_name=self.robot.name,
+            robot_name=self.robot.name.replace("extended_", "") if "extended" in robot.name else robot.name,
             pose_id=robot_pose_id,
         )
         self.objects = self._create_objects(self.demo.object_ids)
