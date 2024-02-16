@@ -86,9 +86,9 @@ class Demonstration:
         demo.pose_id = pose_id
         demo.object_ids = data["object_ids"]
         demo.objects_poses = data["objects_poses"]
-        if "subgoal_objects_poses" in data.keys():
+        if data["subgoal_objects_poses"] is not None:
             demo.subgoal_objects_poses = data["subgoal_objects_poses"]
-        if "subgoal_objects_poses_ref_frames" in data.keys():
+        if data["subgoal_objects_poses_ref_frames"] is not None:
             obj_ref_frames = data["subgoal_objects_poses_ref_frames"]
             assert len(obj_ref_frames) == demo.subgoal_objects_poses.shape[0]
             assert len(obj_ref_frames[0]) == demo.subgoal_objects_poses.shape[1]
@@ -99,7 +99,7 @@ class Demonstration:
         demo.contacts = data["contacts"]
         demo.furniture_ids = data["furniture_ids"]
         demo.furniture_poses = data["furniture_poses"]
-        if "furniture_poses_ref_frames" in data.keys():
+        if data["furniture_poses_ref_frames"] is not None:
             furniture_ref_frames = data["furniture_poses_ref_frames"]
             assert len(furniture_ref_frames) == len(demo.furniture_ids)
             for i, frame in enumerate(furniture_ref_frames):
@@ -206,70 +206,82 @@ if __name__ == "__main__":
     # # d = Demonstration.load("test", 0, "panda", 0)
     #
     ################ Convert old demo to new demo
-    # demo = Demonstration()
-    # old_demo_path = demo._get_data_directory().joinpath('demo_08.pkl')
-    # old_demo = pickle.load(open(old_demo_path, 'rb'))
-    #
-    # ##################################################
-    # # To fill manually
-    #
-    # demo.task_name = "shelf"
-    # demo.demo_id = 8
-    # demo.robot_name = "panda"
-    # demo.pose_id = 0
-    # obj_grasp_release = [[(83, 123)], [(18, 66)]]
-    # demo.robot_pose = np.eye(4)
-    # demo.robot_pose[0, 3] = -0.38
-    # demo.furniture_ids = ["table", "shelf"]
-    # demo.furniture_params = [
-    #     {'desk_size': [1.5, 0.7, 0.78], 'leg_display': True},
-    #     {'display_inside_shelf': True}
-    # ]
-    # table_pose = np.eye(4)
-    # shelf_pose = np.eye(4)
-    # shelf_pose[:3, 3] = [0., 0.6, 0.415]
-    # shelf_pose[:3, :3] = np.array([[0., -1., 0.],
-    #                                [1., 0., 0.],
-    #                                [0., 0., 1.]])
-    # demo.furniture_poses = np.array([table_pose, shelf_pose])
-    # ##################################################
-    #
-    # demo.object_ids = [obj_id.upper() for obj_id in old_demo['object_ids']]
-    # demo.objects_poses = old_demo['full_obj_poses']
-    # demo.objects_poses[:, :, 2, 3] -= 0.03
-    # demo.contacts = np.zeros(old_demo['full_obj_poses'].shape[:2])
-    # for obj_id, grasp_rel_seq in enumerate(obj_grasp_release):
-    #     for grasp, release in grasp_rel_seq:
-    #         demo.contacts[obj_id, grasp:release] = 1
-    # demo.save(overwrite=True)
+    demo = Demonstration()
+    old_demo_path = demo._get_data_directory().joinpath('demo_07.pkl')
+    old_demo = pickle.load(open(old_demo_path, 'rb'))
+
+    ##################################################
+    # To fill manually
+
+    demo.task_name = "shelf"
+    demo.demo_id = 7
+    demo.robot_name = "panda"
+    demo.pose_id = 0
+    obj_grasp_release = [[(18, 52)]]
+    demo.robot_pose = np.eye(4)
+    demo.robot_pose[0, 3] = -0.38
+    demo.furniture_ids = ["table", "shelf"]
+    demo.furniture_params = [
+        {'desk_size': [1.5, 0.7, 0.78], 'leg_display': True},
+        {'display_inside_shelf': True}
+    ]
+    table_pose = np.eye(4)
+    shelf_pose = np.eye(4)
+    shelf_pose[:3, 3] = [0., 0.6, 0.415]
+    shelf_pose[:3, :3] = np.array([[0., -1., 0.],
+                                   [1., 0., 0.],
+                                   [0., 0., 1.]])
+    demo.furniture_poses = np.array([table_pose, shelf_pose])
+    ##################################################
+
+    demo.object_ids = [obj_id.upper() for obj_id in old_demo['object_ids']]
+    demo.objects_poses = old_demo['full_obj_poses']
+    demo.objects_poses[:, :, 2, 3] += 0.05
+    demo.contacts = np.zeros(old_demo['full_obj_poses'].shape[:2])
+    for obj_id, grasp_rel_seq in enumerate(obj_grasp_release):
+        for grasp, release in grasp_rel_seq:
+            demo.contacts[obj_id, grasp:release] = 1
+    # demo.subgoal_objects_poses_ref_frames = []
+    # for i, obj_poses in enumerate(demo.subgoal_objects_poses):
+        # object_ref_frames = ['world', 'world']
+        # for j, ref in enumerate(object_ref_frames):
+        #     world_obj = pin.SE3(demo.subgoal_objects_poses[i, j].copy())
+        #     world_furn = pin.SE3(demo.furniture_poses[demo.furniture_ids.index(ref)])
+        #     furn_obj = world_obj.inverse() * world_furn
+        #     demo.subgoal_objects_poses[i, j] = furn_obj.homogeneous
+        # for time_poses in obj_poses:
+        #     object_ref_frames.append('world')
+        # demo.subgoal_objects_poses_ref_frames.append(object_ref_frames)
+
+    demo.save(overwrite=True)
 
 
     # task = ShelfTask(8, PandaRobot(), 0)
     # r = Renderer(task)
     # r.animate_demonstration()
     # time.sleep(5)
-    import pinocchio as pin
-    demo = Demonstration.load("tunnel", 0, "panda", 0)
-    print(demo.object_ids)
-    print(demo.furniture_ids)
-    print(demo.subgoal_objects_poses.shape)
-    print(demo.subgoal_objects_poses_ref_frames)
-    print(demo.furniture_poses_ref_frames)
-    demo.subgoal_objects_poses_ref_frames = []
-    for i, obj_poses in enumerate(demo.subgoal_objects_poses):
-        object_ref_frames = ['table', 'tunnel', 'tunnel', 'table']
-        for j, ref in enumerate(object_ref_frames):
-            world_obj = pin.SE3(demo.subgoal_objects_poses[i, j].copy())
-            world_furn = pin.SE3(demo.furniture_poses[demo.furniture_ids.index(ref)])
-            furn_obj = world_obj.inverse() * world_furn
-            demo.subgoal_objects_poses[i, j] = furn_obj.homogeneous
-        # for time_poses in obj_poses:
-        #     object_ref_frames.append('world')
-        demo.subgoal_objects_poses_ref_frames.append(object_ref_frames)
-
-    demo.furniture_poses_ref_frames = []
-    for furn in demo.furniture_ids:
-        demo.furniture_poses_ref_frames.append('world')
-    demo.save(overwrite=True)
-    print(demo.subgoal_objects_poses_ref_frames)
-    print(demo.furniture_poses_ref_frames)
+    # import pinocchio as pin
+    # demo = Demonstration.load("tunnel", 0, "panda", 0)
+    # print(demo.object_ids)
+    # print(demo.furniture_ids)
+    # print(demo.subgoal_objects_poses.shape)
+    # print(demo.subgoal_objects_poses_ref_frames)
+    # print(demo.furniture_poses_ref_frames)
+    # demo.subgoal_objects_poses_ref_frames = []
+    # for i, obj_poses in enumerate(demo.subgoal_objects_poses):
+    #     object_ref_frames = ['table', 'tunnel', 'tunnel', 'table']
+    #     for j, ref in enumerate(object_ref_frames):
+    #         world_obj = pin.SE3(demo.subgoal_objects_poses[i, j].copy())
+    #         world_furn = pin.SE3(demo.furniture_poses[demo.furniture_ids.index(ref)])
+    #         furn_obj = world_obj.inverse() * world_furn
+    #         demo.subgoal_objects_poses[i, j] = furn_obj.homogeneous
+    #     # for time_poses in obj_poses:
+    #     #     object_ref_frames.append('world')
+    #     demo.subgoal_objects_poses_ref_frames.append(object_ref_frames)
+    #
+    # demo.furniture_poses_ref_frames = []
+    # for furn in demo.furniture_ids:
+    #     demo.furniture_poses_ref_frames.append('world')
+    # demo.save(overwrite=True)
+    # print(demo.subgoal_objects_poses_ref_frames)
+    # print(demo.furniture_poses_ref_frames)
