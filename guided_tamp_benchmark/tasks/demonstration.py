@@ -4,10 +4,11 @@
 # Created on: 14.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
+from __future__ import annotations
+
 import os
 import pickle
 from pathlib import Path
-from typing import Optional, List
 
 import numpy as np
 
@@ -19,7 +20,7 @@ class Demonstration:
         self.robot_name: Optional[str] = None
         self.pose_id: Optional[str] = None
         self.object_ids: Optional[
-            List[str]
+            list[str]
         ] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
         self.objects_poses: Optional[np.array] = None  # n*t*4x4 numpy array
         self.subgoal_objects_poses: Optional[np.array] = None
@@ -27,7 +28,7 @@ class Demonstration:
             np.array
         ] = None  # n * t np array of boolean grasped/not grasped
         self.robot_pose: Optional[np.array] = None  # 4x4 numpy array
-        self.furniture_ids: Optional[List[str]] = None
+        self.furniture_ids: Optional[list[str]] = None
         self.furniture_poses: Optional[np.array] = None
         self.furniture_params = None
 
@@ -48,14 +49,14 @@ class Demonstration:
         """Get valid demonstration IDs for a given task name."""
         datadir = Demonstration._get_data_directory()
         return [
-            int(d.name[len(task_name) + 1 : -4])
+            int(d.name[len(task_name) + 1: -4])
             for d in datadir.iterdir()
             if d.name.startswith(task_name) and not d.name.endswith("poses.pkl")
         ]
 
     @staticmethod
     def _get_robot_poses_filepath(
-        task_name: str, demo_id: int, robot_name: str
+            task_name: str, demo_id: int, robot_name: str
     ) -> Path:
         """Get path to the robot_poses file."""
         return Demonstration._get_data_directory().joinpath(
