@@ -56,7 +56,7 @@ class Shelf(FurnitureObject):
 
     @staticmethod
     def urdf(
-        pos: List[float],
+        pos: list[float],
         rot: list[float],
         inside=True,
         material: str = "brown",
