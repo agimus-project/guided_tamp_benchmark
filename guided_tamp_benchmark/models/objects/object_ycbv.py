@@ -4,9 +4,9 @@
 # Created on: 17.10.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
+from __future__ import annotations
 
 import os
-from typing import List
 import xml.etree.ElementTree as ElTree
 from pinocchio import XYZQUATToSE3
 import numpy as np
@@ -67,7 +67,7 @@ class ObjectYCBV(BaseObject):
             )
 
     @classmethod
-    def initial_configuration(cls) -> List[float]:
+    def initial_configuration(cls) -> list[float]:
         """
         generates initial configuration of cuboid in [x, y, z, i, j, k, w]
 
