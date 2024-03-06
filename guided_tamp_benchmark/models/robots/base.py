@@ -3,9 +3,9 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 24.10.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+from __future__ import annotations
 
 from abc import abstractmethod
-from typing import List
 
 import pinocchio
 
@@ -23,7 +23,7 @@ class BaseRobot(object):
     robot_type = ""  # either mobile or fixed
 
     @abstractmethod
-    def initial_configuration(self) -> List[float]:
+    def initial_configuration(self) -> list[float]:
         """Return initial configuration of the object."""
         pass
 
@@ -32,7 +32,7 @@ class BaseRobot(object):
         """Return maximum reach of robot end effector in meters."""
         pass
 
-    def get_actuated_joint_names(self) -> List[str]:
+    def get_actuated_joint_names(self) -> list[str]:
         """Return list of names of actuated joints"""
         model = pinocchio.buildModelFromUrdf(self.urdfFilename)
         return model.names.tolist()[1:]
@@ -42,7 +42,7 @@ class BaseRobot(object):
         """return name of the gripper of the robot"""
         pass
 
-    def get_contact_surfaces(self) -> List[str]:
+    def get_contact_surfaces(self) -> list[str]:
         """Return contact surfaces of the robot"""
         return []
 

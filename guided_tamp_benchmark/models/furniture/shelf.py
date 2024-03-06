@@ -5,7 +5,6 @@
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
 import os
-from typing import List
 import numpy as np
 from pinocchio.rpy import matrixToRpy
 
@@ -56,8 +55,8 @@ class Shelf(FurnitureObject):
 
     @staticmethod
     def urdf(
-        pos: List[float],
-        rot: List[float],
+        pos: list[float],
+        rot: list[float],
         inside=True,
         material: str = "brown",
         color_rgba: str = "0.43 0.34 0.24 0.9",
