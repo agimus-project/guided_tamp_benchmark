@@ -3,6 +3,7 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 17.10.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+from __future__ import annotations
 
 import os
 import numpy as np
