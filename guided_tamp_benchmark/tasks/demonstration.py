@@ -19,12 +19,14 @@ class Demonstration:
         self.demo_id: int | None = None
         self.robot_name: str | None = None
         self.pose_id: str | None = None
-        self.object_ids: str | None = \
+        self.object_ids: str | None = (
             None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
+        )
         self.objects_poses: np.ndarray | None = None  # n*t*4x4 numpy array
         self.subgoal_objects_poses: np.ndarray | None = None
-        self.contacts: np.ndarray | None = \
+        self.contacts: np.ndarray | None = (
             None  # n * t np array of boolean grasped/not grasped
+        )
         self.robot_pose: np.ndarray | None = None  # 4x4 numpy array
         self.furniture_ids: list[str] | None = None
         self.furniture_poses: np.ndarray | None = None
@@ -47,14 +49,14 @@ class Demonstration:
         """Get valid demonstration IDs for a given task name."""
         datadir = Demonstration._get_data_directory()
         return [
-            int(d.name[len(task_name) + 1: -4])
+            int(d.name[len(task_name) + 1 : -4])
             for d in datadir.iterdir()
             if d.name.startswith(task_name) and not d.name.endswith("poses.pkl")
         ]
 
     @staticmethod
     def _get_robot_poses_filepath(
-            task_name: str, demo_id: int, robot_name: str
+        task_name: str, demo_id: int, robot_name: str
     ) -> Path:
         """Get path to the robot_poses file."""
         return Demonstration._get_data_directory().joinpath(
