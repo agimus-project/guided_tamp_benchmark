@@ -9,12 +9,11 @@ from guided_tamp_benchmark.models.robots import (
     KukaMobileIIWARobot,
 )
 import pathlib
-from typing import Tuple, List
 
 
 def collision_check_cycle(
-    task: BaseTask, configs: List[Configuration]
-) -> Tuple[bool, int]:
+    task: BaseTask, configs: list[Configuration]
+) -> tuple[bool, int]:
     for i, c in enumerate(configs):
         if not task.collision.is_config_valid(c):
             return True, i
@@ -23,7 +22,7 @@ def collision_check_cycle(
 
 
 def grasp_check_cycle(
-    task: BaseTask, configs: List[Configuration], graps: list
+    task: BaseTask, configs: list[Configuration], graps: list
 ) -> bool:
     for i, c in enumerate(configs):
         if task._check_grasp_constraint(c, delta=0.0001) == graps[i]:
@@ -33,7 +32,7 @@ def grasp_check_cycle(
 
 
 def placement_check_cycle(
-    task: BaseTask, configs: List[Configuration], placement: list
+    task: BaseTask, configs: list[Configuration], placement: list
 ) -> bool:
     for i, c in enumerate(configs):
         if not task._check_place_constraint(c) == placement[i]:
