@@ -3,9 +3,9 @@
 # Copyright (c) CTU -- All Rights Reserved
 # Created on: 24.10.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
+from __future__ import annotations
 
 import numpy as np
-from typing import List
 
 from guided_tamp_benchmark.models.robots import BaseRobot
 from guided_tamp_benchmark.models.utils import get_robots_data_directory
@@ -17,7 +17,7 @@ class KukaIIWARobot(BaseRobot):
     name = "kuka_iiwa"
     robot_type = "fixed"
 
-    def initial_configuration(self) -> List[float]:
+    def initial_configuration(self) -> list[float]:
         """Return the initial configuration of the robot."""
         return [0, -np.pi / 4, 0, -np.pi / 2, 0, np.pi / 2, np.pi / 4, 0, 0]
 

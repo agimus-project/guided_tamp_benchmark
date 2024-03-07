@@ -1,7 +1,6 @@
 import unittest
 
 import numpy as np
-from guided_tamp_benchmark.models import *
 from guided_tamp_benchmark.models.furniture import *
 from guided_tamp_benchmark.models.objects import *
 from guided_tamp_benchmark.models.robots import *
