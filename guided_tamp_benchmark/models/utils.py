@@ -30,7 +30,7 @@ def parse_contacts_grippers_handles(
 ) -> Tuple[dict, dict, dict]:
     """parses info from root of elementary tree xml parser of .srdf file. Returns
     dictionary with the wanted info in following format.
-    contacts["name"] = {"link": str, "shapes": np.array},
+    contacts["name"] = {"link": str, "shapes": np.array, points: list},
     handles["name"] = {"link": str, "pose": list, "clearance"" float},
     grippers["name"] = {"link": str, "pose": list, "clearance"" float}"""
     contact_dict, gripper_dict, handle_dict = {}, {}, {}
@@ -57,9 +57,16 @@ def parse_contacts_grippers_handles(
                             break
                     parsed_shapes.append(shape)
 
+                parsed_points = []
+                for i in range(2, len(points), 3):
+                    parsed_points.append(
+                        [float(points[i - 2]), float(points[i - 1]), float(points[i])]
+                    )
+
                 contact_dict[child.attrib["name"]] = {
                     "link": child[0].attrib["name"],
                     "shapes": np.array(parsed_shapes),
+                    "points": np.array(parsed_points),
                 }
             except Exception:
                 raise NameError("srdf file is missing handles!")
