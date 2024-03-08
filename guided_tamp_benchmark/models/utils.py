@@ -59,14 +59,14 @@ def parse_contacts_grippers_handles(
 
                 parsed_points = []
                 for i in range(2, len(points), 3):
-                    parsed_points.append([float(points[i - 2]),
-                                          float(points[i - 1]),
-                                          float(points[i])])
+                    parsed_points.append(
+                        [float(points[i - 2]), float(points[i - 1]), float(points[i])]
+                    )
 
                 contact_dict[child.attrib["name"]] = {
                     "link": child[0].attrib["name"],
                     "shapes": np.array(parsed_shapes),
-                    "points": np.array(parsed_points)
+                    "points": np.array(parsed_points),
                 }
             except Exception:
                 raise NameError("srdf file is missing handles!")
