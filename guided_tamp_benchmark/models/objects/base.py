@@ -4,8 +4,8 @@
 # Created on: 2022-10-13
 #     Author: Vladimir Petrik <vladimir.petrik@cvut.cz>
 #
+from __future__ import annotations
 from abc import abstractmethod
-from typing import List
 import tempfile
 import os
 
@@ -29,20 +29,20 @@ class BaseObject(object):
             )
 
     @abstractmethod
-    def initial_configuration(self) -> List[float]:
+    def initial_configuration(self) -> list[float]:
         """Return initial configuration of the object."""
         pass
 
     @classmethod
     @abstractmethod
-    def handles(cls, prefix: str = "") -> List[str]:
+    def handles(cls, prefix: str = "") -> list[str]:
         """Returns the list of all handle names defined by the object with optional
         :param prefix."""
         pass
 
     @classmethod
     @abstractmethod
-    def contact_surfaces(cls, prefix: str = "") -> List[str]:
+    def contact_surfaces(cls, prefix: str = "") -> list[str]:
         """Returns the list of all contact surface names defined by the object with
         optional :param prefix."""
         pass

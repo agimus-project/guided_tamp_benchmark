@@ -4,31 +4,32 @@
 # Created on: 14.11.22
 #     Author: David Kovar <kovarda8@fel.cvut.cz>
 
+from __future__ import annotations
+
 import os
 import pickle
 from pathlib import Path
-from typing import Optional, List
 
 import numpy as np
 
 
 class Demonstration:
     def __init__(self):
-        self.task_name: Optional[str] = None
-        self.demo_id: Optional[int] = None
-        self.robot_name: Optional[str] = None
-        self.pose_id: Optional[str] = None
-        self.object_ids: Optional[
-            List[str]
-        ] = None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
-        self.objects_poses: Optional[np.array] = None  # n*t*4x4 numpy array
-        self.subgoal_objects_poses: Optional[np.array] = None
-        self.contacts: Optional[
-            np.array
-        ] = None  # n * t np array of boolean grasped/not grasped
-        self.robot_pose: Optional[np.array] = None  # 4x4 numpy array
-        self.furniture_ids: Optional[List[str]] = None
-        self.furniture_poses: Optional[np.array] = None
+        self.task_name: str | None = None
+        self.demo_id: int | None = None
+        self.robot_name: str | None = None
+        self.pose_id: str | None = None
+        self.object_ids: str | None = (
+            None  # can be a list of e.g. YCBV_01 or CUBOID_0.1_0.2_0.8
+        )
+        self.objects_poses: np.ndarray | None = None  # n*t*4x4 numpy array
+        self.subgoal_objects_poses: np.ndarray | None = None
+        self.contacts: np.ndarray | None = (
+            None  # n * t np array of boolean grasped/not grasped
+        )
+        self.robot_pose: np.ndarray | None = None  # 4x4 numpy array
+        self.furniture_ids: list[str] | None = None
+        self.furniture_poses: np.ndarray | None = None
         self.furniture_params = None
 
     @staticmethod
