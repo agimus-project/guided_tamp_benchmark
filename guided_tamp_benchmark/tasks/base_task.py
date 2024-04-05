@@ -29,7 +29,8 @@ from guided_tamp_benchmark.tasks.collisions import (
 
 class BaseTask:
     def __init__(
-        self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int
+        self, task_name: str, demo_id: int, robot: BaseRobot, robot_pose_id: int,
+            furniture_pose_update: np.array | None = None
     ):
         self.task_name: str = task_name
         self.robot: BaseRobot = robot
@@ -40,6 +41,10 @@ class BaseTask:
             pose_id=robot_pose_id,
         )
         self.objects = self._create_objects(self.demo.object_ids)
+        if furniture_pose_update is not None:
+            for i in range(self.demo.furniture_poses.shape[0]):
+                self.demo.furniture_poses[i] = furniture_pose_update[i].dot(
+                    self.demo.furniture_poses[i])
         self.furniture = self._create_furniture(
             self.demo.furniture_ids,
             self.demo.furniture_poses,

@@ -17,7 +17,8 @@ from collections import defaultdict
 
 
 class Benchmark:
-    """Benchmark class store results internally in nested dictionaries in a following
+    """
+    Benchmark class store results internally in nested dictionaries in a following
      structure:
        planer_name -> task_name -> demo_id -> robot_name -> robot_pose_id -> seed_id
     To get results for you planner for panda in shelf1 task do:
@@ -48,25 +49,41 @@ class Benchmark:
         planner_arg: dict,
         delta: float,
         max_planning_time: float = 60,
+        obj_id_to_update: int | None = None,
+        time_id_to_change: int | None = None,
+        obj_update_pose: np.array = np.eye(4),
+        furn_id_to_update: int | None = None,
+        furniture_update_pose: np.array = np.eye(4)
     ):
         """runs benchmarking for the given planner with given arguments, on given task
         and seeds with the specified max planning time. Results will be saved in
         Benchmark.results dictionary. Argument delta is a step by which the path
         returned by planner will be interpolated."""
+
         for s in seeds:
-            try:
-                p = planner(
-                    task=task,
-                    max_planning_time=max_planning_time,
-                    random_seed=s,
-                    **planner_arg,
-                )
-                task = p.task
-                start_solve_t = time.time()
-                res = p.solve()
-            except Exception as e:
-                print(f"ERROR {e}")
-                res = False
+            res = None
+            while res is None:
+                try:
+                    p = planner(
+                        task=task,
+                        max_planning_time=max_planning_time,
+                        random_seed=s,
+                        **planner_arg,
+                    )
+                    task = p.task
+                    if obj_id_to_update is not None:
+                        _ = p.update_object_poses_matching_time_id(obj_update_pose,
+                                                                   obj_id_to_update,
+                                                                   time_id_to_change)
+                    if furn_id_to_update is not None:
+                        p.update_object_to_match_furniture_poses(
+                            furniture_update_pose, furn_id_to_update)
+
+                    start_solve_t = time.time()
+                    res = p.solve()
+                except Exception as e:
+                    print(f"ERROR {e}")
+                    res = False
             end_solve_t = time.time()
 
             print(

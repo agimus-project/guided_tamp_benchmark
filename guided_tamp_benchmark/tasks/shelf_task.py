@@ -9,7 +9,9 @@ from guided_tamp_benchmark.models.robots import BaseRobot
 
 
 class ShelfTask(BaseTask):
-    def __init__(self, demo_id: int, robot: BaseRobot, robot_pose_id: int):
+    def __init__(self, demo_id: int, robot: BaseRobot, robot_pose_id: int, 
+                 furniture_pose_update=None):
         super().__init__(
-            "shelf", demo_id=demo_id, robot=robot, robot_pose_id=robot_pose_id
+            "shelf", demo_id=demo_id, robot=robot, robot_pose_id=robot_pose_id,
+            furniture_pose_update=furniture_pose_update
         )
