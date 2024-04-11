@@ -90,8 +90,9 @@ class Demonstration:
             demo.subgoal_objects_poses = data["subgoal_objects_poses"]
         if data["subgoal_objects_poses_ref_frames"] is not None:
             obj_ref_frames = data["subgoal_objects_poses_ref_frames"]
-            assert len(obj_ref_frames) == demo.subgoal_objects_poses.shape[0]
-            assert len(obj_ref_frames[0]) == demo.subgoal_objects_poses.shape[1]
+            if data["subgoal_objects_poses"] is not None:
+                assert len(obj_ref_frames) == demo.subgoal_objects_poses.shape[0]
+                assert len(obj_ref_frames[0]) == demo.subgoal_objects_poses.shape[1]
             for list_per_obj in obj_ref_frames:
                 for frame in list_per_obj:
                     assert frame in ["world"] + data["furniture_ids"]
