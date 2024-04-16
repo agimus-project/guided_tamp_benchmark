@@ -108,6 +108,12 @@ class ObjectYCBV(BaseObject):
             ids = [i for i in range(4)] + [i for i in range(8, 12)]
         elif self.name == "obj_000005":
             ids = [8, 9, 10, 11]
+        elif self.name == "obj_000007":
+            ids = [0, 1, 2, 3, 4, 5, 6, 7]
+        elif self.name == "obj_000008":
+            ids = [0, 1, 2, 3, 4, 5, 6, 7]
+        elif self.name == "obj_000009":
+            ids = [0, 1, 2, 3]
         elif self.name == "obj_000012":
             ids = [8, 9, 10, 11]
         elif self.name == "obj_000021":
