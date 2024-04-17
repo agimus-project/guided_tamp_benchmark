@@ -95,7 +95,7 @@ class Demonstration:
                 assert len(obj_ref_frames[0]) == demo.subgoal_objects_poses.shape[1]
             for list_per_obj in obj_ref_frames:
                 for frame in list_per_obj:
-                    assert frame in ["world"] + data["furniture_ids"]
+                    assert frame in ["world"] + data["furniture_ids"], frame
             demo.subgoal_objects_poses_ref_frames = obj_ref_frames
         demo.contacts = data["contacts"]
         demo.furniture_ids = data["furniture_ids"]
