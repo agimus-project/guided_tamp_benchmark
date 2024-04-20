@@ -49,9 +49,7 @@ class Benchmark:
         planner_arg: dict,
         delta: float,
         max_planning_time: float = 60,
-        obj_id_to_update: int | None = None,
-        time_id_to_change: int | None = None,
-        obj_update_pose: np.array = np.eye(4),
+        obj_update_pose_tuples: tuple = None,
         furn_id_to_update: int | None = None,
         furniture_update_pose: np.array = np.eye(4)
     ):
@@ -71,18 +69,32 @@ class Benchmark:
                         **planner_arg,
                     )
                     task = p.task
-                    if obj_id_to_update is not None:
-                        _ = p.update_object_poses_matching_time_id(obj_update_pose,
-                                                                   obj_id_to_update,
-                                                                   time_id_to_change)
                     if furn_id_to_update is not None:
                         p.update_object_to_match_furniture_poses(
                             furniture_update_pose, furn_id_to_update)
+
+                    if obj_update_pose_tuples is not None:
+                        for time_id, obj_id, x_y_angle in obj_update_pose_tuples:
+                            if x_y_angle is not None:
+                                x, y, theta = x_y_angle
+                                pose = np.eye(4)
+                                pose[:2, 3] = [x, y]  # this is in world frame
+                                pose[:3, :3] = np.array([
+                                    [np.cos(theta), -np.sin(theta), 0.],
+                                    [np.sin(theta), np.cos(theta), 0.],
+                                    [0., 0., 1.]
+                                ])  # this is in object frame
+                                _ = p.update_object_poses_matching_time_id(
+                                    pose_update=pose, obj_id=obj_id,
+                                    time_id=time_id)
+
 
                     start_solve_t = time.time()
                     res = p.solve()
                 except Exception as e:
                     print(f"ERROR {e}")
+                    import traceback
+                    print(traceback.format_exc())
                     res = False
             end_solve_t = time.time()
 
