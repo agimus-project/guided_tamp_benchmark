@@ -49,7 +49,7 @@ class Benchmark:
         planner_arg: dict,
         delta: float,
         max_planning_time: float = 60,
-        obj_update_pose_tuples: tuple = None,
+        obj_update_pose_tuples: list = [],
         furn_id_to_update: int | None = None,
         furniture_update_pose: np.array = np.eye(4)
     ):
@@ -73,20 +73,11 @@ class Benchmark:
                         p.update_object_to_match_furniture_poses(
                             furniture_update_pose, furn_id_to_update)
 
-                    if obj_update_pose_tuples is not None:
-                        for time_id, obj_id, x_y_angle in obj_update_pose_tuples:
-                            if x_y_angle is not None:
-                                x, y, theta = x_y_angle
-                                pose = np.eye(4)
-                                pose[:2, 3] = [x, y]  # this is in world frame
-                                pose[:3, :3] = np.array([
-                                    [np.cos(theta), -np.sin(theta), 0.],
-                                    [np.sin(theta), np.cos(theta), 0.],
-                                    [0., 0., 1.]
-                                ])  # this is in object frame
-                                _ = p.update_object_poses_matching_time_id(
-                                    pose_update=pose, obj_id=obj_id,
-                                    time_id=time_id)
+                    if len(obj_update_pose_tuples) > 0:
+                        for time_id, obj_id, pose in obj_update_pose_tuples:
+                            _ = p.update_object_poses_matching_time_id(
+                                pose_update=pose, obj_id=obj_id,
+                                time_id=time_id)
 
 
                     start_solve_t = time.time()
