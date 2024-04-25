@@ -22,7 +22,8 @@ class Tunnel(FurnitureObject):
         lengths: List[float],
         tunnel_walls_thickness: float = 0.16,
         collision_walls_thickness: float = 0.1,
-        walls_display=False,
+        walls_display: bool = False,
+        walls_remove: bool = False,
     ) -> None:
         """
         will generate .urdf and .srdf file for environmental object tunnel.
@@ -50,6 +51,7 @@ class Tunnel(FurnitureObject):
                     thickness=tunnel_walls_thickness,
                     collision_thickness=collision_walls_thickness,
                     disp_walls=walls_display,
+                    remove_walls=walls_remove
                 )
             )
         with os.fdopen(self.fd_srdf, "w") as f:
@@ -73,7 +75,8 @@ class Tunnel(FurnitureObject):
         lengths: List[float],
         thickness: float,
         collision_thickness: float,
-        disp_walls=False,
+        disp_walls: bool = False,
+        remove_walls: bool = False,
         material: str = "grey",
         color_rgba: str = "0.713 0.725 0.725 0.8",
     ):
@@ -97,6 +100,92 @@ class Tunnel(FurnitureObject):
             walls_alpha = 0.0
         else:
             walls_alpha = 0.4
+        if remove_walls:
+            wall_part1 = ""
+            wall_part2 = ""
+        else:
+            wall_part1 = f"""<link name="left_sideB">
+    <inertial>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+        <mass value="1"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+    </inertial>
+    <visual>
+        <origin xyz="{0} {lengths[1] / 2 + 5} {lengths[2] / 2}" rpy="0 0 0" />
+        <geometry>
+            <box size="{collision_thickness} 10 10"/>
+        </geometry>
+        <material name="red">
+        <color rgba="1 0 0 {walls_alpha}"/>
+        </material>
+    </visual>
+    <collision>
+        <origin xyz="{0} {lengths[1] / 2 + 5} {lengths[2] / 2}" rpy="0 0 0" />
+        <geometry>
+            <box size="{collision_thickness} 10 10"/>
+        </geometry>
+    </collision>
+</link>
+<link name="right_sideB">
+    <inertial>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+        <mass value="1"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+    </inertial>
+    <visual>
+        <origin xyz="{0} {-lengths[1] / 2 - 5} {lengths[2] / 2}" rpy="0 0 0" />
+        <geometry>
+            <box size="{collision_thickness} 10 10"/>
+        </geometry>
+        <material name="red">
+        <color rgba="1 0 0 {walls_alpha}"/>
+        </material>
+    </visual>
+    <collision>
+        <origin xyz="{0} {-lengths[1] / 2 - 5} {lengths[2] / 2}" rpy="0 0 0" />
+        <geometry>
+            <box size="{collision_thickness} 10 10"/>
+        </geometry>
+    </collision>
+</link>
+<link name="top_sideB">
+    <inertial>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+        <mass value="1"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+    </inertial>
+    <visual>
+        <origin xyz="{0} {0} {lengths[2] / 2 + (5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
+        <geometry>
+            <box size="{collision_thickness} {lengths[1]} {5 - lengths[2]}"/>
+        </geometry>
+        <material name="red">
+        <color rgba="1 0 0 {walls_alpha}"/>
+        </material>
+    </visual>
+    <collision>
+        <origin xyz="{0} {0} {lengths[2] / 2 + (5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
+        <geometry>
+            <box size="{collision_thickness} {lengths[1]} {5 - lengths[2]}"/>
+        </geometry>
+    </collision>
+</link>"""
+            wall_part2 = """<joint name="top_connect" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="top_side"/>
+    <child link="top_sideB"/>
+</joint>
+<joint name="left_connectB" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="top_sideB"/>
+    <child link="left_sideB"/>
+</joint>
+<joint name="right_connectB" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="top_sideB"/>
+    <child link="right_sideB"/>
+</joint>"""
+
 
         return f"""
         <robot name="tunnel">
@@ -173,72 +262,7 @@ class Tunnel(FurnitureObject):
         </geometry>
     </collision>
 </link>
-<link name="left_sideB">
-    <inertial>
-        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-        <mass value="1"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-    <visual>
-        <origin xyz="{0} {lengths[1] / 2 + 5} {lengths[2] / 2}" rpy="0 0 0" />
-        <geometry>
-            <box size="{collision_thickness} 10 10"/>
-        </geometry>
-        <material name="red">
-        <color rgba="1 0 0 {walls_alpha}"/>
-        </material>
-    </visual>
-    <collision>
-        <origin xyz="{0} {lengths[1] / 2 + 5} {lengths[2] / 2}" rpy="0 0 0" />
-        <geometry>
-            <box size="{collision_thickness} 10 10"/>
-        </geometry>
-    </collision>
-</link>
-<link name="right_sideB">
-    <inertial>
-        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-        <mass value="1"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-    <visual>
-        <origin xyz="{0} {-lengths[1] / 2 - 5} {lengths[2] / 2}" rpy="0 0 0" />
-        <geometry>
-            <box size="{collision_thickness} 10 10"/>
-        </geometry>
-        <material name="red">
-        <color rgba="1 0 0 {walls_alpha}"/>
-        </material>
-    </visual>
-    <collision>
-        <origin xyz="{0} {-lengths[1] / 2 - 5} {lengths[2] / 2}" rpy="0 0 0" />
-        <geometry>
-            <box size="{collision_thickness} 10 10"/>
-        </geometry>
-    </collision>
-</link>
-<link name="top_sideB">
-    <inertial>
-        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-        <mass value="1"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-    <visual>
-        <origin xyz="{0} {0} {lengths[2] / 2 + (5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
-        <geometry>
-            <box size="{collision_thickness} {lengths[1]} {5 - lengths[2]}"/>
-        </geometry>
-        <material name="red">
-        <color rgba="1 0 0 {walls_alpha}"/>
-        </material>
-    </visual>
-    <collision>
-        <origin xyz="{0} {0} {lengths[2] / 2 + (5 - lengths[2]) / 2 + lengths[2] / 2}" rpy="0 0 0"/>
-        <geometry>
-            <box size="{collision_thickness} {lengths[1]} {5 - lengths[2]}"/>
-        </geometry>
-    </collision>
-</link>
+{wall_part1}
 <joint name="main_link" type="fixed">
     <origin rpy="{rpy[0]} {rpy[1]} {rpy[2]}" xyz="{pos[0]} {pos[1]} {pos[2]}"/>
     <parent link="base_link"/>
@@ -254,21 +278,7 @@ class Tunnel(FurnitureObject):
     <parent link="top_side"/>
     <child link="right_side"/>
 </joint>
-<joint name="top_connect" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="top_side"/>
-    <child link="top_sideB"/>
-</joint>
-<joint name="left_connectB" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="top_sideB"/>
-    <child link="left_sideB"/>
-</joint>
-<joint name="right_connectB" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="top_sideB"/>
-    <child link="right_sideB"/>
-</joint>
+{wall_part2}
 </robot>
         """  # noqa E501
 
