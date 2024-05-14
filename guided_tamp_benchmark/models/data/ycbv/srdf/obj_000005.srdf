@@ -17,12 +17,12 @@
     </handle>
 
     <handle name="handleXmy" clearance="0.065">
-        <position> 0.00 0.000 0.0   0.6929114 -0.6929114   0.14097442 -0.14097442</position>
+        <position> 0.00 0.000 0.0   0.6929114 -0.6929114  -0.14097442 -0.14097442</position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleXpy" clearance="0.065">
-        <position> 0.0 0 0.0   0.14097442 -0.14097442 -0.6929114   0.6929114</position>
+        <position> 0.0 0 0.0   0.14097442 -0.14097442 0.6929114   0.6929114</position>
         <link name="base_link"/>
     </handle>
 
