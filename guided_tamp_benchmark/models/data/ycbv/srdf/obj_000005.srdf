@@ -1,26 +1,22 @@
 <?xml version="1.0" ?>
 <robot name="obj_000005">
 
-    <handle name="handleZpy" clearance="0.065">
-        <position> 0 0 0.05   0.58964632 -0.39027839  0.58964632  0.39027839</position>
-        <link name="base_link"/>
-    </handle>
-
-    <handle name="handleZmy" clearance="0.075">
-        <position> 0 0 -0.05    0.58964632  0.39027839 -0.58964632  0.39027839</position>
-        <link name="base_link"/>
-    </handle>
-
-    <handle name="handleXmy" clearance="0.065">
-        <position> 0.00 0.000 0.0   0.6929114 -0.6929114   0.14097442 -0.14097442</position>
-        <link name="base_link"/>
-    </handle>
-
-    <handle name="handleXpy" clearance="0.065">
-        <position> 0.0 0 0.0   0.14097442 -0.14097442 -0.6929114   0.6929114</position>
-        <link name="base_link"/>
-    </handle>
-
+<handle name="handleZpy" clearance="0.08">
+<position>  0.0003162363156991592 9.625348155897952e-05 -0.0818309754624641 0.5907751038068443 0.39222480922221387 -0.5852338626237354 0.3932503712735967  </position>
+<link name="base_link"/>
+</handle>
+<handle name="handleZmy" clearance="0.08">
+<position>  0.000887335844384408 0.0006521111648055693 0.01816584882493171 0.5852338473456588 -0.3932503608104791 0.5907750880892322 0.3922247989821479  </position>
+<link name="base_link"/>
+</handle>
+<handle name="handleXmy" clearance="0.08">
+<position>  0.0006017860800417836 0.0003741823231822744 -0.031832563318766195 0.13647800692820083 0.1396710741108297 0.6958110677771222 0.6911676371478154  </position>
+<link name="base_link"/>
+</handle>
+<handle name="handleXpy" clearance="0.08">
+<position>  0.0006017860800417836 0.0003741823231822744 -0.031832563318766195 0.6911676371478154 -0.6958110677771222 0.1396710741108297 -0.13647800692820083  </position>
+<link name="base_link"/>
+</handle>
 
 <contact name="obj_000005_surface">
     <link name="base_link"/>
