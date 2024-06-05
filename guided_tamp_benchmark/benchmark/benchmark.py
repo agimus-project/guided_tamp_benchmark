@@ -54,19 +54,23 @@ class Benchmark:
         Benchmark.results dictionary. Argument delta is a step by which the path
         returned by planner will be interpolated."""
         for s in seeds:
-            try:
-                p = planner(
-                    task=task,
-                    max_planning_time=max_planning_time,
-                    random_seed=s,
-                    **planner_arg,
-                )
-                start_solve_t = time.time()
-                res = p.solve()
-            except Exception as e:
-                print(f"ERROR {e}")
-                res = False
-            end_solve_t = time.time()
+            res = None
+            while res is None:
+                try:
+                    p = planner(
+                        task=task,
+                        max_planning_time=max_planning_time,
+                        random_seed=s,
+                        **planner_arg,
+                    )
+                    start_solve_t = time.time()
+                    res = p.solve()
+                except Exception as e:
+                    print(f"ERROR {e}")
+                    res = False
+                end_solve_t = time.time()
+                if res is None:
+                    p.reset()
 
             print(
                 f"{task.robot.name} robot pose {task.demo.pose_id},"
@@ -102,3 +106,4 @@ class Benchmark:
         internally."""
         with open(self.results_path, "rb") as f:
             self.results = dill.load(f)
+
