@@ -82,6 +82,8 @@ class Benchmark:
 
                     start_solve_t = time.time()
                     res = p.solve()
+                    if not res:
+                        p.reset()
                 except Exception as e:
                     print(f"ERROR {e}")
                     import traceback
