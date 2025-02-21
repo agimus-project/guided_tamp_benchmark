@@ -172,122 +172,122 @@ class Cuboid(BaseObject):
 <robot name="box">
 
  <handle name="handleZpx" clearance="{lengths[0]}">
-    <position> 0 0 {dist[2]}   0.7071068 0 0.7071068 0</position>
+    <position> xyz="0 0 {dist[2]}"   xyzw="0 0.7071068 0 0.7071068"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZmx" clearance="{lengths[0]}">
-    <position> 0 0 {-dist[2]}  0.7071067811865476 0.0 -0.7071067811865475 0.0  </position>
+    <position> xyz="0 0 {-dist[2]}"  xyzw="0.0 -0.7071067811865475 0.0 0.7071067811865476"  </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleYpx" clearance="{lengths[0]}">
-    <position> 0 {dist[1]} 0.0   0.5 0.5 -0.5  -0.5  </position>
+    <position> xyz="0 {dist[1]} 0.0"   xyzw="0.5 -0.5  -0.5 0.5"  </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleYmx" clearance="{lengths[0]}">
-    <position> 0 {-dist[1]} 0.0   0.5 -0.5 -0.5 0.5  </position>
+    <position> xyz="0 {-dist[1]} 0.0"   xyzw="-0.5 -0.5 0.5 0.5"  </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZpxSm" clearance="{lengths[0]}">
-    <position> 0 {-dist[1]} {dist[2]}   0.65328148 0.27059805 0.65328148 0.27059805</position>
+    <position> xyz="0 {-dist[1]} {dist[2]}"   xyzw="0.27059805 0.65328148 0.27059805 0.65328148"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZpxSp" clearance="{lengths[0]}">
-    <position> 0 {dist[1]} {dist[2]}   0.65328148  -0.27059805  0.65328148 -0.27059805</position>
+    <position> xyz="0 {dist[1]} {dist[2]}"   xyzw="-0.27059805  0.65328148 -0.27059805 0.65328148"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZmxSm" clearance="{lengths[0]}">
-    <position> 0 {-dist[1]} {-dist[2]}    0.65328148  -0.27059805 -0.65328148  0.27059805</position>
+    <position> xyz="0 {-dist[1]} {-dist[2]}"    xyzw="-0.27059805 -0.65328148  0.27059805 0.65328148"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZmxSp" clearance="{lengths[0]}">
-    <position> 0 {dist[1]} {-dist[2]}  0.65328148  0.27059805 -0.65328148 -0.27059805</position>
+    <position> xyz="0 {dist[1]} {-dist[2]}"  xyzw="0.27059805 -0.65328148 -0.27059805 0.65328148"</position>
     <link name="base_link"/>
   </handle>
 
 <handle name="handleZpy" clearance="{lengths[1]}">
-    <position> 0 0 {dist[2]}   0.5 -0.5  0.5  0.5 </position>
+    <position> xyz="0 0 {dist[2]}"   xyzw="-0.5  0.5  0.5 0.5" </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZmy" clearance="{lengths[1]}">
-    <position> 0 0 {-dist[2]}   0.5 0.5 -0.5 0.5  </position>
+    <position> xyz="0 0 {-dist[2]}"   xyzw="0.5 -0.5 0.5 0.5"  </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleXmy" clearance="{lengths[1]}">
-    <position> {-dist[0]} 0 0.0   0.7071067811865476 -0.7071067811865475 0.0 0.0  </position>
+    <position> xyz="{-dist[0]} 0 0.0"   xyzw="-0.7071067811865475 0.0 0.0 0.7071067811865476"  </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleXpy" clearance="{lengths[1]}">
-    <position> {dist[0]} 0 0.0   0 0 -0.7071067811865475 0.7071067811865476 </position>
+    <position> xyz="{dist[0]} 0 0.0"   xyzw="0 -0.7071067811865475 0.7071067811865476 0" </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZpySm" clearance="{lengths[1]}">
-    <position> {-dist[0]} 0 {dist[2]}    0.65328148 -0.65328148  0.27059805  0.27059805</position>
+    <position> xyz="{-dist[0]} 0 {dist[2]}"    xyzw="-0.65328148  0.27059805  0.27059805 0.65328148"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZpySp" clearance="{lengths[1]}">
-    <position> {dist[0]} 0 {dist[2]}   0.27059805  -0.27059805  0.65328148  0.65328148</position>
+    <position> xyz="{dist[0]} 0 {dist[2]}"   xyzw="-0.27059805  0.65328148  0.65328148 0.27059805"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZmySm" clearance="{lengths[1]}">
-    <position> {-dist[0]} 0 {-dist[2]}   0.65328148  0.65328148 -0.27059805  0.27059805</position>
+    <position> xyz="{-dist[0]} 0 {-dist[2]}"   xyzw="0.65328148 -0.27059805  0.27059805 0.65328148  "</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleZmySp" clearance="{lengths[1]}">
-    <position> {dist[0]} 0 {-dist[2]}   0.27059805  0.27059805 -0.65328148  0.65328148</position>
+    <position> xyz="{dist[0]} 0 {-dist[2]}"   xyzw="0.27059805 -0.65328148  0.65328148 0.27059805"</position>
     <link name="base_link"/>
   </handle>
 
 <handle name="handleYpz" clearance="{lengths[2]}">
-    <position> 0 {dist[1]} 0.0   0.7071067811865476 0.0 0.0 -0.7071067811865475 </position>
+    <position> xyz="0 {dist[1]} 0.0"   xyzw="0.0 0.0 -0.7071067811865475 0.7071067811865476" </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleYmz" clearance="{lengths[2]}">
-    <position> 0 {-dist[1]} 0.0   0 0.7071067811865476 0.7071067811865475 0  </position>
+    <position> xyz="0 {-dist[1]} 0.0"   xyzw="0.7071067811865476 0.7071067811865475 0 0"  </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleXmz" clearance="{lengths[2]}">
-    <position> {-dist[0]} 0 0.0   0 1 0 0 </position>
+    <position> xyz="{-dist[0]} 0 0.0"   xyzw="1 0 0 0" </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleXpz" clearance="{lengths[2]}">
-    <position> {dist[0]} 0 0.0   0 0 1 0 </position>
+    <position> xyz="{dist[0]} 0 0.0"   xyzw="0 1 0 0" </position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleYpzSm" clearance="{lengths[2]}">
-    <position> {-dist[0]} {dist[1]} 0  0  0.9238795 -0.3826834 0</position>
+    <position> xyz="{-dist[0]} {dist[1]} 0"  xyzw="0.9238795 -0.3826834 0 0"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleYpzSp" clearance="{lengths[2]}">
-    <position> {dist[0]} {dist[1]} 0.0    0 0.3826834 -0.9238795 0</position>
+    <position> xyz="{dist[0]} {dist[1]} 0.0"    xyzw="0.3826834 -0.9238795 0 0"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleYmzSm" clearance="{lengths[2]}">
-    <position> {-dist[0]} {-dist[1]} 0.0   0  0.9238795 0.3826834 0</position>
+    <position> xyz="{-dist[0]} {-dist[1]} 0.0"   xyzw="0.9238795 0.3826834 0 0"</position>
     <link name="base_link"/>
   </handle>
 
   <handle name="handleYmzSp" clearance="{lengths[2]}">
-    <position> {dist[0]} {-dist[1]} 0.0    0 0.3826834 0.9238795 0</position>
+    <position> xyz="{dist[0]} {-dist[1]} 0.0"    xyzw="0.3826834 0.9238795 0 0"</position>
     <link name="base_link"/>
   </handle>
 
