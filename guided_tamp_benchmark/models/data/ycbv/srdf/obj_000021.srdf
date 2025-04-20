@@ -97,27 +97,27 @@
     </handle>
 
     <handle name="handleXpz" clearance="0.055">
-        <position> xyz"0.0 0.0 0.0" xyzw="0.0 1.0 0.0 0.0" </position>
+        <position> xyz="0.0 0.0 0.0" xyzw="0.0 1.0 0.0 0.0" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleYpzSm" clearance="0.055">
-        <position> xyz"0.0 -0.0125 0.0" xyzw="0.9238795 -0.3826834 0.0 0.0" </position>
+        <position> xyz="0.0 -0.0125 0.0" xyzw="0.9238795 -0.3826834 0.0 0.0" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleYmzSm" clearance="0.055">
-        <position> xyz"0.0 -0.0125 0.0" xyzw="0.9238795 0.3826834 0.0 0.0" </position>
+        <position> xyz="0.0 -0.0125 0.0" xyzw="0.9238795 0.3826834 0.0 0.0" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleYpzSp" clearance="0.055">
-        <position> xyz"0.0 0.0125 0.0" xyzw="-0.3826834 0.9238795 0.0 0.0" </position>
+        <position> xyz="0.0 0.0125 0.0" xyzw="-0.3826834 0.9238795 0.0 0.0" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleYmzSp" clearance="0.055">
-        <position> xyz"0.0 0.0125 0.0" xyzw="0.3826834 0.9238795 0.0 0.0" </position>
+        <position> xyz="0.0 0.0125 0.0" xyzw="0.3826834 0.9238795 0.0 0.0" </position>
         <link name="base_link"/>
     </handle>
 

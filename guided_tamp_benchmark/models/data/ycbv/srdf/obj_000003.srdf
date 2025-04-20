@@ -2,42 +2,42 @@
 <robot name="obj_000003">
 
     <handle name="handleZpx" clearance="0.05">
-        <position> xyz"0.0 0.0 0.05" xyzw="0.013638710016076853 0.6945244708186821 -0.014123300016648075 0.7192011391522298" </position>
+        <position> xyz="0.0 0.0 0.05" xyzw="0.013638710016076853 0.6945244708186821 -0.014123300016648075 0.7192011391522298" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleZmx" clearance="0.05">
-        <position> xyz"0.0 0.0 -0.05" xyzw="0.013638710016076853 -0.6945244708186821 0.014123300016648075 0.7192011391522298" </position>
+        <position> xyz="0.0 0.0 -0.05" xyzw="0.013638710016076853 -0.6945244708186821 0.014123300016648075 0.7192011391522298" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleYpx" clearance="0.05">
-        <position> xyz"0.0 0.0 0.0" xyzw="0.5 -0.5 -0.5 0.5" </position>
+        <position> xyz="0.0 0.0 0.0" xyzw="0.5 -0.5 -0.5 0.5" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleYmx" clearance="0.05">
-        <position> xyz"0.0 0.0 0.0" xyzw="0.5 0.5 -0.5 -0.5" </position>
+        <position> xyz="0.0 0.0 0.0" xyzw="0.5 0.5 -0.5 -0.5" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleZpxSm" clearance="0.06">
-        <position> xyz"0.0 -0.01 0.05" xyzw="0.28782689102139386 0.6470617022961886 0.2527347808968646 0.6592358976606094" </position>
+        <position> xyz="0.0 -0.01 0.05" xyzw="0.28782689102139386 0.6470617022961886 0.2527347808968646 0.6592358976606094" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleZpxSp" clearance="0.06">
-        <position> xyz"0.0 0.01 0.05" xyzw="0.65758156 -0.25081292 -0.64780907 0.29158667" </position>
+        <position> xyz="0.0 0.01 0.05" xyzw="0.65758156 -0.25081292 -0.64780907 0.29158667" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleZmxSm" clearance="0.06">
-        <position> xyz"0.0 -0.01 -0.05" xyzw="-0.26262584124520705 -0.636252193016709 0.2788312413220429 0.6696745168248234" </position>
+        <position> xyz="0.0 -0.01 -0.05" xyzw="-0.26262584124520705 -0.636252193016709 0.2788312413220429 0.6696745168248234" </position>
         <link name="base_link"/>
     </handle>
 
     <handle name="handleZmxSp" clearance="0.06">
-        <position> xyz"0.0 0.01 -0.05" xyzw="0.64280778 -0.29174007 0.66409265 -0.24630638000000007" </position>
+        <position> xyz="0.0 0.01 -0.05" xyzw="0.64280778 -0.29174007 0.66409265 -0.24630638000000007" </position>
         <link name="base_link"/>
     </handle>
 
