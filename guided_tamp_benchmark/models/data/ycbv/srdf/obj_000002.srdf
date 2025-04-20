@@ -1,45 +1,45 @@
 <?xml version="1.0" ?>
 <robot name="obj_000002">
 
-      <handle name="handleZpx" clearance="0.075">
-        <position> 0 0 0.06   0.7071068 0 0.7071068 0</position>
+    <handle name="handleZpx" clearance="0.075">
+        <position> xyz="0.0 0.0 0.06" xyzw="0.0 0.7071068376269077 0.0 0.7071067623730944" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
-      <handle name="handleZmx" clearance="0.075">
-        <position> 0 0 -0.07  0.7071067811865476 0.0 -0.7071067811865475 0.0  </position>
+    <handle name="handleZmx" clearance="0.075">
+        <position> xyz="0.0 0.0 -0.07" xyzw="0.0 -0.7071067811865475 0.0 0.7071067811865476" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
-      <handle name="handleYpx" clearance="0.075">
-        <position> 0 0.03 0.0   0.5 0.5 -0.5  -0.5  </position>
+    <handle name="handleYpx" clearance="0.075">
+        <position> xyz="0.0 0.03 0.0" xyzw="0.5 -0.5 -0.5 0.5" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
-      <handle name="handleYmx" clearance="0.075">
-        <position> 0 -0.03 0.0   0.5 -0.5 -0.5 0.5  </position>
+    <handle name="handleYmx" clearance="0.075">
+        <position> xyz="0.0 -0.03 0.0" xyzw="0.5 0.5 -0.5 -0.5" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
-      <handle name="handleZpxSm" clearance="0.075">
-        <position> 0 -0.05 0.07   0.65328148 0.27059805 0.65328148 0.27059805</position>
+    <handle name="handleZpxSm" clearance="0.075">
+        <position> xyz="0.0 -0.05 0.07" xyzw="0.2705980479550552 0.6532814750630666 0.2705980479550552 0.6532814849369334" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
-      <handle name="handleZpxSp" clearance="0.075">
-        <position> 0 0.05 0.07   0.65328148  -0.27059805  0.65328148 -0.27059805</position>
+    <handle name="handleZpxSp" clearance="0.075">
+        <position> xyz="0.0 0.05 0.07" xyzw="-0.2705980479550552 0.6532814750630666 -0.2705980479550552 0.6532814849369334" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
-      <handle name="handleZmxSm" clearance="0.075">
-        <position> 0 -0.05 -0.07    0.65328148  -0.27059805 -0.65328148  0.27059805</position>
+    <handle name="handleZmxSm" clearance="0.075">
+        <position> xyz="0.0 -0.05 -0.07" xyzw="-0.2705980479550552 -0.6532814750630666 0.2705980479550552 0.6532814849369334" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
-      <handle name="handleZmxSp" clearance="0.075">
-        <position> 0 0.05 -0.07  0.65328148  0.27059805 -0.65328148 -0.27059805</position>
+    <handle name="handleZmxSp" clearance="0.075">
+        <position> xyz="0.0 0.05 -0.07" xyzw="0.2705980479550552 -0.6532814750630666 -0.2705980479550552 0.6532814849369334" </position>
         <link name="base_link"/>
-      </handle>
+    </handle>
 
     <contact name="obj_000002_surface">
         <link name="base_link"/>

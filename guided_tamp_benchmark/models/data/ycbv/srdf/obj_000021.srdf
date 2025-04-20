@@ -1,125 +1,125 @@
 <?xml version="1.0" ?>
 <robot name="obj_000021">
 
-  <handle name="handleZpx" clearance="0.055">
-    <position> 0 0 0   0.7071068 0 0.7071068 0</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZpx" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.0 0.7071068376269077 0.0 0.7071067623730944" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZmx" clearance="0.055">
-    <position> 0 0 0  0.7071067811865476 0.0 -0.7071067811865475 0.0  </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZmx" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.0 -0.7071067811865475 0.0 0.7071067811865476" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYmx" clearance="0.055">
-    <position> 0 0 0.0   0.5 -0.5 -0.5 0.5  </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYmx" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.5 0.5 -0.5 -0.5" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYpx" clearance="0.055">
-    <position> 0 0 0.0   0.5 0.5 -0.5  -0.5  </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYpx" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.5 -0.5 -0.5 0.5" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZpxSm" clearance="0.055">
-    <position> 0 -0.0125 0   0.65328148 0.27059805 0.65328148 0.27059805</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZpxSm" clearance="0.055">
+        <position> xyz"0.0 -0.0125 0.0" xyzw="0.2705980479550552 0.6532814750630666 0.2705980479550552 0.6532814849369334" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZmxSm" clearance="0.055">
-    <position> 0 -0.0125 0    0.65328148  -0.27059805 -0.65328148  0.27059805</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZmxSm" clearance="0.055">
+        <position> xyz"0.0 -0.0125 0.0" xyzw="-0.2705980479550552 -0.6532814750630666 0.2705980479550552 0.6532814849369334" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZpxSp" clearance="0.055">
-    <position> 0 0.0125 0   0.65328148  -0.27059805  0.65328148 -0.27059805</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZpxSp" clearance="0.055">
+        <position> xyz"0.0 0.0125 0.0" xyzw="-0.2705980479550552 0.6532814750630666 -0.2705980479550552 0.6532814849369334" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZmxSp" clearance="0.055">
-    <position> 0 0.0125 0  0.65328148  0.27059805 -0.65328148 -0.27059805</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZmxSp" clearance="0.055">
+        <position> xyz"0.0 0.0125 0.0" xyzw="0.2705980479550552 -0.6532814750630666 -0.2705980479550552 0.6532814849369334" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZpy" clearance="0.08">
-    <position> 0 0 0   0.5 -0.5  0.5  0.5 </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZpy" clearance="0.08">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.5 -0.5 -0.5 -0.5" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZmy" clearance="0.08">
-    <position> 0 0 0   0.5 0.5 -0.5 0.5  </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZmy" clearance="0.08">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.5 -0.5 0.5 0.5" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleXmy" clearance="0.055">
-    <position> 0 0 0.0   0.7071067811865476 -0.7071067811865475 0.0 0.0  </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleXmy" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="-0.7071067811865475 0.0 0.0 0.7071067811865476" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleXpy" clearance="0.055">
-    <position> 0 0 0.0   0 0 -0.7071067811865475 0.7071067811865476 </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleXpy" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.0 -0.7071067811865475 0.7071067811865476 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZpySm" clearance="0.08">
-    <position> 0 0 0    0.65328148 -0.65328148  0.27059805  0.27059805</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZpySm" clearance="0.08">
+        <position> xyz"0.0 0.0 0.0" xyzw="-0.6532814750630666 0.2705980479550552 0.2705980479550552 0.6532814849369334" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZmySm" clearance="0.08">
-    <position> 0 0 0  0.65328148  0.65328148 -0.27059805  0.27059805</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZmySm" clearance="0.08">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.6532814750630666 -0.2705980479550552 0.2705980479550552 0.6532814849369334" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZpySp" clearance="0.08">
-    <position> 0 0 0   0.27059805  -0.27059805  0.65328148  0.65328148</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZpySp" clearance="0.08">
+        <position> xyz"0.0 0.0 0.0" xyzw="-0.27059805 0.65328148 0.65328148 0.27059805" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleZmySp" clearance="0.08">
-    <position> 0 0 0   0.27059805  0.27059805 -0.65328148  0.65328148</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleZmySp" clearance="0.08">
+        <position> xyz"0.0 0.0 0.0" xyzw="-0.27059805 0.65328148 -0.65328148 -0.27059805" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYpz" clearance="0.055">
-    <position> 0 0 0.0   0.7071067811865476 0.0 0.0 -0.7071067811865475 </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYpz" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.0 0.0 -0.7071067811865475 0.7071067811865476" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYmz" clearance="0.055">
-    <position> 0 0 0.0   0 0.7071067811865476 0.7071067811865475 0  </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYmz" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="0.7071067811865476 0.7071067811865475 0.0 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleXmz" clearance="0.055">
-    <position> 0 0 0.0   0 1 0 0 </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleXmz" clearance="0.055">
+        <position> xyz"0.0 0.0 0.0" xyzw="1.0 0.0 0.0 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleXpz" clearance="0.055">
-    <position> 0 0 0.0   0 0 1 0 </position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleXpz" clearance="0.055">
+        <position> xyz="0.0 0.0 0.0" xyzw="0.0 1.0 0.0 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYpzSm" clearance="0.055">
-    <position> 0 -0.0125 0  0  0.9238795 -0.3826834 0</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYpzSm" clearance="0.055">
+        <position> xyz="0.0 -0.0125 0.0" xyzw="0.9238795 -0.3826834 0.0 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYmzSm" clearance="0.055">
-    <position> 0 -0.0125 0.0   0  0.9238795 0.3826834 0</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYmzSm" clearance="0.055">
+        <position> xyz="0.0 -0.0125 0.0" xyzw="0.9238795 0.3826834 0.0 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYpzSp" clearance="0.055">
-    <position> 0 0.0125 0.0    0 0.3826834 -0.9238795 0</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYpzSp" clearance="0.055">
+        <position> xyz="0.0 0.0125 0.0" xyzw="-0.3826834 0.9238795 0.0 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
-  <handle name="handleYmzSp" clearance="0.055">
-    <position> 0 0.0125 0.0    0 0.3826834 0.9238795 0</position>
-    <link name="base_link"/>
-  </handle>
+    <handle name="handleYmzSp" clearance="0.055">
+        <position> xyz="0.0 0.0125 0.0" xyzw="0.3826834 0.9238795 0.0 0.0" </position>
+        <link name="base_link"/>
+    </handle>
 
 
 <contact name="obj_000021_surface">
